@@ -205,70 +205,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
 
-            {/* SVG for relationships */}
-            <svg className="absolute top-0 left-0 w-full h-full" style={{ pointerEvents: 'none', zIndex: 5 }}>
-              <defs>
-                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                  <polygon points="0 0, 10 3.5, 0 7" fill="#8E9196" />
-                </marker>
-              </defs>
-              
-              {/* Relationship lines */}
-              {/* Utilisateur to Classe */}
-              <path d="M 128 80 Q 250 120 350 240" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="200" y="150" className="text-xs" fill="#403E43">manages</text>
-              
-              {/* Niveau to Classe */}
-              <path d="M 880 80 Q 750 120 600 240" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="700" y="140" className="text-xs" fill="#403E43">has level</text>
-              
-              {/* Classe to Etudiant */}
-              <path d="M 450 220 Q 500 120 450 80" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="480" y="150" className="text-xs" fill="#403E43">contains</text>
-              
-              {/* Niveau to Semestre */}
-              <path d="M 880 100 Q 600 150 128 240" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="500" y="180" className="text-xs" fill="#403E43">organizes</text>
-              
-              {/* Semestre to Sequence */}
-              <path d="M 180 260 Q 500 280 800 260" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="480" y="260" className="text-xs" fill="#403E43">contains</text>
-              
-              {/* Sequence to Cours */}
-              <path d="M 800 300 Q 500 350 180 400" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="480" y="340" className="text-xs" fill="#403E43">contains</text>
-              
-              {/* Cours to Exercice */}
-              <path d="M 180 440 Q 300 480 450 440" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="300" y="470" className="text-xs" fill="#403E43">contains</text>
-              
-              {/* Etudiant to Progression */}
-              <path d="M 450 100 Q 900 300 800 440" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="750" y="250" className="text-xs" fill="#403E43">tracks</text>
-              
-              {/* Cours to Progression */}
-              <path d="M 240 440 Q 450 480 750 440" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="450" y="470" className="text-xs" fill="#403E43">tracks</text>
-              
-              {/* Utilisateur to Enseignant_Classe */}
-              <path d="M 80 120 Q 250 300 450 600" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="200" y="350" className="text-xs" fill="#403E43">manages</text>
-              
-              {/* Classe to Enseignant_Classe */}
-              <path d="M 500 300 Q 470 450 450 550" 
-                    stroke="#8E9196" strokeWidth="1.5" markerEnd="url(#arrowhead)" fill="none" />
-              <text x="460" y="400" className="text-xs" fill="#403E43">assigned to</text>
-            </svg>
+            {/* SVG arrows and relationship lines have been removed */}
           </div>
         </div>
       </div>
@@ -315,3 +252,4 @@ const ClassDiagram: React.FC = () => {
 };
 
 export default ClassDiagram;
+
