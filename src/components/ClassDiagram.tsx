@@ -60,8 +60,8 @@ const ClassDiagram: React.FC = () => {
             width: isMobile ? '100%' : '1200px'
           }}
         >
-          {/* Grid layout for better organization - increased gap to 12 */}
-          <div className="grid grid-cols-3 gap-12 h-full">
+          {/* Increased both horizontal and vertical spacing */}
+          <div className="grid grid-cols-3 gap-16 h-full">
             {/* Row 1 */}
             <div className="relative">
               <Entity 
@@ -105,7 +105,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            {/* Row 2 - increased mt to 16 */}
+            {/* Row 2 - maintain the same mt value */}
             <div className="relative mt-16">
               <Entity
                 title="Semestre"
@@ -148,7 +148,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
 
-            {/* Row 3 - increased mt to 16 */}
+            {/* Row 3 - maintain the same mt value */}
             <div className="relative mt-16">
               <Entity
                 title="Cours"
@@ -192,7 +192,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            {/* Row 4 - increased mt to 16 */}
+            {/* Row 4 - maintain the same mt value */}
             <div className="relative col-start-2 mt-16">
               <Entity
                 title="Enseignant_Classe"
@@ -252,4 +252,3 @@ const ClassDiagram: React.FC = () => {
 };
 
 export default ClassDiagram;
-
