@@ -60,8 +60,8 @@ const ClassDiagram: React.FC = () => {
             width: isMobile ? '100%' : '1200px'
           }}
         >
-          {/* Grid layout for better organization */}
-          <div className="grid grid-cols-3 gap-6 h-full">
+          {/* Grid layout for better organization - increased gap to 12 */}
+          <div className="grid grid-cols-3 gap-12 h-full">
             {/* Row 1 */}
             <div className="relative">
               <Entity 
@@ -105,8 +105,8 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            {/* Row 2 */}
-            <div className="relative mt-8">
+            {/* Row 2 - increased mt to 16 */}
+            <div className="relative mt-16">
               <Entity
                 title="Semestre"
                 icon={<Calendar className="w-5 h-5" />}
@@ -119,7 +119,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            <div className="relative mt-8">
+            <div className="relative mt-16">
               <Entity
                 title="Classe"
                 icon={<School className="w-5 h-5" />}
@@ -134,7 +134,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
 
-            <div className="relative mt-8">
+            <div className="relative mt-16">
               <Entity
                 title="Sequence"
                 icon={<BookOpen className="w-5 h-5" />}
@@ -148,8 +148,8 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
 
-            {/* Row 3 */}
-            <div className="relative mt-8">
+            {/* Row 3 - increased mt to 16 */}
+            <div className="relative mt-16">
               <Entity
                 title="Cours"
                 icon={<Book className="w-5 h-5" />}
@@ -163,7 +163,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            <div className="relative mt-8">
+            <div className="relative mt-16">
               <Entity
                 title="Exercice"
                 icon={<BookOpen className="w-5 h-5" />}
@@ -178,7 +178,7 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
 
-            <div className="relative mt-8">
+            <div className="relative mt-16">
               <Entity
                 title="Progression"
                 attributes={[
@@ -192,8 +192,8 @@ const ClassDiagram: React.FC = () => {
               />
             </div>
             
-            {/* Row 4 */}
-            <div className="relative col-start-2 mt-8">
+            {/* Row 4 - increased mt to 16 */}
+            <div className="relative col-start-2 mt-16">
               <Entity
                 title="Enseignant_Classe"
                 attributes={[
