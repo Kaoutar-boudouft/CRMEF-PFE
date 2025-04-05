@@ -1,21 +1,23 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ClassDiagram from '../components/ClassDiagram';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'diagram' | 'students' | 'teachers' | 'classes' | 'courses' | 'exercises' | 'semesters'>('diagram');
+  const navigate = useNavigate();
+  const [currentView, setCurrentView] = useState<'dashboard' | 'diagram' | 'students' | 'teachers' | 'classes'>('dashboard');
 
   // Mock navigation items
   const navItems = [
-    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard },
-    { title: "Diagramme UML", id: "diagram", icon: BookOpenCheck },
-    { title: "Étudiants", id: "students", icon: Users },
-    { title: "Enseignants", id: "teachers", icon: School },
-    { title: "Classes", id: "classes", icon: GraduationCap },
-    { title: "Cours", id: "courses", icon: BookText },
-    { title: "Exercices", id: "exercises", icon: BookText },
-    { title: "Semestres", id: "semesters", icon: Calendar },
+    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
+    { title: "Diagramme UML", id: "diagram", icon: BookOpenCheck, path: "/" },
+    { title: "Étudiants", id: "students", icon: Users, path: "/" },
+    { title: "Enseignants", id: "teachers", icon: School, path: "/" },
+    { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
+    { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
   ];
 
   return (
@@ -34,8 +36,14 @@ const Index = () => {
                   {navItems.map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
-                        className={currentView === item.id ? "bg-accent" : ""}
-                        onClick={() => setCurrentView(item.id as any)}
+                        className={currentView === item.id && item.path === '/' ? "bg-accent" : ""}
+                        onClick={() => {
+                          if (item.path === '/') {
+                            setCurrentView(item.id as any);
+                          } else {
+                            navigate(item.path);
+                          }
+                        }}
                       >
                         <item.icon className="h-5 w-5 mr-2" />
                         <span>{item.title}</span>
@@ -65,11 +73,11 @@ const Index = () => {
             )}
             
             {currentView === 'dashboard' && (
-              <DashboardMockup />
+              <EnhancedDashboard />
             )}
             
             {currentView === 'students' && (
-              <StudentsMockup />
+              <EnhancedStudents />
             )}
             
             {currentView === 'teachers' && (
@@ -77,19 +85,7 @@ const Index = () => {
             )}
             
             {currentView === 'classes' && (
-              <ClassesMockup />
-            )}
-            
-            {currentView === 'courses' && (
-              <CoursesMockup />
-            )}
-            
-            {currentView === 'exercises' && (
-              <ExercisesMockup />
-            )}
-            
-            {currentView === 'semesters' && (
-              <SemestersMockup />
+              <EnhancedClasses />
             )}
           </main>
         </div>
@@ -98,58 +94,448 @@ const Index = () => {
   );
 };
 
-// Mock components for each view
-const DashboardMockup = () => (
+// Enhanced Dashboard with more specific visualizations
+const EnhancedDashboard = () => (
   <div className="space-y-6">
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <StatsCard title="Étudiants" value="1,245" icon={<Users className="h-8 w-8" />} color="soft-blue" />
-      <StatsCard title="Enseignants" value="78" icon={<School className="h-8 w-8" />} color="soft-green" />
-      <StatsCard title="Classes" value="36" icon={<GraduationCap className="h-8 w-8" />} color="soft-yellow" />
+      <StatsCard 
+        title="Étudiants" 
+        value="1,245" 
+        icon={<Users className="h-8 w-8" />} 
+        color="soft-blue" 
+        details="Répartis sur 3 niveaux collégiaux"
+      />
+      <StatsCard 
+        title="Classes" 
+        value="36" 
+        icon={<GraduationCap className="h-8 w-8" />} 
+        color="soft-yellow" 
+        details="15 générales, 21 internationales"
+      />
+      <StatsCard 
+        title="Cours Planifiés" 
+        value="124" 
+        icon={<BookText className="h-8 w-8" />} 
+        color="soft-green" 
+        details="42 par niveau en moyenne"
+      />
     </div>
     
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="rounded-lg border bg-card p-6 shadow-sm">
-        <h3 className="text-lg font-medium mb-4">Activité Récente</h3>
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><BarChart className="h-5 w-5 mr-2" /> Répartition des élèves par niveau</h3>
         <div className="space-y-4">
-          {[1, 2, 3, 4].map(i => (
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>1ère année collégiale</span>
+              <span>425 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-blue-500 rounded-full h-2" style={{ width: '34%' }} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>2ème année collégiale</span>
+              <span>410 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-green-500 rounded-full h-2" style={{ width: '33%' }} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>3ème année collégiale</span>
+              <span>410 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-purple-500 rounded-full h-2" style={{ width: '33%' }} />
+            </div>
+          </div>
+        </div>
+      </Card>
+      
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><PieChart className="h-5 w-5 mr-2" /> Progression des élèves par niveau</h3>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+              <span>Niveau basique</span>
+            </div>
+            <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded">85% des élèves</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+              <span>Niveau recommandé</span>
+            </div>
+            <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">65% des élèves</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+              <span>Niveau avancé</span>
+            </div>
+            <span className="text-sm bg-purple-100 text-purple-800 px-2 py-1 rounded">42% des élèves</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><FileCheck className="h-5 w-5 mr-2" /> Activité Récente</h3>
+        <div className="space-y-4">
+          {[
+            { action: "Séquence ajoutée", details: "Programmation - 2ème année", time: "Il y a 2 heures", icon: "soft-purple" },
+            { action: "Exercice complété", details: "HTML/CSS - 1ère année", time: "Il y a 3 heures", icon: "soft-green" },
+            { action: "Cours modifié", details: "Base de données - 3ème année", time: "Il y a 5 heures", icon: "soft-blue" },
+            { action: "Élève ajouté", details: "Classe 2B - 2ème année", time: "Il y a 1 jour", icon: "soft-peach" },
+          ].map((item, i) => (
             <div key={i} className="flex items-start space-x-4 border-b pb-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-soft-${i % 2 ? 'purple' : 'peach'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${item.icon}`}>
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-medium">Nouvel étudiant inscrit</p>
-                <p className="text-sm text-muted-foreground">Il y a 3 heures</p>
+                <p className="font-medium">{item.action}</p>
+                <p className="text-sm">{item.details}</p>
+                <p className="text-xs text-muted-foreground">{item.time}</p>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
       
-      <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <Card className="p-6">
         <h3 className="text-lg font-medium mb-4">Cours Populaires</h3>
         <div className="space-y-4">
-          {['Mathématiques', 'Programmation', 'Base de données', 'Anglais'].map((course, i) => (
+          {[
+            { name: 'Introduction à la programmation', level: '1ère année', progress: 95 },
+            { name: 'Base de données relationnelles', level: '2ème année', progress: 88 },
+            { name: 'Développement Web', level: '2ème année', progress: 82 },
+            { name: 'Algorithmique avancée', level: '3ème année', progress: 75 },
+          ].map((course, i) => (
             <div key={i} className="space-y-2">
               <div className="flex justify-between">
-                <span>{course}</span>
-                <span className="text-sm">{90 - i * 10}%</span>
+                <span>{course.name}</span>
+                <span className="text-sm">{course.progress}%</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>{course.level}</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
                 <div 
                   className="bg-primary rounded-full h-2" 
-                  style={{ width: `${90 - i * 10}%` }}
+                  style={{ width: `${course.progress}%` }}
                 />
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   </div>
 );
 
+// Enhanced Students section with import functionality
+const EnhancedStudents = () => (
+  <div className="space-y-6">
+    <Tabs defaultValue="list">
+      <div className="flex justify-between items-center mb-4">
+        <TabsList>
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            <span>Liste des élèves</span>
+          </TabsTrigger>
+          <TabsTrigger value="import" className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            <span>Importer des élèves</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="flex gap-2">
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les niveaux</option>
+            <option>1ère année</option>
+            <option>2ème année</option>
+            <option>3ème année</option>
+          </select>
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Toutes les classes</option>
+            <option>Classe 1A</option>
+            <option>Classe 1B</option>
+            <option>Classe 2A</option>
+          </select>
+          <button className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md flex items-center">
+            <Users className="h-4 w-4 mr-2" /> Ajouter
+          </button>
+        </div>
+      </div>
+      
+      <TabsContent value="list">
+        <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="py-3 px-4 text-left">Nom</th>
+                  <th className="py-3 px-4 text-left">Email</th>
+                  <th className="py-3 px-4 text-left">Niveau</th>
+                  <th className="py-3 px-4 text-left">Classe</th>
+                  <th className="py-3 px-4 text-left">Type</th>
+                  <th className="py-3 px-4 text-left">Progression</th>
+                  <th className="py-3 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3, 4, 5].map(i => (
+                  <tr key={i} className="border-b hover:bg-muted/50">
+                    <td className="py-4 px-4">Étudiant {i}</td>
+                    <td className="py-4 px-4">etudiant{i}@example.com</td>
+                    <td className="py-4 px-4">{i % 3 + 1}ème année</td>
+                    <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
+                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-24 bg-secondary rounded-full h-2">
+                          <div 
+                            className="bg-primary rounded-full h-2" 
+                            style={{ width: `${60 + i * 5}%` }}
+                          />
+                        </div>
+                        <span className="text-xs">{60 + i * 5}%</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex space-x-2">
+                        <button className="p-1 text-blue-600 hover:text-blue-800">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
+                        <button className="p-1 text-green-600 hover:text-green-800">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="import">
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <div className="max-w-xl mx-auto">
+            <h3 className="text-lg font-medium mb-4">Importer des élèves</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>Sélectionner un niveau</option>
+                  <option>1ère année</option>
+                  <option>2ème année</option>
+                  <option>3ème année</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Classe</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>Sélectionner une classe</option>
+                  <option>Classe 1A</option>
+                  <option>Classe 1B</option>
+                  <option>Classe 2A</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Fichier CSV</label>
+                <div className="border-2 border-dashed rounded-md p-6 text-center">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <div className="mt-4 flex text-sm justify-center">
+                    <label className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-focus">
+                      <span>Télécharger un fichier</span>
+                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                    </label>
+                    <p className="pl-1">ou glisser-déposer</p>
+                  </div>
+                  <p className="text-xs text-gray-500">CSV uniquement, max 5MB</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Structure du CSV</label>
+                <div className="text-xs bg-muted p-3 rounded">
+                  <p className="font-medium">Format requis:</p>
+                  <p>nom,prenom,email,date_naissance,genre</p>
+                  <p>Exemple: Dupont,Jean,jean.dupont@example.com,2005-06-15,M</p>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <button className="px-4 py-2 border rounded-md">Annuler</button>
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Importer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </div>
+);
+
+// Enhanced Classes view
+const EnhancedClasses = () => (
+  <div className="space-y-6">
+    <Tabs defaultValue="list">
+      <div className="flex justify-between items-center mb-4">
+        <TabsList>
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4" />
+            <span>Liste des classes</span>
+          </TabsTrigger>
+          <TabsTrigger value="new" className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            <span>Nouvelle classe</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="flex gap-2">
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les niveaux</option>
+            <option>1ère année</option>
+            <option>2ème année</option>
+            <option>3ème année</option>
+          </select>
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les types</option>
+            <option>Général</option>
+            <option>International</option>
+          </select>
+        </div>
+      </div>
+      
+      <TabsContent value="list">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { name: 'Classe 1A', level: '1ère année', type: 'Général', students: 32, status: 'active' },
+            { name: 'Classe 1B', level: '1ère année', type: 'International', students: 28, status: 'active' },
+            { name: 'Classe 2A', level: '2ème année', type: 'Général', students: 30, status: 'active' },
+            { name: 'Classe 2B', level: '2ème année', type: 'International', students: 26, status: 'active' },
+            { name: 'Classe 3A', level: '3ème année', type: 'Général', students: 31, status: 'active' },
+            { name: 'Classe 3B', level: '3ème année', type: 'International', students: 27, status: 'active' },
+          ].map((classItem, i) => (
+            <Card key={i} className="overflow-hidden">
+              <div className={`h-2 ${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-medium">{classItem.name}</h3>
+                    <p className="text-sm text-muted-foreground">{classItem.level} - {classItem.type}</p>
+                  </div>
+                  <span className={`inline-block px-2 py-1 rounded text-xs ${
+                    classItem.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {classItem.status === 'active' ? 'Actif' : 'Inactif'}
+                  </span>
+                </div>
+                
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Élèves:</span>
+                    <span>{classItem.students}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Semestres:</span>
+                    <span>2</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Cours planifiés:</span>
+                    <span>24</span>
+                  </div>
+                  <div className="pt-2">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Progression moyenne:</span>
+                      <span>{70 + i * 3}%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div 
+                        className={`${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'} rounded-full h-2`}
+                        style={{ width: `${70 + i * 3}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between mt-6">
+                  <button className="px-3 py-1.5 border rounded text-sm">Élèves</button>
+                  <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
+                  <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="new">
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <div className="max-w-xl mx-auto">
+            <h3 className="text-lg font-medium mb-4">Créer une nouvelle classe</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nom de la classe</label>
+                <input type="text" className="w-full px-3 py-2 border rounded-md" placeholder="Ex: Classe 1C" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner un niveau</option>
+                    <option>1ère année</option>
+                    <option>2ème année</option>
+                    <option>3ème année</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Type de classe</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner un type</option>
+                    <option>Général</option>
+                    <option>International</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Année scolaire</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>2023-2024</option>
+                  <option>2024-2025</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description (optionnelle)</label>
+                <textarea className="w-full px-3 py-2 border rounded-md" rows={3}></textarea>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <button className="px-4 py-2 border rounded-md">Annuler</button>
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Créer la classe</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </div>
+);
+
 // Stats Card Component
-const StatsCard = ({ title, value, icon, color }) => (
+const StatsCard = ({ title, value, icon, color, details }) => (
   <div className={`rounded-lg border bg-card p-6 shadow-sm flex items-center space-x-4`}>
     <div className={`rounded-full bg-${color} p-3`}>
       {icon}
@@ -157,52 +543,12 @@ const StatsCard = ({ title, value, icon, color }) => (
     <div>
       <p className="text-sm text-muted-foreground">{title}</p>
       <p className="text-2xl font-bold">{value}</p>
+      {details && <p className="text-xs text-muted-foreground mt-1">{details}</p>}
     </div>
   </div>
 );
 
-// Student mockup
-const StudentsMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Liste des Étudiants</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <Users className="h-4 w-4 mr-2" /> Ajouter un étudiant
-      </button>
-    </div>
-    
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="py-3 px-4 text-left">Nom</th>
-            <th className="py-3 px-4 text-left">Email</th>
-            <th className="py-3 px-4 text-left">Classe</th>
-            <th className="py-3 px-4 text-left">Date d'inscription</th>
-            <th className="py-3 px-4 text-left">Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          {[1, 2, 3, 4, 5].map(i => (
-            <tr key={i} className="border-b hover:bg-muted/50">
-              <td className="py-4 px-4">Étudiant {i}</td>
-              <td className="py-4 px-4">etudiant{i}@example.com</td>
-              <td className="py-4 px-4">Classe {i % 3 + 1}</td>
-              <td className="py-4 px-4">2023-09-{i * 5}</td>
-              <td className="py-4 px-4">
-                <span className={`inline-block px-2 py-1 rounded text-xs ${i % 2 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                  {i % 2 ? 'Actif' : 'En attente'}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-);
-
-// Teachers mockup
+// Teachers mockup (kept the same)
 const TeachersMockup = () => (
   <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
     <div className="flex justify-between items-center">
@@ -236,175 +582,6 @@ const TeachersMockup = () => (
             <div className="flex justify-between">
               <span>Cours:</span>
               <span>{i * 2}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// Classes mockup
-const ClassesMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Gestion des Classes</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <GraduationCap className="h-4 w-4 mr-2" /> Nouvelle classe
-      </button>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {[1, 2, 3, 4].map(i => (
-        <div key={i} className="rounded-lg border bg-card shadow">
-          <div className="p-6 border-b">
-            <h3 className="text-lg font-medium">Classe {i}</h3>
-            <p className="text-sm text-muted-foreground">Année 2023-2024</p>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between text-sm">
-              <span>Étudiants:</span>
-              <span>{20 + i * 5}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Enseignants:</span>
-              <span>{3 + i}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Cours:</span>
-              <span>{6 + i}</span>
-            </div>
-            <div className="pt-4 flex space-x-2">
-              <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded text-sm">Voir détails</button>
-              <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// Courses mockup
-const CoursesMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Gestion des Cours</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <BookText className="h-4 w-4 mr-2" /> Nouveau cours
-      </button>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {['Mathématiques', 'Programmation', 'Base de données', 'Anglais', 'Physique', 'Chimie'].map((course, i) => (
-        <div key={i} className={`rounded-lg border shadow p-6 bg-soft-${i % 5 === 0 ? 'blue' : i % 5 === 1 ? 'green' : i % 5 === 2 ? 'yellow' : i % 5 === 3 ? 'peach' : 'purple'}`}>
-          <h3 className="font-medium text-lg mb-2">{course}</h3>
-          <p className="text-sm mb-4">Description du cours de {course.toLowerCase()}.</p>
-          <div className="space-y-2 text-sm mb-4">
-            <div className="flex justify-between">
-              <span>Niveau:</span>
-              <span>{i % 3 === 0 ? 'Basique' : i % 3 === 1 ? 'Intermédiaire' : 'Avancé'}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Crédits:</span>
-              <span>{(i % 3) + 2}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Exercices:</span>
-              <span>{i * 2 + 3}</span>
-            </div>
-          </div>
-          <button className="w-full px-3 py-1.5 bg-background text-foreground rounded text-sm">Voir le cours</button>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// Exercises mockup
-const ExercisesMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Exercices</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <BookText className="h-4 w-4 mr-2" /> Nouvel exercice
-      </button>
-    </div>
-    
-    <div className="space-y-4">
-      {[1, 2, 3, 4].map(i => (
-        <div key={i} className="rounded-lg border bg-card shadow p-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h3 className="font-medium">Exercice {i}: Titre de l'exercice</h3>
-              <p className="text-sm text-muted-foreground">Cours: {i % 3 === 0 ? 'Mathématiques' : i % 3 === 1 ? 'Programmation' : 'Base de données'}</p>
-            </div>
-            <span className={`inline-block px-2 py-1 rounded text-xs ${i % 3 === 0 ? 'bg-green-100 text-green-800' : i % 3 === 1 ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
-              {i % 3 === 0 ? 'Facile' : i % 3 === 1 ? 'Moyen' : 'Difficile'}
-            </span>
-          </div>
-          <p className="text-sm mb-4">Description de l'exercice {i} avec des instructions détaillées pour les étudiants.</p>
-          <div className="flex space-x-2">
-            <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded text-sm">Prévisualiser</button>
-            <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Modifier</button>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// Semesters mockup
-const SemestersMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Gestion des Semestres</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <Calendar className="h-4 w-4 mr-2" /> Nouveau semestre
-      </button>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {[
-        { name: 'Semestre 1 2023-2024', status: 'En cours', startDate: '2023-09-01', endDate: '2023-12-31' },
-        { name: 'Semestre 2 2023-2024', status: 'À venir', startDate: '2024-01-15', endDate: '2024-05-31' },
-        { name: 'Semestre 1 2022-2023', status: 'Terminé', startDate: '2022-09-01', endDate: '2022-12-31' },
-        { name: 'Semestre 2 2022-2023', status: 'Terminé', startDate: '2023-01-15', endDate: '2023-05-31' },
-      ].map((semester, i) => (
-        <div key={i} className="rounded-lg border bg-card shadow">
-          <div className="p-6 border-b flex justify-between items-center">
-            <h3 className="text-lg font-medium">{semester.name}</h3>
-            <span className={`inline-block px-2 py-1 rounded text-xs ${semester.status === 'En cours' ? 'bg-green-100 text-green-800' : semester.status === 'À venir' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
-              {semester.status}
-            </span>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between text-sm">
-              <span>Date de début:</span>
-              <span>{semester.startDate}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Date de fin:</span>
-              <span>{semester.endDate}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Séquences:</span>
-              <span>{i === 0 ? '4 (2 complétées)' : i === 1 ? '4 (0 complétée)' : '4 (4 complétées)'}</span>
-            </div>
-            {semester.status === 'En cours' && (
-              <div className="pt-2">
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Progression:</span>
-                  <span>50%</span>
-                </div>
-                <div className="w-full bg-secondary rounded-full h-2">
-                  <div className="bg-primary rounded-full h-2 w-1/2" />
-                </div>
-              </div>
-            )}
-            <div className="pt-4 flex space-x-2">
-              <button className="px-3 py-1.5 bg-secondary text-secondary-foreground rounded text-sm">Séquences</button>
-              <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button>
             </div>
           </div>
         </div>
