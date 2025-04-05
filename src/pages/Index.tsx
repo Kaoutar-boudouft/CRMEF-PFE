@@ -1,8 +1,6 @@
-
 import { useState } from 'react';
 import ClassDiagram from '../components/ClassDiagram';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '../components/ui/resizable';
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
 import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users } from 'lucide-react';
 
 const Index = () => {
@@ -21,80 +19,82 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar Navigation */}
-      <Sidebar className="border-r">
-        <SidebarContent>
-          <div className="py-4 px-3">
-            <h2 className="text-xl font-bold text-primary">EduManage</h2>
-          </div>
-          <SidebarGroup>
-            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {navItems.map((item) => (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton 
-                      className={currentView === item.id ? "bg-accent" : ""}
-                      onClick={() => setCurrentView(item.id as any)}
-                    >
-                      <item.icon className="h-5 w-5 mr-2" />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        <header className="border-b px-6 py-3">
-          <h1 className="text-2xl font-bold">
-            {navItems.find(item => item.id === currentView)?.title || 'EduManage'}
-          </h1>
-        </header>
-
-        <main className="p-6">
-          {currentView === 'diagram' && (
-            <div className="rounded-lg border bg-card p-6 shadow-sm w-full overflow-auto">
-              <h2 className="text-xl font-semibold mb-4">Diagramme de Classes</h2>
-              <ClassDiagram />
+    <SidebarProvider>
+      <div className="min-h-screen bg-background flex w-full">
+        {/* Sidebar Navigation */}
+        <Sidebar className="border-r">
+          <SidebarContent>
+            <div className="py-4 px-3">
+              <h2 className="text-xl font-bold text-primary">EduManage</h2>
             </div>
-          )}
-          
-          {currentView === 'dashboard' && (
-            <DashboardMockup />
-          )}
-          
-          {currentView === 'students' && (
-            <StudentsMockup />
-          )}
-          
-          {currentView === 'teachers' && (
-            <TeachersMockup />
-          )}
-          
-          {currentView === 'classes' && (
-            <ClassesMockup />
-          )}
-          
-          {currentView === 'courses' && (
-            <CoursesMockup />
-          )}
-          
-          {currentView === 'exercises' && (
-            <ExercisesMockup />
-          )}
-          
-          {currentView === 'semesters' && (
-            <SemestersMockup />
-          )}
-        </main>
+            <SidebarGroup>
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {navItems.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton 
+                        className={currentView === item.id ? "bg-accent" : ""}
+                        onClick={() => setCurrentView(item.id as any)}
+                      >
+                        <item.icon className="h-5 w-5 mr-2" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        </Sidebar>
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden">
+          <header className="border-b px-6 py-3">
+            <h1 className="text-2xl font-bold">
+              {navItems.find(item => item.id === currentView)?.title || 'EduManage'}
+            </h1>
+          </header>
+
+          <main className="p-6">
+            {currentView === 'diagram' && (
+              <div className="rounded-lg border bg-card p-6 shadow-sm w-full overflow-auto">
+                <h2 className="text-xl font-semibold mb-4">Diagramme de Classes</h2>
+                <ClassDiagram />
+              </div>
+            )}
+            
+            {currentView === 'dashboard' && (
+              <DashboardMockup />
+            )}
+            
+            {currentView === 'students' && (
+              <StudentsMockup />
+            )}
+            
+            {currentView === 'teachers' && (
+              <TeachersMockup />
+            )}
+            
+            {currentView === 'classes' && (
+              <ClassesMockup />
+            )}
+            
+            {currentView === 'courses' && (
+              <CoursesMockup />
+            )}
+            
+            {currentView === 'exercises' && (
+              <ExercisesMockup />
+            )}
+            
+            {currentView === 'semesters' && (
+              <SemestersMockup />
+            )}
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
