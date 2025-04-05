@@ -9,6 +9,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 
 const Planning = () => {
   const navigate = useNavigate();
@@ -17,13 +20,123 @@ const Planning = () => {
   const [selectedSemester, setSelectedSemester] = useState<string>('');
   const [selectedUnit, setSelectedUnit] = useState<string>('');
   const [selectedSequence, setSelectedSequence] = useState<string>('');
+  
+  const [units, setUnits] = useState([
+    { id: "unit1", name: "Unité 1: Programmation" },
+    { id: "unit2", name: "Unité 2: Base de données" },
+    { id: "unit3", name: "Unité 3: Web" },
+  ]);
+  
+  const [sequences, setSequences] = useState([
+    { id: "seq1", name: "Séquence 1: Introduction" },
+    { id: "seq2", name: "Séquence 2: Concepts avancés" },
+    { id: "seq3", name: "Séquence 3: Projet pratique" },
+  ]);
+  
+  const [courses, setCourses] = useState([
+    { id: "course1", name: "Cours 1: Fondamentaux", level: "basic" },
+    { id: "course2", name: "Cours 2: Applications", level: "recommande" },
+    { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
+  ]);
 
-  // Mock navigation items
+  // Formulaires pour les nouvelles entités
+  const unitForm = useForm({
+    defaultValues: {
+      unitName: "",
+    }
+  });
+
+  const sequenceForm = useForm({
+    defaultValues: {
+      sequenceName: "",
+    }
+  });
+
+  const courseForm = useForm({
+    defaultValues: {
+      courseName: "",
+      courseLevel: "basic", // Valeur par défaut
+    }
+  });
+
+  // Fonctions pour ajouter de nouvelles entités
+  const handleAddUnit = (data: { unitName: string }) => {
+    if (!selectedLevel || !selectedSemester) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner un niveau collégial et un semestre",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newUnit = {
+      id: `unit${units.length + 1}`,
+      name: data.unitName,
+    };
+    
+    setUnits([...units, newUnit]);
+    unitForm.reset();
+    
+    toast({
+      title: "Unité ajoutée",
+      description: `L'unité ${data.unitName} a été ajoutée avec succès.`,
+    });
+  };
+
+  const handleAddSequence = (data: { sequenceName: string }) => {
+    if (!selectedLevel || !selectedSemester || !selectedUnit) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner un niveau collégial, un semestre et une unité",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newSequence = {
+      id: `seq${sequences.length + 1}`,
+      name: data.sequenceName,
+    };
+    
+    setSequences([...sequences, newSequence]);
+    sequenceForm.reset();
+    
+    toast({
+      title: "Séquence ajoutée",
+      description: `La séquence ${data.sequenceName} a été ajoutée avec succès.`,
+    });
+  };
+
+  const handleAddCourse = (data: { courseName: string, courseLevel: string }) => {
+    if (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner tous les critères nécessaires",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newCourse = {
+      id: `course${courses.length + 1}`,
+      name: data.courseName,
+      level: data.courseLevel,
+    };
+    
+    setCourses([...courses, newCourse]);
+    courseForm.reset();
+    
+    toast({
+      title: "Cours ajouté",
+      description: `Le cours ${data.courseName} a été ajouté avec succès.`,
+    });
+  };
+
+  // Mock navigation items (suppression de l'élément "Enseignants")
   const navItems = [
     { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
-    { title: "Diagramme UML", id: "diagram", icon: BookOpenCheck, path: "/" },
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
-    { title: "Enseignants", id: "teachers", icon: School, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
   ];
@@ -35,27 +148,10 @@ const Planning = () => {
     { id: "3", name: "3ème année" },
   ];
 
+  // Semestres constants
   const semesters = [
-    { id: "sem1", name: "Semestre 1" },
-    { id: "sem2", name: "Semestre 2" },
-  ];
-
-  const units = [
-    { id: "unit1", name: "Unité 1: Programmation" },
-    { id: "unit2", name: "Unité 2: Base de données" },
-    { id: "unit3", name: "Unité 3: Web" },
-  ];
-
-  const sequences = [
-    { id: "seq1", name: "Séquence 1: Introduction" },
-    { id: "seq2", name: "Séquence 2: Concepts avancés" },
-    { id: "seq3", name: "Séquence 3: Projet pratique" },
-  ];
-
-  const courses = [
-    { id: "course1", name: "Cours 1: Fondamentaux", level: "basic" },
-    { id: "course2", name: "Cours 2: Applications", level: "recommande" },
-    { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
+    { id: "sem1", name: "1er semestre" },
+    { id: "sem2", name: "2ème semestre" },
   ];
 
   return (
@@ -134,10 +230,6 @@ const Planning = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>Ajouter un semestre</span>
-                    </Button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -218,10 +310,48 @@ const Planning = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button className="flex items-center gap-2">
-                      <Library className="h-4 w-4" />
-                      <span>Ajouter une unité</span>
-                    </Button>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center gap-2">
+                          <Library className="h-4 w-4" />
+                          <span>Ajouter une unité</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Ajouter une nouvelle unité</DialogTitle>
+                          <DialogDescription>
+                            Créez une nouvelle unité pour le niveau et le semestre sélectionnés.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <Form {...unitForm}>
+                          <form onSubmit={unitForm.handleSubmit(handleAddUnit)} className="space-y-4">
+                            <FormField
+                              control={unitForm.control}
+                              name="unitName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nom de l'unité</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: Unité 4: Algorithmes" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="outline">Annuler</Button>
+                              </DialogClose>
+                              <Button type="submit">Créer l'unité</Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -309,10 +439,48 @@ const Planning = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button className="flex items-center gap-2">
-                      <ListTodo className="h-4 w-4" />
-                      <span>Ajouter une séquence</span>
-                    </Button>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center gap-2">
+                          <ListTodo className="h-4 w-4" />
+                          <span>Ajouter une séquence</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Ajouter une nouvelle séquence</DialogTitle>
+                          <DialogDescription>
+                            Créez une nouvelle séquence pour l'unité sélectionnée.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <Form {...sequenceForm}>
+                          <form onSubmit={sequenceForm.handleSubmit(handleAddSequence)} className="space-y-4">
+                            <FormField
+                              control={sequenceForm.control}
+                              name="sequenceName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nom de la séquence</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: Séquence 4: Révisions" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="outline">Annuler</Button>
+                              </DialogClose>
+                              <Button type="submit">Créer la séquence</Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -414,10 +582,72 @@ const Planning = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4" />
-                      <span>Ajouter un cours</span>
-                    </Button>
+                    
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center gap-2">
+                          <BookOpen className="h-4 w-4" />
+                          <span>Ajouter un cours</span>
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Ajouter un nouveau cours</DialogTitle>
+                          <DialogDescription>
+                            Créez un nouveau cours pour la séquence sélectionnée.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+                        <Form {...courseForm}>
+                          <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
+                            <FormField
+                              control={courseForm.control}
+                              name="courseName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nom du cours</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: Cours 4: Révisions générales" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseLevel"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Niveau du cours</FormLabel>
+                                  <Select 
+                                    value={field.value} 
+                                    onValueChange={field.onChange}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Choisir un niveau" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="basic">Basique</SelectItem>
+                                      <SelectItem value="recommande">Recommandé</SelectItem>
+                                      <SelectItem value="avancee">Avancé</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="outline">Annuler</Button>
+                              </DialogClose>
+                              <Button type="submit">Créer le cours</Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
