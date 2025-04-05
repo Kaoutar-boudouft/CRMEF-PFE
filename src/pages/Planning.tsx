@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Upload, Video, Image as ImageIcon, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,14 +12,28 @@ import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { Tabs as CourseCreationTabs, TabsContent as CourseCreationTabsContent, TabsList as CourseCreationTabsList, TabsTrigger as CourseCreationTabsTrigger } from "@/components/ui/tabs";
 
 const Planning = () => {
   const navigate = useNavigate();
   const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses'>('semesters');
-  const [selectedLevel, setSelectedLevel] = useState<string>('');
-  const [selectedSemester, setSelectedSemester] = useState<string>('');
-  const [selectedUnit, setSelectedUnit] = useState<string>('');
-  const [selectedSequence, setSelectedSequence] = useState<string>('');
+  
+  // Set default selections for dropdowns
+  const collegialLevels = [
+    { id: "1", name: "1ère année" },
+    { id: "2", name: "2ème année" },
+    { id: "3", name: "3ème année" },
+  ];
+  
+  const [selectedLevel, setSelectedLevel] = useState<string>(collegialLevels[0].id);
+  
+  // Semestres constants
+  const semesters = [
+    { id: "sem1", name: "1er semestre" },
+    { id: "sem2", name: "2ème semestre" },
+  ];
+  
+  const [selectedSemester, setSelectedSemester] = useState<string>(semesters[0].id);
   
   const [units, setUnits] = useState([
     { id: "unit1", name: "Unité 1: Programmation" },
@@ -27,17 +41,27 @@ const Planning = () => {
     { id: "unit3", name: "Unité 3: Web" },
   ]);
   
+  const [selectedUnit, setSelectedUnit] = useState<string>(units.length > 0 ? units[0].id : "");
+  
   const [sequences, setSequences] = useState([
     { id: "seq1", name: "Séquence 1: Introduction" },
     { id: "seq2", name: "Séquence 2: Concepts avancés" },
     { id: "seq3", name: "Séquence 3: Projet pratique" },
   ]);
   
+  const [selectedSequence, setSelectedSequence] = useState<string>(sequences.length > 0 ? sequences[0].id : "");
+  
   const [courses, setCourses] = useState([
     { id: "course1", name: "Cours 1: Fondamentaux", level: "basic" },
     { id: "course2", name: "Cours 2: Applications", level: "recommande" },
     { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
   ]);
+
+  // State for course creation with multiple levels
+  const [courseCreationLevel, setCourseCreationLevel] = useState<"basic" | "recommande" | "avancee">("basic");
+  const [courseFile, setCourseFile] = useState<File | null>(null);
+  const [courseVideo, setCourseVideo] = useState<File | null>(null);
+  const [courseImages, setCourseImages] = useState<File[]>([]);
 
   // Formulaires pour les nouvelles entités
   const unitForm = useForm({
@@ -55,7 +79,10 @@ const Planning = () => {
   const courseForm = useForm({
     defaultValues: {
       courseName: "",
-      courseLevel: "basic", // Valeur par défaut
+      courseLevel: "basic",
+      courseDocument: "",
+      courseVideo: "",
+      courseImages: "",
     }
   });
 
@@ -126,6 +153,9 @@ const Planning = () => {
     
     setCourses([...courses, newCourse]);
     courseForm.reset();
+    setCourseFile(null);
+    setCourseVideo(null);
+    setCourseImages([]);
     
     toast({
       title: "Cours ajouté",
@@ -133,25 +163,42 @@ const Planning = () => {
     });
   };
 
-  // Mock navigation items (suppression de l'élément "Enseignants")
+  // Navigation functions for buttons
+  const handleSemesterManage = (semesterId: string) => {
+    setCurrentPlanningTab('units');
+    setSelectedSemester(semesterId);
+  };
+
+  const handleUnitManage = (unitId: string) => {
+    setCurrentPlanningTab('sequences');
+    setSelectedUnit(unitId);
+  };
+
+  const handleSequenceManage = (sequenceId: string) => {
+    setCurrentPlanningTab('courses');
+    setSelectedSequence(sequenceId);
+  };
+
+  // File handling functions
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'document' | 'video' | 'image') => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    if (type === 'document') {
+      setCourseFile(e.target.files[0]);
+    } else if (type === 'video') {
+      setCourseVideo(e.target.files[0]);
+    } else if (type === 'image') {
+      const newImages = Array.from(e.target.files);
+      setCourseImages([...courseImages, ...newImages]);
+    }
+  };
+
+  // Mock navigation items
   const navItems = [
     { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
-  ];
-
-  // Mock data
-  const collegialLevels = [
-    { id: "1", name: "1ère année" },
-    { id: "2", name: "2ème année" },
-    { id: "3", name: "3ème année" },
-  ];
-
-  // Semestres constants
-  const semesters = [
-    { id: "sem1", name: "1er semestre" },
-    { id: "sem2", name: "2ème semestre" },
   ];
 
   return (
@@ -269,7 +316,7 @@ const Planning = () => {
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
                           <Button variant="outline">Exporter</Button>
-                          <Button>Gérer</Button>
+                          <Button onClick={() => handleSemesterManage(semester.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -382,9 +429,8 @@ const Planning = () => {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Copier</Button>
-                          <Button>Gérer</Button>
+                        <CardFooter className="flex justify-end">
+                          <Button onClick={() => handleUnitManage(unit.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -511,9 +557,8 @@ const Planning = () => {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Dupliquer</Button>
-                          <Button>Gérer</Button>
+                        <CardFooter className="flex justify-end">
+                          <Button onClick={() => handleSequenceManage(sequence.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -590,7 +635,7 @@ const Planning = () => {
                           <span>Ajouter un cours</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="max-w-2xl">
                         <DialogHeader>
                           <DialogTitle>Ajouter un nouveau cours</DialogTitle>
                           <DialogDescription>
@@ -598,54 +643,246 @@ const Planning = () => {
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <Form {...courseForm}>
-                          <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
-                            <FormField
-                              control={courseForm.control}
-                              name="courseName"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Nom du cours</FormLabel>
-                                  <FormControl>
-                                    <Input placeholder="Ex: Cours 4: Révisions générales" {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <FormField
-                              control={courseForm.control}
-                              name="courseLevel"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Niveau du cours</FormLabel>
-                                  <Select 
-                                    value={field.value} 
-                                    onValueChange={field.onChange}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Choisir un niveau" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="basic">Basique</SelectItem>
-                                      <SelectItem value="recommande">Recommandé</SelectItem>
-                                      <SelectItem value="avancee">Avancé</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button variant="outline">Annuler</Button>
-                              </DialogClose>
-                              <Button type="submit">Créer le cours</Button>
-                            </DialogFooter>
-                          </form>
-                        </Form>
+                        <CourseCreationTabs value={courseCreationLevel} onValueChange={(value) => setCourseCreationLevel(value as "basic" | "recommande" | "avancee")}>
+                          <CourseCreationTabsList className="mb-4 grid grid-cols-3">
+                            <CourseCreationTabsTrigger value="basic" className="flex items-center gap-2">
+                              <span>Basique</span>
+                            </CourseCreationTabsTrigger>
+                            <CourseCreationTabsTrigger value="recommande" className="flex items-center gap-2">
+                              <span>Recommandé</span>
+                            </CourseCreationTabsTrigger>
+                            <CourseCreationTabsTrigger value="avancee" className="flex items-center gap-2">
+                              <span>Avancé</span>
+                            </CourseCreationTabsTrigger>
+                          </CourseCreationTabsList>
+                          
+                          <Form {...courseForm}>
+                            <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
+                              <CourseCreationTabsContent value="basic" className="space-y-4">
+                                <FormField
+                                  control={courseForm.control}
+                                  name="courseName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Nom du cours (Basique)</FormLabel>
+                                      <FormControl>
+                                        <Input placeholder="Ex: Cours 4: Révisions générales" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                
+                                <div className="space-y-4">
+                                  <FormItem>
+                                    <FormLabel>Trace du cours (PDF)</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept=".pdf,.doc,.docx" 
+                                          onChange={(e) => handleFileChange(e, 'document')}
+                                        />
+                                        <FileText className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez un document pour le cours (PDF, DOC)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Vidéo explicative</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="video/*" 
+                                          onChange={(e) => handleFileChange(e, 'video')}
+                                        />
+                                        <Video className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez une vidéo explicative (MP4, MOV)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Images</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="image/*" 
+                                          multiple 
+                                          onChange={(e) => handleFileChange(e, 'image')}
+                                        />
+                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez des images pour illustrer le cours
+                                    </FormDescription>
+                                  </FormItem>
+                                </div>
+                                
+                                <input type="hidden" value="basic" {...courseForm.register("courseLevel")} />
+                              </CourseCreationTabsContent>
+                              
+                              <CourseCreationTabsContent value="recommande" className="space-y-4">
+                                <FormField
+                                  control={courseForm.control}
+                                  name="courseName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Nom du cours (Recommandé)</FormLabel>
+                                      <FormControl>
+                                        <Input placeholder="Ex: Cours 4: Révisions approfondies" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                
+                                <div className="space-y-4">
+                                  <FormItem>
+                                    <FormLabel>Trace du cours (PDF)</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept=".pdf,.doc,.docx" 
+                                          onChange={(e) => handleFileChange(e, 'document')}
+                                        />
+                                        <FileText className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez un document pour le cours (PDF, DOC)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Vidéo explicative</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="video/*" 
+                                          onChange={(e) => handleFileChange(e, 'video')}
+                                        />
+                                        <Video className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez une vidéo explicative (MP4, MOV)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Images</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="image/*" 
+                                          multiple 
+                                          onChange={(e) => handleFileChange(e, 'image')}
+                                        />
+                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez des images pour illustrer le cours
+                                    </FormDescription>
+                                  </FormItem>
+                                </div>
+                                
+                                <input type="hidden" value="recommande" {...courseForm.register("courseLevel")} />
+                              </CourseCreationTabsContent>
+                              
+                              <CourseCreationTabsContent value="avancee" className="space-y-4">
+                                <FormField
+                                  control={courseForm.control}
+                                  name="courseName"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Nom du cours (Avancé)</FormLabel>
+                                      <FormControl>
+                                        <Input placeholder="Ex: Cours 4: Révisions expertises" {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                
+                                <div className="space-y-4">
+                                  <FormItem>
+                                    <FormLabel>Trace du cours (PDF)</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept=".pdf,.doc,.docx" 
+                                          onChange={(e) => handleFileChange(e, 'document')}
+                                        />
+                                        <FileText className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez un document pour le cours (PDF, DOC)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Vidéo explicative</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="video/*" 
+                                          onChange={(e) => handleFileChange(e, 'video')}
+                                        />
+                                        <Video className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez une vidéo explicative (MP4, MOV)
+                                    </FormDescription>
+                                  </FormItem>
+                                  
+                                  <FormItem>
+                                    <FormLabel>Images</FormLabel>
+                                    <FormControl>
+                                      <div className="flex items-center gap-2">
+                                        <Input 
+                                          type="file" 
+                                          accept="image/*" 
+                                          multiple 
+                                          onChange={(e) => handleFileChange(e, 'image')}
+                                        />
+                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                                      </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                      Ajoutez des images pour illustrer le cours
+                                    </FormDescription>
+                                  </FormItem>
+                                </div>
+                                
+                                <input type="hidden" value="avancee" {...courseForm.register("courseLevel")} />
+                              </CourseCreationTabsContent>
+                              
+                              <DialogFooter>
+                                <DialogClose asChild>
+                                  <Button variant="outline">Annuler</Button>
+                                </DialogClose>
+                                <Button type="submit">Créer le cours</Button>
+                              </DialogFooter>
+                            </form>
+                          </Form>
+                        </CourseCreationTabs>
                       </DialogContent>
                     </Dialog>
                   </div>
