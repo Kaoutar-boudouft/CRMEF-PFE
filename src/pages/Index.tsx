@@ -8,14 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [currentView, setCurrentView] = useState<'dashboard' | 'diagram' | 'students' | 'teachers' | 'classes'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'students' | 'classes'>('dashboard');
 
-  // Mock navigation items
+  // Mock navigation items - removed 'diagram' and 'teachers'
   const navItems = [
     { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
-    { title: "Diagramme UML", id: "diagram", icon: BookOpenCheck, path: "/" },
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
-    { title: "Enseignants", id: "teachers", icon: School, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
   ];
@@ -65,23 +63,12 @@ const Index = () => {
           </header>
 
           <main className="p-6">
-            {currentView === 'diagram' && (
-              <div className="rounded-lg border bg-card p-6 shadow-sm w-full overflow-auto">
-                <h2 className="text-xl font-semibold mb-4">Diagramme de Classes</h2>
-                <ClassDiagram />
-              </div>
-            )}
-            
             {currentView === 'dashboard' && (
               <EnhancedDashboard />
             )}
             
             {currentView === 'students' && (
               <EnhancedStudents />
-            )}
-            
-            {currentView === 'teachers' && (
-              <TeachersMockup />
             )}
             
             {currentView === 'classes' && (
