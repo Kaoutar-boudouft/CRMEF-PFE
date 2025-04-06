@@ -1,7 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,14 +12,18 @@ import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Planning = () => {
   const navigate = useNavigate();
   const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses'>('semesters');
-  const [selectedLevel, setSelectedLevel] = useState<string>('');
-  const [selectedSemester, setSelectedSemester] = useState<string>('');
-  const [selectedUnit, setSelectedUnit] = useState<string>('');
-  const [selectedSequence, setSelectedSequence] = useState<string>('');
+  
+  // State management
+  const [selectedLevel, setSelectedLevel] = useState<string>('1');
+  const [selectedSemester, setSelectedSemester] = useState<string>('sem1');
+  const [selectedUnit, setSelectedUnit] = useState<string>('unit1');
+  const [selectedSequence, setSelectedSequence] = useState<string>('seq1');
+  const [activeCourseLevel, setActiveCourseLevel] = useState<'basic' | 'recommande' | 'avancee'>('basic');
   
   const [units, setUnits] = useState([
     { id: "unit1", name: "Unité 1: Programmation" },
@@ -39,6 +43,23 @@ const Planning = () => {
     { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
   ]);
 
+  // Set default values for dropdowns
+  useEffect(() => {
+    if (currentPlanningTab === 'units' && !selectedLevel) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+    } else if (currentPlanningTab === 'sequences' && (!selectedLevel || !selectedSemester || !selectedUnit)) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+      setSelectedUnit('unit1');
+    } else if (currentPlanningTab === 'courses' && (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence)) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+      setSelectedUnit('unit1');
+      setSelectedSequence('seq1');
+    }
+  }, [currentPlanningTab, selectedLevel, selectedSemester, selectedUnit, selectedSequence]);
+
   // Formulaires pour les nouvelles entités
   const unitForm = useForm({
     defaultValues: {
@@ -56,6 +77,9 @@ const Planning = () => {
     defaultValues: {
       courseName: "",
       courseLevel: "basic", // Valeur par défaut
+      courseTrace: "",
+      courseVideo: "",
+      courseImages: ""
     }
   });
 
@@ -108,7 +132,7 @@ const Planning = () => {
     });
   };
 
-  const handleAddCourse = (data: { courseName: string, courseLevel: string }) => {
+  const handleAddCourse = (data: any) => {
     if (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence) {
       toast({
         title: "Erreur",
@@ -121,7 +145,10 @@ const Planning = () => {
     const newCourse = {
       id: `course${courses.length + 1}`,
       name: data.courseName,
-      level: data.courseLevel,
+      level: activeCourseLevel,
+      trace: data.courseTrace || "",
+      video: data.courseVideo || "",
+      images: data.courseImages || ""
     };
     
     setCourses([...courses, newCourse]);
@@ -133,7 +160,23 @@ const Planning = () => {
     });
   };
 
-  // Mock navigation items (suppression de l'élément "Enseignants")
+  // Navigation functions
+  const navigateToUnits = (semesterId: string) => {
+    setSelectedSemester(semesterId);
+    setCurrentPlanningTab('units');
+  };
+
+  const navigateToSequences = (unitId: string) => {
+    setSelectedUnit(unitId);
+    setCurrentPlanningTab('sequences');
+  };
+
+  const navigateToCourses = (sequenceId: string) => {
+    setSelectedSequence(sequenceId);
+    setCurrentPlanningTab('courses');
+  };
+
+  // Mock navigation items
   const navItems = [
     { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
@@ -269,7 +312,7 @@ const Planning = () => {
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
                           <Button variant="outline">Exporter</Button>
-                          <Button>Gérer</Button>
+                          <Button onClick={() => navigateToUnits(semester.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -383,8 +426,7 @@ const Planning = () => {
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Copier</Button>
-                          <Button>Gérer</Button>
+                          <Button onClick={() => navigateToSequences(unit.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -512,8 +554,7 @@ const Planning = () => {
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Dupliquer</Button>
-                          <Button>Gérer</Button>
+                          <Button onClick={() => navigateToCourses(sequence.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -590,7 +631,7 @@ const Planning = () => {
                           <span>Ajouter un cours</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent className="max-w-2xl">
                         <DialogHeader>
                           <DialogTitle>Ajouter un nouveau cours</DialogTitle>
                           <DialogDescription>
@@ -600,6 +641,39 @@ const Planning = () => {
                         
                         <Form {...courseForm}>
                           <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
+                            <div className="flex justify-between items-center mb-4">
+                              <span className="text-sm font-medium">Niveau du cours:</span>
+                              <div className="flex space-x-2">
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'basic' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('basic')}
+                                  className="text-xs px-3"
+                                >
+                                  Basique
+                                </Button>
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'recommande' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('recommande')}
+                                  className="text-xs px-3"
+                                >
+                                  Recommandé
+                                </Button>
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'avancee' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('avancee')}
+                                  className="text-xs px-3"
+                                >
+                                  Avancé
+                                </Button>
+                              </div>
+                            </div>
+                            
                             <FormField
                               control={courseForm.control}
                               name="courseName"
@@ -616,23 +690,50 @@ const Planning = () => {
                             
                             <FormField
                               control={courseForm.control}
-                              name="courseLevel"
+                              name="courseTrace"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Niveau du cours</FormLabel>
-                                  <Select 
-                                    value={field.value} 
-                                    onValueChange={field.onChange}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Choisir un niveau" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="basic">Basique</SelectItem>
-                                      <SelectItem value="recommande">Recommandé</SelectItem>
-                                      <SelectItem value="avancee">Avancé</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <FileText className="h-4 w-4" />
+                                    Trace du cours (URL ou référence)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://example.com/cours.pdf" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseVideo"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Video className="h-4 w-4" />
+                                    Vidéo explicative (URL)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://youtube.com/watch?v=..." {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseImages"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Image className="h-4 w-4" />
+                                    Images supplémentaires (URLs séparées par des virgules)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://example.com/image1.jpg, https://example.com/image2.jpg" {...field} />
+                                  </FormControl>
                                   <FormMessage />
                                 </FormItem>
                               )}
@@ -679,6 +780,18 @@ const Planning = () => {
                               <span>Durée:</span>
                               <span>2 heures</span>
                             </div>
+                            {course.trace && (
+                              <div className="flex items-center gap-2 text-primary">
+                                <FileText className="h-4 w-4" />
+                                <span>Trace de cours disponible</span>
+                              </div>
+                            )}
+                            {course.video && (
+                              <div className="flex items-center gap-2 text-primary">
+                                <Video className="h-4 w-4" />
+                                <span>Vidéo explicative disponible</span>
+                              </div>
+                            )}
                             <div className="pt-2">
                               <div className="flex justify-between text-sm mb-2">
                                 <span>Progrès moyen des élèves:</span>
