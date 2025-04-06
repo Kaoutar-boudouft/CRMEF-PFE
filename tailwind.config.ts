@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,16 +61,7 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				},
-				// Custom colors for class diagram
-				"soft-blue": "#D3E4FD",
-				"soft-green": "#F2FCE2",
-				"soft-yellow": "#FEF7CD",
-				"soft-orange": "#FEC6A1",
-				"soft-purple": "#E5DEFF",
-				"soft-pink": "#FFDEE2",
-				"soft-peach": "#FDE1D3",
-				"soft-gray": "#F1F0FB"
+				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
