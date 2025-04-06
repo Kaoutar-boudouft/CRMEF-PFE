@@ -1,464 +1,24 @@
-
-import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { LayoutDashboard, Users, School, Calendar, GraduationCap, Plus, Upload } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { toast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
+import ClassDiagram from '../components/ClassDiagram';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
   const navigate = useNavigate();
-  
-  // Navigation items for sidebar
+  const [currentView, setCurrentView] = useState<'dashboard' | 'diagram' | 'students' | 'teachers' | 'classes'>('dashboard');
+
+  // Mock navigation items
   const navItems = [
     { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
+    { title: "Diagramme UML", id: "diagram", icon: BookOpenCheck, path: "/" },
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
+    { title: "Enseignants", id: "teachers", icon: School, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
   ];
-
-  // State for current tab on dashboard
-  const [activeTab, setActiveTab] = useState('dashboard');
-  
-  // State for students and classes
-  const [students, setStudents] = useState([
-    { id: '1', firstName: 'Jean', lastName: 'Dupont', email: 'jean.dupont@example.com', class: '1A' },
-    { id: '2', firstName: 'Marie', lastName: 'Martin', email: 'marie.martin@example.com', class: '2B' },
-    { id: '3', firstName: 'Paul', lastName: 'Bernard', email: 'paul.bernard@example.com', class: '3C' },
-  ]);
-  
-  const [classes, setClasses] = useState([
-    { id: '1', name: '1A', level: '1', type: 'générale', students: 25 },
-    { id: '2', name: '2B', level: '2', type: 'internationale', students: 22 },
-    { id: '3', name: '3C', level: '3', type: 'générale', students: 20 },
-  ]);
-
-  // Forms for creating new entities
-  const studentForm = useForm({
-    defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      class: ''
-    }
-  });
-
-  const classForm = useForm({
-    defaultValues: {
-      name: '',
-      level: '',
-      type: ''
-    }
-  });
-
-  // Function to add a new student
-  const handleAddStudent = (data: { firstName: string, lastName: string, email: string, class: string }) => {
-    const newStudent = {
-      id: `${students.length + 1}`,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      class: data.class
-    };
-    
-    setStudents([...students, newStudent]);
-    studentForm.reset();
-    
-    toast({
-      title: "Étudiant ajouté",
-      description: `L'étudiant ${data.firstName} ${data.lastName} a été ajouté avec succès.`,
-    });
-  };
-
-  // Function to add a new class
-  const handleAddClass = (data: { name: string, level: string, type: string }) => {
-    const newClass = {
-      id: `${classes.length + 1}`,
-      name: data.name,
-      level: data.level,
-      type: data.type,
-      students: 0
-    };
-    
-    setClasses([...classes, newClass]);
-    classForm.reset();
-    
-    toast({
-      title: "Classe ajoutée",
-      description: `La classe ${data.name} a été ajoutée avec succès.`,
-    });
-  };
-
-  // Handle file change for class schedule upload
-  const handleScheduleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    
-    toast({
-      title: "Emploi du temps importé",
-      description: `Le fichier ${e.target.files[0].name} a été importé avec succès.`,
-    });
-  };
-
-  // Dashboard content
-  const renderDashboard = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">3</CardTitle>
-            <CardDescription>Niveaux Collégiaux</CardDescription>
-          </CardHeader>
-          <CardContent className="pb-2">
-            <div className="text-sm text-muted-foreground">
-              1ère, 2ème et 3ème année
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">{classes.length}</CardTitle>
-            <CardDescription>Classes</CardDescription>
-          </CardHeader>
-          <CardContent className="pb-2">
-            <div className="text-sm text-muted-foreground">
-              {classes.filter(c => c.type === 'générale').length} générales, {classes.filter(c => c.type === 'internationale').length} internationales
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">{students.length}</CardTitle>
-            <CardDescription>Étudiants</CardDescription>
-          </CardHeader>
-          <CardContent className="pb-2">
-            <div className="text-sm text-muted-foreground">
-              Inscrits pour l'année 2023-2024
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Progression des Élèves</CardTitle>
-          <CardDescription>Répartition par niveau de compétence</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Niveau Basique</span>
-                <span>85%</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-green-500 rounded-full h-2" style={{ width: '85%' }} />
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Niveau Recommandé</span>
-                <span>60%</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-blue-500 rounded-full h-2" style={{ width: '60%' }} />
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between text-sm mb-2">
-                <span>Niveau Avancé</span>
-                <span>35%</span>
-              </div>
-              <div className="w-full bg-secondary rounded-full h-2">
-                <div className="bg-purple-500 rounded-full h-2" style={{ width: '35%' }} />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  // Students content
-  const renderStudents = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Liste des Étudiants</h2>
-        
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              <span>Ajouter un étudiant</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter un nouvel étudiant</DialogTitle>
-              <DialogDescription>
-                Entrez les informations de l'étudiant à ajouter à votre classe.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <Form {...studentForm}>
-              <form onSubmit={studentForm.handleSubmit(handleAddStudent)} className="space-y-4">
-                <FormField
-                  control={studentForm.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prénom</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Jean" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={studentForm.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Dupont" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={studentForm.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="jean.dupont@example.com" type="email" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={studentForm.control}
-                  name="class"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Classe</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez une classe" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {classes.map((classItem) => (
-                            <SelectItem key={classItem.id} value={classItem.name}>{classItem.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Annuler</Button>
-                  </DialogClose>
-                  <Button type="submit">Ajouter</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
-      
-      <div className="border rounded-md">
-        <table className="w-full">
-          <thead className="bg-muted">
-            <tr>
-              <th className="p-3 text-left">Nom</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Classe</th>
-              <th className="p-3 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id} className="border-t">
-                <td className="p-3">{student.firstName} {student.lastName}</td>
-                <td className="p-3">{student.email}</td>
-                <td className="p-3">{student.class}</td>
-                <td className="p-3 text-right">
-                  <Button variant="ghost" size="sm">Voir</Button>
-                  <Button variant="ghost" size="sm">Modifier</Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-
-  // Classes content
-  const renderClasses = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Gestion des Classes</h2>
-        
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              <span>Nouvelle classe</span>
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Créer une nouvelle classe</DialogTitle>
-              <DialogDescription>
-                Configurez les détails de la nouvelle classe.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <Form {...classForm}>
-              <form onSubmit={classForm.handleSubmit(handleAddClass)} className="space-y-4">
-                <FormField
-                  control={classForm.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom de la classe</FormLabel>
-                      <FormControl>
-                        <Input placeholder="1A" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={classForm.control}
-                  name="level"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Niveau collégial</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez un niveau" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">1ère année</SelectItem>
-                          <SelectItem value="2">2ème année</SelectItem>
-                          <SelectItem value="3">3ème année</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={classForm.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Type de classe</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionnez un type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="générale">Générale</SelectItem>
-                          <SelectItem value="internationale">Internationale</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <div className="space-y-2">
-                  <Label htmlFor="schedule">Emploi du temps</Label>
-                  <div className="flex gap-2 items-center">
-                    <Input 
-                      id="schedule" 
-                      type="file" 
-                      accept=".pdf,.doc,.docx,.xls,.xlsx"
-                      onChange={handleScheduleUpload}
-                    />
-                    <Upload className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Importez l'emploi du temps de la classe (PDF, Word, Excel)
-                  </p>
-                </div>
-                
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Annuler</Button>
-                  </DialogClose>
-                  <Button type="submit">Créer</Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {classes.map((classItem) => (
-          <Card key={classItem.id}>
-            <CardHeader>
-              <CardTitle className="flex justify-between">
-                <span>Classe {classItem.name}</span>
-                <span className={`text-xs px-2 py-1 rounded ${
-                  classItem.type === 'internationale' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                }`}>
-                  {classItem.type === 'internationale' ? 'Internationale' : 'Générale'}
-                </span>
-              </CardTitle>
-              <CardDescription>
-                {classItem.level === '1' ? '1ère année' : 
-                 classItem.level === '2' ? '2ème année' : '3ème année'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Élèves:</span>
-                  <span>{classItem.students}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Emploi du temps:</span>
-                  <span className="text-blue-500 cursor-pointer">Voir</span>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end space-x-2">
-              <Button variant="outline">Élèves</Button>
-              <Button>Gérer</Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <SidebarProvider>
@@ -476,12 +36,12 @@ const Index = () => {
                   {navItems.map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
-                        className={activeTab === item.id || (item.path === "/planning" && location.pathname === "/planning") ? "bg-accent" : ""}
+                        className={currentView === item.id && item.path === '/' ? "bg-accent" : ""}
                         onClick={() => {
-                          if (item.path === "/planning") {
-                            navigate("/planning");
+                          if (item.path === '/') {
+                            setCurrentView(item.id as any);
                           } else {
-                            setActiveTab(item.id);
+                            navigate(item.path);
                           }
                         }}
                       >
@@ -497,14 +57,537 @@ const Index = () => {
         </Sidebar>
 
         {/* Main Content */}
-        <div className="flex-1 p-6">
-          {activeTab === 'dashboard' && renderDashboard()}
-          {activeTab === 'students' && renderStudents()}
-          {activeTab === 'classes' && renderClasses()}
+        <div className="flex-1 overflow-hidden">
+          <header className="border-b px-6 py-3">
+            <h1 className="text-2xl font-bold">
+              {navItems.find(item => item.id === currentView)?.title || 'EduManage'}
+            </h1>
+          </header>
+
+          <main className="p-6">
+            {currentView === 'diagram' && (
+              <div className="rounded-lg border bg-card p-6 shadow-sm w-full overflow-auto">
+                <h2 className="text-xl font-semibold mb-4">Diagramme de Classes</h2>
+                <ClassDiagram />
+              </div>
+            )}
+            
+            {currentView === 'dashboard' && (
+              <EnhancedDashboard />
+            )}
+            
+            {currentView === 'students' && (
+              <EnhancedStudents />
+            )}
+            
+            {currentView === 'teachers' && (
+              <TeachersMockup />
+            )}
+            
+            {currentView === 'classes' && (
+              <EnhancedClasses />
+            )}
+          </main>
         </div>
       </div>
     </SidebarProvider>
   );
 };
+
+// Enhanced Dashboard with more specific visualizations
+const EnhancedDashboard = () => (
+  <div className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <StatsCard 
+        title="Étudiants" 
+        value="1,245" 
+        icon={<Users className="h-8 w-8" />} 
+        color="soft-blue" 
+        details="Répartis sur 3 niveaux collégiaux"
+      />
+      <StatsCard 
+        title="Classes" 
+        value="36" 
+        icon={<GraduationCap className="h-8 w-8" />} 
+        color="soft-yellow" 
+        details="15 générales, 21 internationales"
+      />
+      <StatsCard 
+        title="Cours Planifiés" 
+        value="124" 
+        icon={<BookText className="h-8 w-8" />} 
+        color="soft-green" 
+        details="42 par niveau en moyenne"
+      />
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><BarChart className="h-5 w-5 mr-2" /> Répartition des élèves par niveau</h3>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>1ère année collégiale</span>
+              <span>425 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-blue-500 rounded-full h-2" style={{ width: '34%' }} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>2ème année collégiale</span>
+              <span>410 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-green-500 rounded-full h-2" style={{ width: '33%' }} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>3ème année collégiale</span>
+              <span>410 élèves</span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div className="bg-purple-500 rounded-full h-2" style={{ width: '33%' }} />
+            </div>
+          </div>
+        </div>
+      </Card>
+      
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><PieChart className="h-5 w-5 mr-2" /> Progression des élèves par niveau</h3>
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+              <span>Niveau basique</span>
+            </div>
+            <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded">85% des élèves</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+              <span>Niveau recommandé</span>
+            </div>
+            <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">65% des élèves</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+              <span>Niveau avancé</span>
+            </div>
+            <span className="text-sm bg-purple-100 text-purple-800 px-2 py-1 rounded">42% des élèves</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4 flex items-center"><FileCheck className="h-5 w-5 mr-2" /> Activité Récente</h3>
+        <div className="space-y-4">
+          {[
+            { action: "Séquence ajoutée", details: "Programmation - 2ème année", time: "Il y a 2 heures", icon: "soft-purple" },
+            { action: "Exercice complété", details: "HTML/CSS - 1ère année", time: "Il y a 3 heures", icon: "soft-green" },
+            { action: "Cours modifié", details: "Base de données - 3ème année", time: "Il y a 5 heures", icon: "soft-blue" },
+            { action: "Élève ajouté", details: "Classe 2B - 2ème année", time: "Il y a 1 jour", icon: "soft-peach" },
+          ].map((item, i) => (
+            <div key={i} className="flex items-start space-x-4 border-b pb-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-${item.icon}`}>
+                <Users className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-medium">{item.action}</p>
+                <p className="text-sm">{item.details}</p>
+                <p className="text-xs text-muted-foreground">{item.time}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      
+      <Card className="p-6">
+        <h3 className="text-lg font-medium mb-4">Cours Populaires</h3>
+        <div className="space-y-4">
+          {[
+            { name: 'Introduction à la programmation', level: '1ère année', progress: 95 },
+            { name: 'Base de données relationnelles', level: '2ème année', progress: 88 },
+            { name: 'Développement Web', level: '2ème année', progress: 82 },
+            { name: 'Algorithmique avancée', level: '3ème année', progress: 75 },
+          ].map((course, i) => (
+            <div key={i} className="space-y-2">
+              <div className="flex justify-between">
+                <span>{course.name}</span>
+                <span className="text-sm">{course.progress}%</span>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>{course.level}</span>
+              </div>
+              <div className="w-full bg-secondary rounded-full h-2">
+                <div 
+                  className="bg-primary rounded-full h-2" 
+                  style={{ width: `${course.progress}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  </div>
+);
+
+// Enhanced Students section with import functionality
+const EnhancedStudents = () => (
+  <div className="space-y-6">
+    <Tabs defaultValue="list">
+      <div className="flex justify-between items-center mb-4">
+        <TabsList>
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            <span>Liste des élèves</span>
+          </TabsTrigger>
+          <TabsTrigger value="import" className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            <span>Importer des élèves</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="flex gap-2">
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les niveaux</option>
+            <option>1ère année</option>
+            <option>2ème année</option>
+            <option>3ème année</option>
+          </select>
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Toutes les classes</option>
+            <option>Classe 1A</option>
+            <option>Classe 1B</option>
+            <option>Classe 2A</option>
+          </select>
+          <button className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md flex items-center">
+            <Users className="h-4 w-4 mr-2" /> Ajouter
+          </button>
+        </div>
+      </div>
+      
+      <TabsContent value="list">
+        <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="py-3 px-4 text-left">Nom</th>
+                  <th className="py-3 px-4 text-left">Email</th>
+                  <th className="py-3 px-4 text-left">Niveau</th>
+                  <th className="py-3 px-4 text-left">Classe</th>
+                  <th className="py-3 px-4 text-left">Type</th>
+                  <th className="py-3 px-4 text-left">Progression</th>
+                  <th className="py-3 px-4 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3, 4, 5].map(i => (
+                  <tr key={i} className="border-b hover:bg-muted/50">
+                    <td className="py-4 px-4">Étudiant {i}</td>
+                    <td className="py-4 px-4">etudiant{i}@example.com</td>
+                    <td className="py-4 px-4">{i % 3 + 1}ème année</td>
+                    <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
+                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-24 bg-secondary rounded-full h-2">
+                          <div 
+                            className="bg-primary rounded-full h-2" 
+                            style={{ width: `${60 + i * 5}%` }}
+                          />
+                        </div>
+                        <span className="text-xs">{60 + i * 5}%</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex space-x-2">
+                        <button className="p-1 text-blue-600 hover:text-blue-800">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
+                        <button className="p-1 text-green-600 hover:text-green-800">
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="import">
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <div className="max-w-xl mx-auto">
+            <h3 className="text-lg font-medium mb-4">Importer des élèves</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>Sélectionner un niveau</option>
+                  <option>1ère année</option>
+                  <option>2ème année</option>
+                  <option>3ème année</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Classe</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>Sélectionner une classe</option>
+                  <option>Classe 1A</option>
+                  <option>Classe 1B</option>
+                  <option>Classe 2A</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Fichier CSV</label>
+                <div className="border-2 border-dashed rounded-md p-6 text-center">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <div className="mt-4 flex text-sm justify-center">
+                    <label className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-focus">
+                      <span>Télécharger un fichier</span>
+                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                    </label>
+                    <p className="pl-1">ou glisser-déposer</p>
+                  </div>
+                  <p className="text-xs text-gray-500">CSV uniquement, max 5MB</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Structure du CSV</label>
+                <div className="text-xs bg-muted p-3 rounded">
+                  <p className="font-medium">Format requis:</p>
+                  <p>nom,prenom,email,date_naissance,genre</p>
+                  <p>Exemple: Dupont,Jean,jean.dupont@example.com,2005-06-15,M</p>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <button className="px-4 py-2 border rounded-md">Annuler</button>
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Importer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </div>
+);
+
+// Enhanced Classes view
+const EnhancedClasses = () => (
+  <div className="space-y-6">
+    <Tabs defaultValue="list">
+      <div className="flex justify-between items-center mb-4">
+        <TabsList>
+          <TabsTrigger value="list" className="flex items-center gap-2">
+            <GraduationCap className="h-4 w-4" />
+            <span>Liste des classes</span>
+          </TabsTrigger>
+          <TabsTrigger value="new" className="flex items-center gap-2">
+            <FileCheck className="h-4 w-4" />
+            <span>Nouvelle classe</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <div className="flex gap-2">
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les niveaux</option>
+            <option>1ère année</option>
+            <option>2ème année</option>
+            <option>3ème année</option>
+          </select>
+          <select className="px-3 py-1.5 border rounded-md text-sm">
+            <option>Tous les types</option>
+            <option>Général</option>
+            <option>International</option>
+          </select>
+        </div>
+      </div>
+      
+      <TabsContent value="list">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { name: 'Classe 1A', level: '1ère année', type: 'Général', students: 32, status: 'active' },
+            { name: 'Classe 1B', level: '1ère année', type: 'International', students: 28, status: 'active' },
+            { name: 'Classe 2A', level: '2ème année', type: 'Général', students: 30, status: 'active' },
+            { name: 'Classe 2B', level: '2ème année', type: 'International', students: 26, status: 'active' },
+            { name: 'Classe 3A', level: '3ème année', type: 'Général', students: 31, status: 'active' },
+            { name: 'Classe 3B', level: '3ème année', type: 'International', students: 27, status: 'active' },
+          ].map((classItem, i) => (
+            <Card key={i} className="overflow-hidden">
+              <div className={`h-2 ${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-medium">{classItem.name}</h3>
+                    <p className="text-sm text-muted-foreground">{classItem.level} - {classItem.type}</p>
+                  </div>
+                  <span className={`inline-block px-2 py-1 rounded text-xs ${
+                    classItem.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {classItem.status === 'active' ? 'Actif' : 'Inactif'}
+                  </span>
+                </div>
+                
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span>Élèves:</span>
+                    <span>{classItem.students}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Semestres:</span>
+                    <span>2</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Cours planifiés:</span>
+                    <span>24</span>
+                  </div>
+                  <div className="pt-2">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Progression moyenne:</span>
+                      <span>{70 + i * 3}%</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div 
+                        className={`${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'} rounded-full h-2`}
+                        style={{ width: `${70 + i * 3}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between mt-6">
+                  <button className="px-3 py-1.5 border rounded text-sm">Élèves</button>
+                  <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
+                  <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </TabsContent>
+      
+      <TabsContent value="new">
+        <div className="rounded-lg border bg-card p-6 shadow-sm">
+          <div className="max-w-xl mx-auto">
+            <h3 className="text-lg font-medium mb-4">Créer une nouvelle classe</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Nom de la classe</label>
+                <input type="text" className="w-full px-3 py-2 border rounded-md" placeholder="Ex: Classe 1C" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner un niveau</option>
+                    <option>1ère année</option>
+                    <option>2ème année</option>
+                    <option>3ème année</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Type de classe</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner un type</option>
+                    <option>Général</option>
+                    <option>International</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Année scolaire</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>2023-2024</option>
+                  <option>2024-2025</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description (optionnelle)</label>
+                <textarea className="w-full px-3 py-2 border rounded-md" rows={3}></textarea>
+              </div>
+              <div className="flex justify-end space-x-2 pt-4">
+                <button className="px-4 py-2 border rounded-md">Annuler</button>
+                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Créer la classe</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TabsContent>
+    </Tabs>
+  </div>
+);
+
+// Stats Card Component
+const StatsCard = ({ title, value, icon, color, details }) => (
+  <div className={`rounded-lg border bg-card p-6 shadow-sm flex items-center space-x-4`}>
+    <div className={`rounded-full bg-${color} p-3`}>
+      {icon}
+    </div>
+    <div>
+      <p className="text-sm text-muted-foreground">{title}</p>
+      <p className="text-2xl font-bold">{value}</p>
+      {details && <p className="text-xs text-muted-foreground mt-1">{details}</p>}
+    </div>
+  </div>
+);
+
+// Teachers mockup (kept the same)
+const TeachersMockup = () => (
+  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
+    <div className="flex justify-between items-center">
+      <h2 className="text-xl font-semibold">Liste des Enseignants</h2>
+      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
+        <School className="h-4 w-4 mr-2" /> Ajouter un enseignant
+      </button>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <div key={i} className="rounded-lg border bg-card shadow p-6 flex flex-col">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-16 h-16 rounded-full bg-soft-purple flex items-center justify-center">
+              <School className="h-8 w-8" />
+            </div>
+            <div>
+              <h3 className="font-medium">Prof. Nom {i}</h3>
+              <p className="text-sm text-muted-foreground">Spécialité {i % 3 + 1}</p>
+            </div>
+          </div>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span>Email:</span>
+              <span>prof{i}@example.com</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Classes:</span>
+              <span>{i + 1}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Cours:</span>
+              <span>{i * 2}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default Index;

@@ -1,7 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Upload, Video, Image as ImageIcon, FileText } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,28 +12,18 @@ import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { Tabs as CourseCreationTabs, TabsContent as CourseCreationTabsContent, TabsList as CourseCreationTabsList, TabsTrigger as CourseCreationTabsTrigger } from "@/components/ui/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const Planning = () => {
   const navigate = useNavigate();
   const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses'>('semesters');
   
-  // Set default selections for dropdowns
-  const collegialLevels = [
-    { id: "1", name: "1ère année" },
-    { id: "2", name: "2ème année" },
-    { id: "3", name: "3ème année" },
-  ];
-  
-  const [selectedLevel, setSelectedLevel] = useState<string>(collegialLevels[0].id);
-  
-  // Semestres constants
-  const semesters = [
-    { id: "sem1", name: "1er semestre" },
-    { id: "sem2", name: "2ème semestre" },
-  ];
-  
-  const [selectedSemester, setSelectedSemester] = useState<string>(semesters[0].id);
+  // State management
+  const [selectedLevel, setSelectedLevel] = useState<string>('1');
+  const [selectedSemester, setSelectedSemester] = useState<string>('sem1');
+  const [selectedUnit, setSelectedUnit] = useState<string>('unit1');
+  const [selectedSequence, setSelectedSequence] = useState<string>('seq1');
+  const [activeCourseLevel, setActiveCourseLevel] = useState<'basic' | 'recommande' | 'avancee'>('basic');
   
   const [units, setUnits] = useState([
     { id: "unit1", name: "Unité 1: Programmation" },
@@ -41,15 +31,11 @@ const Planning = () => {
     { id: "unit3", name: "Unité 3: Web" },
   ]);
   
-  const [selectedUnit, setSelectedUnit] = useState<string>(units.length > 0 ? units[0].id : "");
-  
   const [sequences, setSequences] = useState([
     { id: "seq1", name: "Séquence 1: Introduction" },
     { id: "seq2", name: "Séquence 2: Concepts avancés" },
     { id: "seq3", name: "Séquence 3: Projet pratique" },
   ]);
-  
-  const [selectedSequence, setSelectedSequence] = useState<string>(sequences.length > 0 ? sequences[0].id : "");
   
   const [courses, setCourses] = useState([
     { id: "course1", name: "Cours 1: Fondamentaux", level: "basic" },
@@ -57,11 +43,22 @@ const Planning = () => {
     { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
   ]);
 
-  // State for course creation with multiple levels
-  const [courseCreationLevel, setCourseCreationLevel] = useState<"basic" | "recommande" | "avancee">("basic");
-  const [courseFile, setCourseFile] = useState<File | null>(null);
-  const [courseVideo, setCourseVideo] = useState<File | null>(null);
-  const [courseImages, setCourseImages] = useState<File[]>([]);
+  // Set default values for dropdowns
+  useEffect(() => {
+    if (currentPlanningTab === 'units' && !selectedLevel) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+    } else if (currentPlanningTab === 'sequences' && (!selectedLevel || !selectedSemester || !selectedUnit)) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+      setSelectedUnit('unit1');
+    } else if (currentPlanningTab === 'courses' && (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence)) {
+      setSelectedLevel('1');
+      setSelectedSemester('sem1');
+      setSelectedUnit('unit1');
+      setSelectedSequence('seq1');
+    }
+  }, [currentPlanningTab, selectedLevel, selectedSemester, selectedUnit, selectedSequence]);
 
   // Formulaires pour les nouvelles entités
   const unitForm = useForm({
@@ -79,10 +76,10 @@ const Planning = () => {
   const courseForm = useForm({
     defaultValues: {
       courseName: "",
-      courseLevel: "basic",
-      courseDocument: "",
+      courseLevel: "basic", // Valeur par défaut
+      courseTrace: "",
       courseVideo: "",
-      courseImages: "",
+      courseImages: ""
     }
   });
 
@@ -135,7 +132,7 @@ const Planning = () => {
     });
   };
 
-  const handleAddCourse = (data: { courseName: string, courseLevel: string }) => {
+  const handleAddCourse = (data: any) => {
     if (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence) {
       toast({
         title: "Erreur",
@@ -148,14 +145,14 @@ const Planning = () => {
     const newCourse = {
       id: `course${courses.length + 1}`,
       name: data.courseName,
-      level: data.courseLevel,
+      level: activeCourseLevel,
+      trace: data.courseTrace || "",
+      video: data.courseVideo || "",
+      images: data.courseImages || ""
     };
     
     setCourses([...courses, newCourse]);
     courseForm.reset();
-    setCourseFile(null);
-    setCourseVideo(null);
-    setCourseImages([]);
     
     toast({
       title: "Cours ajouté",
@@ -163,34 +160,20 @@ const Planning = () => {
     });
   };
 
-  // Navigation functions for buttons
-  const handleSemesterManage = (semesterId: string) => {
-    setCurrentPlanningTab('units');
+  // Navigation functions
+  const navigateToUnits = (semesterId: string) => {
     setSelectedSemester(semesterId);
+    setCurrentPlanningTab('units');
   };
 
-  const handleUnitManage = (unitId: string) => {
-    setCurrentPlanningTab('sequences');
+  const navigateToSequences = (unitId: string) => {
     setSelectedUnit(unitId);
+    setCurrentPlanningTab('sequences');
   };
 
-  const handleSequenceManage = (sequenceId: string) => {
-    setCurrentPlanningTab('courses');
+  const navigateToCourses = (sequenceId: string) => {
     setSelectedSequence(sequenceId);
-  };
-
-  // File handling functions
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'document' | 'video' | 'image') => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    
-    if (type === 'document') {
-      setCourseFile(e.target.files[0]);
-    } else if (type === 'video') {
-      setCourseVideo(e.target.files[0]);
-    } else if (type === 'image') {
-      const newImages = Array.from(e.target.files);
-      setCourseImages([...courseImages, ...newImages]);
-    }
+    setCurrentPlanningTab('courses');
   };
 
   // Mock navigation items
@@ -199,6 +182,19 @@ const Planning = () => {
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
+  ];
+
+  // Mock data
+  const collegialLevels = [
+    { id: "1", name: "1ère année" },
+    { id: "2", name: "2ème année" },
+    { id: "3", name: "3ème année" },
+  ];
+
+  // Semestres constants
+  const semesters = [
+    { id: "sem1", name: "1er semestre" },
+    { id: "sem2", name: "2ème semestre" },
   ];
 
   return (
@@ -316,7 +312,7 @@ const Planning = () => {
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
                           <Button variant="outline">Exporter</Button>
-                          <Button onClick={() => handleSemesterManage(semester.id)}>Gérer</Button>
+                          <Button onClick={() => navigateToUnits(semester.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -429,8 +425,8 @@ const Planning = () => {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="flex justify-end">
-                          <Button onClick={() => handleUnitManage(unit.id)}>Gérer</Button>
+                        <CardFooter className="flex justify-end space-x-2">
+                          <Button onClick={() => navigateToSequences(unit.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -557,8 +553,8 @@ const Planning = () => {
                             </div>
                           </div>
                         </CardContent>
-                        <CardFooter className="flex justify-end">
-                          <Button onClick={() => handleSequenceManage(sequence.id)}>Gérer</Button>
+                        <CardFooter className="flex justify-end space-x-2">
+                          <Button onClick={() => navigateToCourses(sequence.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
                     ))}
@@ -643,246 +639,114 @@ const Planning = () => {
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <CourseCreationTabs value={courseCreationLevel} onValueChange={(value) => setCourseCreationLevel(value as "basic" | "recommande" | "avancee")}>
-                          <CourseCreationTabsList className="mb-4 grid grid-cols-3">
-                            <CourseCreationTabsTrigger value="basic" className="flex items-center gap-2">
-                              <span>Basique</span>
-                            </CourseCreationTabsTrigger>
-                            <CourseCreationTabsTrigger value="recommande" className="flex items-center gap-2">
-                              <span>Recommandé</span>
-                            </CourseCreationTabsTrigger>
-                            <CourseCreationTabsTrigger value="avancee" className="flex items-center gap-2">
-                              <span>Avancé</span>
-                            </CourseCreationTabsTrigger>
-                          </CourseCreationTabsList>
-                          
-                          <Form {...courseForm}>
-                            <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
-                              <CourseCreationTabsContent value="basic" className="space-y-4">
-                                <FormField
-                                  control={courseForm.control}
-                                  name="courseName"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Nom du cours (Basique)</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="Ex: Cours 4: Révisions générales" {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                
-                                <div className="space-y-4">
-                                  <FormItem>
-                                    <FormLabel>Trace du cours (PDF)</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept=".pdf,.doc,.docx" 
-                                          onChange={(e) => handleFileChange(e, 'document')}
-                                        />
-                                        <FileText className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez un document pour le cours (PDF, DOC)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Vidéo explicative</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="video/*" 
-                                          onChange={(e) => handleFileChange(e, 'video')}
-                                        />
-                                        <Video className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez une vidéo explicative (MP4, MOV)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Images</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="image/*" 
-                                          multiple 
-                                          onChange={(e) => handleFileChange(e, 'image')}
-                                        />
-                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez des images pour illustrer le cours
-                                    </FormDescription>
-                                  </FormItem>
-                                </div>
-                                
-                                <input type="hidden" value="basic" {...courseForm.register("courseLevel")} />
-                              </CourseCreationTabsContent>
-                              
-                              <CourseCreationTabsContent value="recommande" className="space-y-4">
-                                <FormField
-                                  control={courseForm.control}
-                                  name="courseName"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Nom du cours (Recommandé)</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="Ex: Cours 4: Révisions approfondies" {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                
-                                <div className="space-y-4">
-                                  <FormItem>
-                                    <FormLabel>Trace du cours (PDF)</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept=".pdf,.doc,.docx" 
-                                          onChange={(e) => handleFileChange(e, 'document')}
-                                        />
-                                        <FileText className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez un document pour le cours (PDF, DOC)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Vidéo explicative</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="video/*" 
-                                          onChange={(e) => handleFileChange(e, 'video')}
-                                        />
-                                        <Video className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez une vidéo explicative (MP4, MOV)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Images</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="image/*" 
-                                          multiple 
-                                          onChange={(e) => handleFileChange(e, 'image')}
-                                        />
-                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez des images pour illustrer le cours
-                                    </FormDescription>
-                                  </FormItem>
-                                </div>
-                                
-                                <input type="hidden" value="recommande" {...courseForm.register("courseLevel")} />
-                              </CourseCreationTabsContent>
-                              
-                              <CourseCreationTabsContent value="avancee" className="space-y-4">
-                                <FormField
-                                  control={courseForm.control}
-                                  name="courseName"
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel>Nom du cours (Avancé)</FormLabel>
-                                      <FormControl>
-                                        <Input placeholder="Ex: Cours 4: Révisions expertises" {...field} />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                                
-                                <div className="space-y-4">
-                                  <FormItem>
-                                    <FormLabel>Trace du cours (PDF)</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept=".pdf,.doc,.docx" 
-                                          onChange={(e) => handleFileChange(e, 'document')}
-                                        />
-                                        <FileText className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez un document pour le cours (PDF, DOC)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Vidéo explicative</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="video/*" 
-                                          onChange={(e) => handleFileChange(e, 'video')}
-                                        />
-                                        <Video className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez une vidéo explicative (MP4, MOV)
-                                    </FormDescription>
-                                  </FormItem>
-                                  
-                                  <FormItem>
-                                    <FormLabel>Images</FormLabel>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2">
-                                        <Input 
-                                          type="file" 
-                                          accept="image/*" 
-                                          multiple 
-                                          onChange={(e) => handleFileChange(e, 'image')}
-                                        />
-                                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
-                                      </div>
-                                    </FormControl>
-                                    <FormDescription>
-                                      Ajoutez des images pour illustrer le cours
-                                    </FormDescription>
-                                  </FormItem>
-                                </div>
-                                
-                                <input type="hidden" value="avancee" {...courseForm.register("courseLevel")} />
-                              </CourseCreationTabsContent>
-                              
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button variant="outline">Annuler</Button>
-                                </DialogClose>
-                                <Button type="submit">Créer le cours</Button>
-                              </DialogFooter>
-                            </form>
-                          </Form>
-                        </CourseCreationTabs>
+                        <Form {...courseForm}>
+                          <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
+                            <div className="flex justify-between items-center mb-4">
+                              <span className="text-sm font-medium">Niveau du cours:</span>
+                              <div className="flex space-x-2">
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'basic' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('basic')}
+                                  className="text-xs px-3"
+                                >
+                                  Basique
+                                </Button>
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'recommande' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('recommande')}
+                                  className="text-xs px-3"
+                                >
+                                  Recommandé
+                                </Button>
+                                <Button 
+                                  type="button" 
+                                  size="sm" 
+                                  variant={activeCourseLevel === 'avancee' ? 'default' : 'outline'}
+                                  onClick={() => setActiveCourseLevel('avancee')}
+                                  className="text-xs px-3"
+                                >
+                                  Avancé
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nom du cours</FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: Cours 4: Révisions générales" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseTrace"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <FileText className="h-4 w-4" />
+                                    Trace du cours (URL ou référence)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://example.com/cours.pdf" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseVideo"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Video className="h-4 w-4" />
+                                    Vidéo explicative (URL)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://youtube.com/watch?v=..." {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <FormField
+                              control={courseForm.control}
+                              name="courseImages"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="flex items-center gap-2">
+                                    <Image className="h-4 w-4" />
+                                    Images supplémentaires (URLs séparées par des virgules)
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="Ex: https://example.com/image1.jpg, https://example.com/image2.jpg" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            
+                            <DialogFooter>
+                              <DialogClose asChild>
+                                <Button variant="outline">Annuler</Button>
+                              </DialogClose>
+                              <Button type="submit">Créer le cours</Button>
+                            </DialogFooter>
+                          </form>
+                        </Form>
                       </DialogContent>
                     </Dialog>
                   </div>
@@ -916,6 +780,18 @@ const Planning = () => {
                               <span>Durée:</span>
                               <span>2 heures</span>
                             </div>
+                            {course.trace && (
+                              <div className="flex items-center gap-2 text-primary">
+                                <FileText className="h-4 w-4" />
+                                <span>Trace de cours disponible</span>
+                              </div>
+                            )}
+                            {course.video && (
+                              <div className="flex items-center gap-2 text-primary">
+                                <Video className="h-4 w-4" />
+                                <span>Vidéo explicative disponible</span>
+                              </div>
+                            )}
                             <div className="pt-2">
                               <div className="flex justify-between text-sm mb-2">
                                 <span>Progrès moyen des élèves:</span>
