@@ -10,20 +10,26 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
-type ClassFormValues = {
-  className: string;
-  level: string;
-  type: string;
-  academicYear: string;
-  schedule: FileList | null;
-};
+// Define schema for form validation
+const classFormSchema = z.object({
+  className: z.string().min(1, "Le nom de la classe est requis"),
+  level: z.string().min(1, "Le niveau est requis"),
+  type: z.string().min(1, "Le type de classe est requis"),
+  academicYear: z.string().min(1, "L'année scolaire est requise"),
+  schedule: z.any().optional(),
+});
+
+type ClassFormValues = z.infer<typeof classFormSchema>;
 
 const CreateClass = () => {
   const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   
   const form = useForm<ClassFormValues>({
+    resolver: zodResolver(classFormSchema),
     defaultValues: {
       className: "",
       level: "",
@@ -112,8 +118,8 @@ const CreateClass = () => {
         </Sidebar>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
-          <header className="border-b px-6 py-3 flex items-center justify-between">
+        <div className="flex-1 overflow-auto">
+          <header className="border-b px-6 py-3 flex items-center justify-between sticky top-0 bg-background z-10">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -227,16 +233,19 @@ const CreateClass = () => {
                       control={form.control}
                       name="schedule"
                       render={({ field: { value, onChange, ...field } }) => (
-                        <FormItem>
+                        <FormItem className="mt-4">
                           <FormLabel className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             Emploi du temps
                           </FormLabel>
                           <FormControl>
                             <div className="flex flex-col gap-2">
-                              <div className="border border-dashed border-gray-300 rounded-md p-8 text-center">
+                              <div 
+                                className="border border-dashed border-gray-300 rounded-md p-8 text-center hover:border-primary hover:bg-muted/50 transition-colors cursor-pointer"
+                                onClick={() => document.getElementById('file-upload')?.click()}
+                              >
                                 <div className="flex flex-col items-center justify-center">
-                                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                  <Upload className="h-12 w-12 text-muted-foreground mb-2" />
                                   <p className="text-sm text-muted-foreground mb-1">
                                     Glissez-déposez votre fichier ici ou cliquez pour parcourir
                                   </p>
@@ -252,20 +261,27 @@ const CreateClass = () => {
                                   onChange={handleFileChange}
                                   {...field}
                                 />
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  className="mt-4 px-4 py-2"
-                                  onClick={() => document.getElementById('file-upload')?.click()}
-                                >
-                                  Parcourir...
-                                </Button>
                               </div>
                               
                               {uploadedFile && (
-                                <div className="flex items-center gap-2 text-sm bg-muted p-2 rounded-md mt-2">
-                                  <span className="font-medium">{uploadedFile.name}</span>
-                                  <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                <div className="flex items-center gap-2 text-sm bg-muted p-3 rounded-md mt-2">
+                                  <Calendar className="h-4 w-4 text-primary" />
+                                  <div>
+                                    <span className="font-medium block">{uploadedFile.name}</span>
+                                    <span className="text-xs text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                  </div>
+                                  <Button 
+                                    type="button" 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="ml-auto text-destructive"
+                                    onClick={() => {
+                                      setUploadedFile(null);
+                                      form.setValue('schedule', null);
+                                    }}
+                                  >
+                                    Supprimer
+                                  </Button>
                                 </div>
                               )}
                             </div>
