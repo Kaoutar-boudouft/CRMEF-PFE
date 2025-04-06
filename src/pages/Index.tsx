@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ClassDiagram from '../components/ClassDiagram';
@@ -68,7 +69,7 @@ const Index = () => {
             )}
             
             {currentView === 'students' && (
-              <EnhancedStudents />
+              <EnhancedStudents navigate={navigate} />
             )}
             
             {currentView === 'classes' && (
@@ -226,7 +227,7 @@ const EnhancedDashboard = () => (
 );
 
 // Enhanced Students section with import functionality
-const EnhancedStudents = () => (
+const EnhancedStudents = ({ navigate }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
@@ -254,7 +255,10 @@ const EnhancedStudents = () => (
             <option>Classe 1B</option>
             <option>Classe 2A</option>
           </select>
-          <button className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md flex items-center">
+          <button
+            onClick={() => navigate('/create-student')} 
+            className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md flex items-center"
+          >
             <Users className="h-4 w-4 mr-2" /> Ajouter
           </button>
         </div>
