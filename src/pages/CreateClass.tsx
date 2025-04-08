@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload } from 'lucide-react';
+import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { useForm } from "react-hook-form";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Textarea } from "@/components/ui/textarea";
 
 type ClassFormValues = {
   className: string;
   level: string;
   type: string;
   academicYear: string;
+  description?: string;
   schedule: FileList | null;
 };
 
@@ -29,6 +32,7 @@ const CreateClass = () => {
       level: "",
       type: "",
       academicYear: "",
+      description: "",
       schedule: null,
     },
   });
@@ -53,6 +57,27 @@ const CreateClass = () => {
       setUploadedFile(files[0]);
       form.setValue('schedule', files);
     }
+  };
+  
+  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      setUploadedFile(files[0]);
+      form.setValue('schedule', files);
+    }
+  };
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  
+  const removeUploadedFile = () => {
+    setUploadedFile(null);
+    form.setValue('schedule', null);
   };
   
   // Mock navigation items
@@ -222,6 +247,24 @@ const CreateClass = () => {
                         )}
                       />
                     </div>
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description (optionnelle)</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Ajoutez une description de la classe..."
+                              className="min-h-[120px]" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
                     <FormField
                       control={form.control}
@@ -233,8 +276,12 @@ const CreateClass = () => {
                             Emploi du temps
                           </FormLabel>
                           <FormControl>
-                            <div className="flex flex-col gap-2">
-                              <div className="border border-dashed border-gray-300 rounded-md p-8 text-center">
+                            <div 
+                              className="flex flex-col gap-2"
+                              onDrop={handleFileDrop}
+                              onDragOver={handleDragOver}
+                            >
+                              <div className="border border-dashed border-gray-300 rounded-md p-8 text-center transition-colors hover:bg-accent/10">
                                 <div className="flex flex-col items-center justify-center">
                                   <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                                   <p className="text-sm text-muted-foreground mb-1">
@@ -263,9 +310,22 @@ const CreateClass = () => {
                               </div>
                               
                               {uploadedFile && (
-                                <div className="flex items-center gap-2 text-sm bg-muted p-2 rounded-md mt-2">
-                                  <span className="font-medium">{uploadedFile.name}</span>
-                                  <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                <div className="flex items-center justify-between gap-2 text-sm bg-accent/20 p-3 rounded-md mt-2">
+                                  <div className="flex items-center gap-2">
+                                    <Calendar className="h-4 w-4 text-primary" />
+                                    <span className="font-medium">{uploadedFile.name}</span>
+                                    <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                  </div>
+                                  <Button 
+                                    type="button" 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={removeUploadedFile}
+                                    className="text-destructive hover:text-destructive/90"
+                                  >
+                                    <X className="h-4 w-4" />
+                                    <span className="sr-only">Supprimer</span>
+                                  </Button>
                                 </div>
                               )}
                             </div>
@@ -278,10 +338,13 @@ const CreateClass = () => {
                       )}
                     />
                     
-                    <CardFooter className="px-0 pb-0 flex justify-end">
+                    <CardFooter className="px-0 pb-0 flex justify-end gap-2">
+                      <Button type="button" variant="outline" onClick={() => navigate("/")}>
+                        Annuler
+                      </Button>
                       <Button type="submit" className="flex items-center gap-2">
                         <Save className="h-4 w-4" />
-                        Enregistrer la classe
+                        Créer la classe
                       </Button>
                     </CardFooter>
                   </form>
