@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X } from 'lucide-react';
+import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X, FileInput } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -277,57 +277,35 @@ const CreateClass = () => {
                           </FormLabel>
                           <FormControl>
                             <div 
-                              className="flex flex-col gap-2"
+                              className="flex flex-col gap-2 border-2 border-dashed border-gray-300 rounded-md p-8 text-center transition-colors hover:bg-accent/10"
                               onDrop={handleFileDrop}
                               onDragOver={handleDragOver}
                             >
-                              <div className="border border-dashed border-gray-300 rounded-md p-8 text-center transition-colors hover:bg-accent/10">
-                                <div className="flex flex-col items-center justify-center">
-                                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                                  <p className="text-sm text-muted-foreground mb-1">
-                                    Glissez-déposez votre fichier ici ou cliquez pour parcourir
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
-                                  </p>
-                                </div>
-                                <Input
-                                  id="file-upload"
-                                  type="file"
-                                  className="hidden"
-                                  accept=".pdf,.xls,.xlsx,.doc,.docx"
-                                  onChange={handleFileChange}
-                                  {...field}
-                                />
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  className="mt-4 px-4 py-2"
-                                  onClick={() => document.getElementById('file-upload')?.click()}
-                                >
-                                  Parcourir...
-                                </Button>
+                              <div className="flex flex-col items-center justify-center">
+                                <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                                <p className="text-sm text-muted-foreground mb-1">
+                                  Glissez-déposez votre fichier ici ou cliquez pour parcourir
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
+                                </p>
                               </div>
-                              
-                              {uploadedFile && (
-                                <div className="flex items-center justify-between gap-2 text-sm bg-accent/20 p-3 rounded-md mt-2">
-                                  <div className="flex items-center gap-2">
-                                    <Calendar className="h-4 w-4 text-primary" />
-                                    <span className="font-medium">{uploadedFile.name}</span>
-                                    <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
-                                  </div>
-                                  <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={removeUploadedFile}
-                                    className="text-destructive hover:text-destructive/90"
-                                  >
-                                    <X className="h-4 w-4" />
-                                    <span className="sr-only">Supprimer</span>
-                                  </Button>
-                                </div>
-                              )}
+                              <Input
+                                id="file-upload"
+                                type="file"
+                                className="hidden"
+                                accept=".pdf,.xls,.xlsx,.doc,.docx"
+                                onChange={handleFileChange}
+                                {...field}
+                              />
+                              <Button 
+                                type="button" 
+                                variant="outline" 
+                                className="mt-4 px-4 py-2"
+                                onClick={() => document.getElementById('file-upload')?.click()}
+                              >
+                                Parcourir...
+                              </Button>
                             </div>
                           </FormControl>
                           <FormDescription>
@@ -337,6 +315,26 @@ const CreateClass = () => {
                         </FormItem>
                       )}
                     />
+                    
+                    {uploadedFile && (
+                      <div className="flex items-center justify-between gap-2 text-sm bg-accent/20 p-3 rounded-md mt-2">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-primary" />
+                          <span className="font-medium">{uploadedFile.name}</span>
+                          <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                        </div>
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={removeUploadedFile}
+                          className="text-destructive hover:text-destructive/90"
+                        >
+                          <X className="h-4 w-4" />
+                          <span className="sr-only">Supprimer</span>
+                        </Button>
+                      </div>
+                    )}
                     
                     <CardFooter className="px-0 pb-0 flex justify-end gap-2">
                       <Button type="button" variant="outline" onClick={() => navigate("/")}>
