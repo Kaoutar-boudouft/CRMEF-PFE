@@ -1,11 +1,24 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ClassDiagram from '../components/ClassDiagram';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart } from 'lucide-react';
-import { Card } from '@/components/ui/card';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart, UserPlus } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { toast } from "@/components/ui/use-toast";
+
+type StudentFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  studentId: string;
+  class: string;
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -69,7 +82,7 @@ const Index = () => {
             )}
             
             {currentView === 'students' && (
-              <EnhancedStudents navigate={navigate} />
+              <EnhancedStudents />
             )}
             
             {currentView === 'classes' && (
@@ -226,159 +239,303 @@ const EnhancedDashboard = () => (
   </div>
 );
 
-// Enhanced Students section with import functionality
-const EnhancedStudents = ({ navigate }) => (
-  <div className="space-y-6">
-    <Tabs defaultValue="list">
-      <div className="flex justify-between items-center mb-4">
-        <TabsList>
-          <TabsTrigger value="list" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span>Liste des élèves</span>
-          </TabsTrigger>
-          <TabsTrigger value="import" className="flex items-center gap-2">
-            <FileCheck className="h-4 w-4" />
-            <span>Importer des élèves</span>
-          </TabsTrigger>
-        </TabsList>
-        
-        <div className="flex gap-2">
-          <select className="px-3 py-1.5 border rounded-md text-sm">
-            <option>Tous les niveaux</option>
-            <option>1ère année</option>
-            <option>2ème année</option>
-            <option>3ème année</option>
-          </select>
-          <select className="px-3 py-1.5 border rounded-md text-sm">
-            <option>Toutes les classes</option>
-            <option>Classe 1A</option>
-            <option>Classe 1B</option>
-            <option>Classe 2A</option>
-          </select>
-          <button
-            onClick={() => navigate('/create-student')} 
-            className="px-4 py-1.5 bg-primary text-primary-foreground rounded-md flex items-center"
-          >
-            <Users className="h-4 w-4 mr-2" /> Ajouter
-          </button>
-        </div>
-      </div>
-      
-      <TabsContent value="list">
-        <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b bg-muted/50">
-                  <th className="py-3 px-4 text-left">Nom</th>
-                  <th className="py-3 px-4 text-left">Email</th>
-                  <th className="py-3 px-4 text-left">Niveau</th>
-                  <th className="py-3 px-4 text-left">Classe</th>
-                  <th className="py-3 px-4 text-left">Type</th>
-                  <th className="py-3 px-4 text-left">Progression</th>
-                  <th className="py-3 px-4 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1, 2, 3, 4, 5].map(i => (
-                  <tr key={i} className="border-b hover:bg-muted/50">
-                    <td className="py-4 px-4">Étudiant {i}</td>
-                    <td className="py-4 px-4">etudiant{i}@example.com</td>
-                    <td className="py-4 px-4">{i % 3 + 1}ème année</td>
-                    <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
-                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-24 bg-secondary rounded-full h-2">
-                          <div 
-                            className="bg-primary rounded-full h-2" 
-                            style={{ width: `${60 + i * 5}%` }}
-                          />
-                        </div>
-                        <span className="text-xs">{60 + i * 5}%</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex space-x-2">
-                        <button className="p-1 text-blue-600 hover:text-blue-800">
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                        </button>
-                        <button className="p-1 text-green-600 hover:text-green-800">
-                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </TabsContent>
-      
-      <TabsContent value="import">
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <div className="max-w-xl mx-auto">
-            <h3 className="text-lg font-medium mb-4">Importer des élèves</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Niveau collégial</label>
-                <select className="w-full px-3 py-2 border rounded-md">
-                  <option>Sélectionner un niveau</option>
+// Enhanced Students section with integrated student creation form
+const EnhancedStudents = () => {
+  const [activeTab, setActiveTab] = useState<'list' | 'import' | 'create'>('list');
+  
+  // Mock class data
+  const classes = [
+    { id: "class1", name: "1ère année - Général" },
+    { id: "class2", name: "2ème année - International" },
+    { id: "class3", name: "3ème année - Général" },
+  ];
+  
+  const form = useForm<StudentFormValues>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      studentId: "",
+      class: "",
+    },
+  });
+
+  const onSubmit = (data: StudentFormValues) => {
+    // This would typically save to a backend
+    console.log("Student data:", data);
+    
+    toast({
+      title: "Étudiant créé avec succès",
+      description: `${data.firstName} ${data.lastName} a été ajouté(e).`,
+    });
+    
+    // Reset the form and switch back to list view
+    form.reset();
+    setActiveTab('list');
+  };
+  
+  return (
+    <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+        <div className="flex justify-between items-center mb-4">
+          <TabsList>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span>Liste des élèves</span>
+            </TabsTrigger>
+            <TabsTrigger value="import" className="flex items-center gap-2">
+              <FileCheck className="h-4 w-4" />
+              <span>Importer des élèves</span>
+            </TabsTrigger>
+            <TabsTrigger value="create" className="flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              <span>Ajouter un élève</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          <div className="flex gap-2">
+            {activeTab === 'list' && (
+              <>
+                <select className="px-3 py-1.5 border rounded-md text-sm">
+                  <option>Tous les niveaux</option>
                   <option>1ère année</option>
                   <option>2ème année</option>
                   <option>3ème année</option>
                 </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Classe</label>
-                <select className="w-full px-3 py-2 border rounded-md">
-                  <option>Sélectionner une classe</option>
+                <select className="px-3 py-1.5 border rounded-md text-sm">
+                  <option>Toutes les classes</option>
                   <option>Classe 1A</option>
                   <option>Classe 1B</option>
                   <option>Classe 2A</option>
                 </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Fichier CSV</label>
-                <div className="border-2 border-dashed rounded-md p-6 text-center">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <div className="mt-4 flex text-sm justify-center">
-                    <label className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-focus">
-                      <span>Télécharger un fichier</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                    </label>
-                    <p className="pl-1">ou glisser-déposer</p>
+                <Button 
+                  onClick={() => setActiveTab('create')}
+                  className="flex items-center gap-2"
+                >
+                  <UserPlus className="h-4 w-4" /> Ajouter
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+        
+        <TabsContent value="list">
+          <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b bg-muted/50">
+                    <th className="py-3 px-4 text-left">Nom</th>
+                    <th className="py-3 px-4 text-left">Email</th>
+                    <th className="py-3 px-4 text-left">Niveau</th>
+                    <th className="py-3 px-4 text-left">Classe</th>
+                    <th className="py-3 px-4 text-left">Type</th>
+                    <th className="py-3 px-4 text-left">Progression</th>
+                    <th className="py-3 px-4 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[1, 2, 3, 4, 5].map(i => (
+                    <tr key={i} className="border-b hover:bg-muted/50">
+                      <td className="py-4 px-4">Étudiant {i}</td>
+                      <td className="py-4 px-4">etudiant{i}@example.com</td>
+                      <td className="py-4 px-4">{i % 3 + 1}ème année</td>
+                      <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
+                      <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-secondary rounded-full h-2">
+                            <div 
+                              className="bg-primary rounded-full h-2" 
+                              style={{ width: `${60 + i * 5}%` }}
+                            />
+                          </div>
+                          <span className="text-xs">{60 + i * 5}%</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex space-x-2">
+                          <button className="p-1 text-blue-600 hover:text-blue-800">
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </button>
+                          <button className="p-1 text-green-600 hover:text-green-800">
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="import">
+          <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div className="max-w-xl mx-auto">
+              <h3 className="text-lg font-medium mb-4">Importer des élèves</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner un niveau</option>
+                    <option>1ère année</option>
+                    <option>2ème année</option>
+                    <option>3ème année</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Classe</label>
+                  <select className="w-full px-3 py-2 border rounded-md">
+                    <option>Sélectionner une classe</option>
+                    <option>Classe 1A</option>
+                    <option>Classe 1B</option>
+                    <option>Classe 2A</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Fichier CSV</label>
+                  <div className="border-2 border-dashed rounded-md p-6 text-center">
+                    <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <div className="mt-4 flex text-sm justify-center">
+                      <label className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-focus">
+                        <span>Télécharger un fichier</span>
+                        <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                      </label>
+                      <p className="pl-1">ou glisser-déposer</p>
+                    </div>
+                    <p className="text-xs text-gray-500">CSV uniquement, max 5MB</p>
                   </div>
-                  <p className="text-xs text-gray-500">CSV uniquement, max 5MB</p>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Structure du CSV</label>
-                <div className="text-xs bg-muted p-3 rounded">
-                  <p className="font-medium">Format requis:</p>
-                  <p>nom,prenom,email,date_naissance,genre</p>
-                  <p>Exemple: Dupont,Jean,jean.dupont@example.com,2005-06-15,M</p>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Structure du CSV</label>
+                  <div className="text-xs bg-muted p-3 rounded">
+                    <p className="font-medium">Format requis:</p>
+                    <p>nom,prenom,email,date_naissance,genre</p>
+                    <p>Exemple: Dupont,Jean,jean.dupont@example.com,2005-06-15,M</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end space-x-2 pt-4">
-                <button className="px-4 py-2 border rounded-md">Annuler</button>
-                <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Importer</button>
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button variant="outline" onClick={() => setActiveTab('list')}>Annuler</Button>
+                  <Button>Importer</Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </TabsContent>
-    </Tabs>
-  </div>
-);
+        </TabsContent>
+        
+        <TabsContent value="create">
+          <Card>
+            <CardHeader>
+              <CardTitle>Informations de l'étudiant</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Prénom</FormLabel>
+                          <FormControl>
+                            <Input placeholder="John" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Doe" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="john.doe@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="studentId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Numéro d'étudiant</FormLabel>
+                        <FormControl>
+                          <Input placeholder="STU12345" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="class"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Classe</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Sélectionner une classe" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {classes.map((cls) => (
+                              <SelectItem key={cls.id} value={cls.id}>
+                                {cls.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button variant="outline" onClick={() => setActiveTab('list')} type="button">Annuler</Button>
+                    <Button type="submit">Enregistrer l'étudiant</Button>
+                  </div>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
 
 // Enhanced Classes view
 const EnhancedClasses = () => (
@@ -535,48 +692,6 @@ const StatsCard = ({ title, value, icon, color, details }) => (
       <p className="text-sm text-muted-foreground">{title}</p>
       <p className="text-2xl font-bold">{value}</p>
       {details && <p className="text-xs text-muted-foreground mt-1">{details}</p>}
-    </div>
-  </div>
-);
-
-// Teachers mockup (kept the same)
-const TeachersMockup = () => (
-  <div className="rounded-lg border bg-card p-6 shadow-sm space-y-6">
-    <div className="flex justify-between items-center">
-      <h2 className="text-xl font-semibold">Liste des Enseignants</h2>
-      <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md flex items-center">
-        <School className="h-4 w-4 mr-2" /> Ajouter un enseignant
-      </button>
-    </div>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map(i => (
-        <div key={i} className="rounded-lg border bg-card shadow p-6 flex flex-col">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 rounded-full bg-soft-purple flex items-center justify-center">
-              <School className="h-8 w-8" />
-            </div>
-            <div>
-              <h3 className="font-medium">Prof. Nom {i}</h3>
-              <p className="text-sm text-muted-foreground">Spécialité {i % 3 + 1}</p>
-            </div>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Email:</span>
-              <span>prof{i}@example.com</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Classes:</span>
-              <span>{i + 1}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Cours:</span>
-              <span>{i * 2}</span>
-            </div>
-          </div>
-        </div>
-      ))}
     </div>
   </div>
 );
