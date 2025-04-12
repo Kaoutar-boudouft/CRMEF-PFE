@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload } from 'lucide-react';
+import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,40 @@ const CreateClass = () => {
       setUploadedFile(files[0]);
       form.setValue('schedule', files);
     }
+  };
+  
+  const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const files = event.dataTransfer.files;
+    if (files && files.length > 0) {
+      // Check file type
+      const file = files[0];
+      const allowedTypes = ['.pdf', '.xls', '.xlsx', '.doc', '.docx'];
+      const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+      
+      if (allowedTypes.includes(fileExtension)) {
+        setUploadedFile(file);
+        form.setValue('schedule', files);
+      } else {
+        toast({
+          title: "Type de fichier non supporté",
+          description: "Veuillez télécharger un fichier PDF, Excel ou Word.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+  
+  const handleFileDelete = () => {
+    setUploadedFile(null);
+    form.setValue('schedule', null);
   };
   
   // Mock navigation items
@@ -234,7 +268,11 @@ const CreateClass = () => {
                           </FormLabel>
                           <FormControl>
                             <div className="flex flex-col gap-2">
-                              <div className="border border-dashed border-gray-300 rounded-md p-8 text-center">
+                              <div 
+                                className="border border-dashed border-gray-300 rounded-md p-8 text-center"
+                                onDrop={handleFileDrop}
+                                onDragOver={handleDragOver}
+                              >
                                 <div className="flex flex-col items-center justify-center">
                                   <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                                   <p className="text-sm text-muted-foreground mb-1">
@@ -263,9 +301,19 @@ const CreateClass = () => {
                               </div>
                               
                               {uploadedFile && (
-                                <div className="flex items-center gap-2 text-sm bg-muted p-2 rounded-md mt-2">
-                                  <span className="font-medium">{uploadedFile.name}</span>
-                                  <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                <div className="flex items-center justify-between gap-2 text-sm bg-muted p-2 rounded-md mt-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">{uploadedFile.name}</span>
+                                    <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                  </div>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={handleFileDelete}
+                                    className="h-8 w-8 p-0 rounded-full"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               )}
                             </div>
