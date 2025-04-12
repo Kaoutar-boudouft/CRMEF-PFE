@@ -37,10 +37,11 @@ const Planning = () => {
     { id: "seq3", name: "Séquence 3: Projet pratique" },
   ]);
   
+  // Fix the courses state by explicitly adding trace and video properties
   const [courses, setCourses] = useState([
-    { id: "course1", name: "Cours 1: Fondamentaux", level: "basic" },
-    { id: "course2", name: "Cours 2: Applications", level: "recommande" },
-    { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee" },
+    { id: "course1", name: "Cours 1: Fondamentaux", level: "basic", trace: "", video: "" },
+    { id: "course2", name: "Cours 2: Applications", level: "recommande", trace: "", video: "" },
+    { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee", trace: "", video: "" },
   ]);
 
   // Set default values for dropdowns
