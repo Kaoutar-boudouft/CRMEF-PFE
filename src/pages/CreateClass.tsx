@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X } from 'lucide-react';
+import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Upload, X, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -261,24 +261,27 @@ const CreateClass = () => {
                       control={form.control}
                       name="schedule"
                       render={({ field: { value, onChange, ...field } }) => (
-                        <FormItem>
+                        <FormItem className="mt-4">
                           <FormLabel className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
+                            <FileText className="h-4 w-4" />
                             Emploi du temps
                           </FormLabel>
+                          <FormDescription>
+                            Téléchargez l'emploi du temps de la classe au format PDF, Excel ou Word.
+                          </FormDescription>
                           <FormControl>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 mt-2">
                               <div 
-                                className="border border-dashed border-gray-300 rounded-md p-8 text-center"
+                                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors"
                                 onDrop={handleFileDrop}
                                 onDragOver={handleDragOver}
                               >
                                 <div className="flex flex-col items-center justify-center">
-                                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
-                                  <p className="text-sm text-muted-foreground mb-1">
+                                  <Upload className="h-10 w-10 text-muted-foreground mb-3" />
+                                  <p className="text-base font-medium text-muted-foreground mb-1">
                                     Glissez-déposez votre fichier ici ou cliquez pour parcourir
                                   </p>
-                                  <p className="text-xs text-muted-foreground">
+                                  <p className="text-sm text-muted-foreground">
                                     Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
                                   </p>
                                 </div>
@@ -301,8 +304,9 @@ const CreateClass = () => {
                               </div>
                               
                               {uploadedFile && (
-                                <div className="flex items-center justify-between gap-2 text-sm bg-muted p-2 rounded-md mt-2">
+                                <div className="flex items-center justify-between gap-2 text-sm bg-muted p-3 rounded-md mt-2">
                                   <div className="flex items-center gap-2">
+                                    <FileText className="h-4 w-4 text-primary" />
                                     <span className="font-medium">{uploadedFile.name}</span>
                                     <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
                                   </div>
@@ -318,9 +322,6 @@ const CreateClass = () => {
                               )}
                             </div>
                           </FormControl>
-                          <FormDescription>
-                            Téléchargez l'emploi du temps de la classe au format PDF, Excel ou Word.
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
