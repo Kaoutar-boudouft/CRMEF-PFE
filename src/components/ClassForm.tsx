@@ -86,6 +86,9 @@ export const ClassForm = () => {
             />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Schedule File Upload Component */}
+            <ScheduleFileUpload control={form.control} name="schedule" />
+            
               <FormField
                 control={form.control}
                 name="level"
@@ -162,8 +165,7 @@ export const ClassForm = () => {
               />
             </div>
             
-            {/* Schedule File Upload Component */}
-            <ScheduleFileUpload control={form.control} name="schedule" />
+            
             
             <CardFooter className="px-0 pb-0 flex justify-end">
               <Button type="submit" className="flex items-center gap-2">
