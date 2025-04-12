@@ -88,7 +88,7 @@ export const ClassForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Schedule File Upload Component */}
             <ScheduleFileUpload control={form.control} name="schedule" />
-            
+
               <FormField
                 control={form.control}
                 name="level"
@@ -165,6 +165,30 @@ export const ClassForm = () => {
               />
             </div>
             
+            <FormField
+                      control={form.control}
+                      name="class"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Classe</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Sélectionner une classe" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {classes.map((cls) => (
+                                <SelectItem key={cls.id} value={cls.id}>
+                                  {cls.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
             
             
             <CardFooter className="px-0 pb-0 flex justify-end">
