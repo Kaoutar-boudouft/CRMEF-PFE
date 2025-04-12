@@ -257,11 +257,12 @@ const CreateClass = () => {
                       />
                     </div>
                     
+                    {/* Emploi du temps - File Input Section */}
                     <FormField
                       control={form.control}
                       name="schedule"
                       render={({ field: { value, onChange, ...field } }) => (
-                        <FormItem className="mt-4">
+                        <FormItem className="mt-6">
                           <FormLabel className="flex items-center gap-2">
                             <FileText className="h-4 w-4" />
                             Emploi du temps
@@ -271,53 +272,72 @@ const CreateClass = () => {
                           </FormDescription>
                           <FormControl>
                             <div className="flex flex-col gap-2 mt-2">
-                              <div 
-                                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors"
-                                onDrop={handleFileDrop}
-                                onDragOver={handleDragOver}
-                              >
-                                <div className="flex flex-col items-center justify-center">
-                                  <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                                  <p className="text-base font-medium text-muted-foreground mb-1">
-                                    Glissez-déposez votre fichier ici ou cliquez pour parcourir
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
-                                  </p>
-                                </div>
-                                <Input
-                                  id="file-upload"
-                                  type="file"
-                                  className="hidden"
-                                  accept=".pdf,.xls,.xlsx,.doc,.docx"
-                                  onChange={handleFileChange}
-                                  {...field}
-                                />
-                                <Button 
-                                  type="button" 
-                                  variant="outline" 
-                                  className="mt-4 px-4 py-2"
+                              {!uploadedFile ? (
+                                <div 
+                                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                                  onDrop={handleFileDrop}
+                                  onDragOver={handleDragOver}
                                   onClick={() => document.getElementById('file-upload')?.click()}
                                 >
-                                  Parcourir...
-                                </Button>
-                              </div>
-                              
-                              {uploadedFile && (
-                                <div className="flex items-center justify-between gap-2 text-sm bg-muted p-3 rounded-md mt-2">
-                                  <div className="flex items-center gap-2">
-                                    <FileText className="h-4 w-4 text-primary" />
-                                    <span className="font-medium">{uploadedFile.name}</span>
-                                    <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                                  <div className="flex flex-col items-center justify-center">
+                                    <Upload className="h-12 w-12 text-muted-foreground mb-4" />
+                                    <p className="text-base font-medium text-muted-foreground mb-2">
+                                      Glissez-déposez votre fichier ici ou cliquez pour parcourir
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
+                                    </p>
                                   </div>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={handleFileDelete}
-                                    className="h-8 w-8 p-0 rounded-full"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
+                                  <Input
+                                    id="file-upload"
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.xls,.xlsx,.doc,.docx"
+                                    onChange={handleFileChange}
+                                    {...field}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="border rounded-lg p-4 bg-muted/20">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className="bg-primary/10 p-2 rounded-md">
+                                        <FileText className="h-6 w-6 text-primary" />
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">{uploadedFile.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                          {Math.round(uploadedFile.size / 1024)} KB
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        type="button"
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={() => document.getElementById('file-upload')?.click()}
+                                      >
+                                        Remplacer
+                                      </Button>
+                                      <Button 
+                                        type="button"
+                                        variant="destructive" 
+                                        size="sm"
+                                        onClick={handleFileDelete}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <Input
+                                    id="file-upload"
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.xls,.xlsx,.doc,.docx"
+                                    onChange={handleFileChange}
+                                    {...field}
+                                  />
                                 </div>
                               )}
                             </div>
