@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, ChevronRight, FileText, GraduationCap, LayoutDashboard, Save, Upload, Users, X } from 'lucide-react';
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '../components/ui/sidebar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
