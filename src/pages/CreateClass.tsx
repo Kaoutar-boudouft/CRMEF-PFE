@@ -1,7 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, ChevronRight, FileText, GraduationCap, LayoutDashboard, Save, Upload, Users, X } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, GraduationCap, LayoutDashboard, Save, Upload, Users, X } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '../components/ui/sidebar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 type ClassFormValues = {
   className: string;
   level: string;
   type: string;
-  academicYear: string;
+  description: string;
   schedule: FileList | null;
 };
 
@@ -28,7 +29,7 @@ const CreateClass = () => {
       className: "",
       level: "",
       type: "",
-      academicYear: "",
+      description: "",
       schedule: null,
     },
   });
@@ -56,12 +57,6 @@ const CreateClass = () => {
   const classTypes = [
     { id: "general", name: "Général" },
     { id: "international", name: "International" },
-  ];
-  
-  const academicYears = [
-    { id: "2023-2024", name: "2023-2024" },
-    { id: "2024-2025", name: "2024-2025" },
-    { id: "2025-2026", name: "2025-2026" },
   ];
 
   // Functions for file upload handling
@@ -180,101 +175,13 @@ const CreateClass = () => {
                       )}
                     />
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {/* Schedule File Upload */}
-                      <FormField
-                        control={form.control}
-                        name="schedule"
-                        render={({ field }) => (
-                          <FormItem className="mt-6">
-                            <FormLabel className="flex items-center gap-2">
-                              <FileText className="h-4 w-4" />
-                              Emploi du temps
-                            </FormLabel>
-                            <FormDescription>
-                              Téléchargez l'emploi du temps de la classe au format PDF, Excel ou Word.
-                            </FormDescription>
-                            <FormControl>
-                              <div className="flex flex-col gap-2 mt-2">
-                                {!uploadedFile ? (
-                                  <div 
-                                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
-                                    onDrop={(e) => handleFileDrop(e, field.onChange)}
-                                    onDragOver={handleDragOver}
-                                    onClick={() => document.getElementById('file-upload-schedule')?.click()}
-                                  >
-                                    <div className="flex flex-col items-center justify-center">
-                                      <Upload className="h-12 w-12 text-muted-foreground mb-4" />
-                                      <p className="text-base font-medium text-muted-foreground mb-2">
-                                        Glissez-déposez votre fichier ici ou cliquez pour parcourir
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
-                                      </p>
-                                    </div>
-                                    <Input
-                                      id="file-upload-schedule"
-                                      type="file"
-                                      className="hidden"
-                                      accept=".pdf,.xls,.xlsx,.doc,.docx"
-                                      onChange={(e) => handleFileChange(e, field.onChange)}
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="border rounded-lg p-4 bg-muted/20">
-                                    <div className="flex items-center justify-between gap-4">
-                                      <div className="flex items-center gap-3">
-                                        <div className="bg-primary/10 p-2 rounded-md">
-                                          <FileText className="h-6 w-6 text-primary" />
-                                        </div>
-                                        <div>
-                                          <p className="font-medium">{uploadedFile.name}</p>
-                                          <p className="text-sm text-muted-foreground">
-                                            {Math.round(uploadedFile.size / 1024)} KB
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <div className="flex gap-2">
-                                        <Button 
-                                          type="button"
-                                          variant="outline" 
-                                          size="sm"
-                                          onClick={() => document.getElementById('file-upload-schedule')?.click()}
-                                        >
-                                          Remplacer
-                                        </Button>
-                                        <Button 
-                                          type="button"
-                                          variant="destructive" 
-                                          size="sm"
-                                          onClick={() => handleFileDelete(field.onChange)}
-                                        >
-                                          <X className="h-4 w-4" />
-                                        </Button>
-                                      </div>
-                                    </div>
-                                    <Input
-                                      id="file-upload-schedule"
-                                      type="file"
-                                      className="hidden"
-                                      accept=".pdf,.xls,.xlsx,.doc,.docx"
-                                      onChange={(e) => handleFileChange(e, field.onChange)}
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
                         name="level"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Niveau collégial</FormLabel>
+                            <FormLabel>Niveau</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger>
@@ -318,32 +225,114 @@ const CreateClass = () => {
                           </FormItem>
                         )}
                       />
-                      
-                      <FormField
-                        control={form.control}
-                        name="academicYear"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Année scolaire</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Sélectionner une année" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {academicYears.map((year) => (
-                                  <SelectItem key={year.id} value={year.id}>
-                                    {year.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
+
+                    {/* Description Field */}
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Description de la classe"
+                              className="min-h-[120px]" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Schedule File Upload */}
+                    <FormField
+                      control={form.control}
+                      name="schedule"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <FileText className="h-4 w-4" />
+                            Emploi du temps
+                          </FormLabel>
+                          <FormDescription>
+                            Téléchargez l'emploi du temps de la classe au format PDF, Excel ou Word.
+                          </FormDescription>
+                          <FormControl>
+                            <div className="flex flex-col gap-2 mt-2">
+                              {!uploadedFile ? (
+                                <div 
+                                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer"
+                                  onDrop={(e) => handleFileDrop(e, field.onChange)}
+                                  onDragOver={handleDragOver}
+                                  onClick={() => document.getElementById('file-upload-schedule')?.click()}
+                                >
+                                  <div className="flex flex-col items-center justify-center">
+                                    <Upload className="h-12 w-12 text-muted-foreground mb-4" />
+                                    <p className="text-base font-medium text-muted-foreground mb-2">
+                                      Glissez-déposez votre fichier ici ou cliquez pour parcourir
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Formats acceptés: PDF, XLS, XLSX, DOC, DOCX (Max 10MB)
+                                    </p>
+                                  </div>
+                                  <Input
+                                    id="file-upload-schedule"
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.xls,.xlsx,.doc,.docx"
+                                    onChange={(e) => handleFileChange(e, field.onChange)}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="border rounded-lg p-4 bg-muted/20">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className="bg-primary/10 p-2 rounded-md">
+                                        <FileText className="h-6 w-6 text-primary" />
+                                      </div>
+                                      <div>
+                                        <p className="font-medium">{uploadedFile.name}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                          {Math.round(uploadedFile.size / 1024)} KB
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button 
+                                        type="button"
+                                        variant="outline" 
+                                        size="sm"
+                                        onClick={() => document.getElementById('file-upload-schedule')?.click()}
+                                      >
+                                        Remplacer
+                                      </Button>
+                                      <Button 
+                                        type="button"
+                                        variant="destructive" 
+                                        size="sm"
+                                        onClick={() => handleFileDelete(field.onChange)}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <Input
+                                    id="file-upload-schedule"
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.xls,.xlsx,.doc,.docx"
+                                    onChange={(e) => handleFileChange(e, field.onChange)}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
                     <CardFooter className="px-0 pb-0 flex justify-end">
                       <Button type="submit" className="flex items-center gap-2">
