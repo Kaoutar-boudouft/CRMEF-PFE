@@ -8,7 +8,6 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Planning from "./pages/Planning";
 import CreateStudent from "./pages/CreateStudent";
-import CreateClass from "./pages/CreateClass";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +21,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/planning" element={<Planning />} />
           <Route path="/create-student" element={<CreateStudent />} />
-          <Route path="/create-class" element={<CreateClass />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
