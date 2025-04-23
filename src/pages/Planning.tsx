@@ -205,7 +205,7 @@ const Planning = () => {
         <Sidebar className="border-r">
           <SidebarContent>
             <div className="py-4 px-3">
-              <h2 className="text-xl font-bold text-primary">EduManage</h2>
+              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
             </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -231,7 +231,7 @@ const Planning = () => {
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <header className="border-b px-6 py-3">
-            <h1 className="text-2xl font-bold">Planning Pédagogique</h1>
+            <h1 className="text-2xl text-center font-bold">Planning Pédagogique</h1>
           </header>
 
           <main className="p-6">

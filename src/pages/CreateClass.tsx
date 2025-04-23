@@ -117,7 +117,7 @@ const CreateClass = () => {
         <Sidebar className="border-r">
           <SidebarContent>
             <div className="py-4 px-3">
-              <h2 className="text-xl font-bold text-primary">EduManage</h2>
+              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
             </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>

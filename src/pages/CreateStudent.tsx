@@ -67,7 +67,7 @@ const CreateStudent = () => {
         <Sidebar className="border-r">
           <SidebarContent>
             <div className="py-4 px-3">
-              <h2 className="text-xl font-bold text-primary">EduManage</h2>
+              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
             </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -140,7 +140,7 @@ const CreateStudent = () => {
                       />
                     </div>
                     
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="email"
                       render={({ field }) => (
@@ -152,22 +152,44 @@ const CreateStudent = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
                     
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                     <FormField
                       control={form.control}
                       name="studentId"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Numéro d'étudiant</FormLabel>
+                          <FormLabel>Date naissance</FormLabel>
                           <FormControl>
-                            <Input placeholder="STU12345" {...field} />
+                            <Input placeholder="2005-06-15" type="date" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                      <label className="block text-sm font-medium mb-1">Niveau collégial</label>
+                      <select className="w-full px-3 py-2 border rounded-md">
+                        <option>Sélectionner un niveau</option>
+                        <option>1ère année</option>
+                        <option>2ème année</option>
+                        <option>3ème année</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Type</label>
+                      <select className="w-full px-3 py-2 border rounded-md">
+                        <option>Sélectionner un type</option>
+                        <option>International</option>
+                        <option>Général</option>
+                      </select>
+                    </div>
                     <FormField
                       control={form.control}
                       name="class"
@@ -192,6 +214,9 @@ const CreateStudent = () => {
                         </FormItem>
                       )}
                     />
+                    </div>
+
+                    
                     
                     <CardFooter className="px-0 pb-0 flex justify-end">
                       <Button type="submit" className="flex items-center gap-2">

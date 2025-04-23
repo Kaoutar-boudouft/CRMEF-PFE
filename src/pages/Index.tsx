@@ -24,7 +24,7 @@ const Index = () => {
         <Sidebar className="border-r">
           <SidebarContent>
             <div className="py-4 px-3">
-              <h2 className="text-xl font-bold text-primary">EduManage</h2>
+              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
             </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -56,8 +56,8 @@ const Index = () => {
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <header className="border-b px-6 py-3">
-            <h1 className="text-2xl font-bold">
-              {navItems.find(item => item.id === currentView)?.title || 'EduManage'}
+            <h1 className="text-2xl text-center font-bold">
+              {navItems.find(item => item.id === currentView)?.title || 'قسمي اونلاين'}
             </h1>
           </header>
 
@@ -268,25 +268,28 @@ const EnhancedStudents = ({ navigate }) => (
             <table className="w-full">
               <thead>
                 <tr className="border-b bg-muted/50">
+                  <th className="py-3 px-4 text-center">Numéro</th>
                   <th className="py-3 px-4 text-left">Nom</th>
-                  <th className="py-3 px-4 text-left">Email</th>
-                  <th className="py-3 px-4 text-left">Niveau</th>
+                  {/* <th className="py-3 px-4 text-left">Login</th> */}
+                  <th className="py-3 px-4 text-left">Niveau collégial</th>
                   <th className="py-3 px-4 text-left">Classe</th>
                   <th className="py-3 px-4 text-left">Type</th>
-                  <th className="py-3 px-4 text-left">Progression</th>
+                  <th className="py-3 px-4 text-left">Niveau</th>
                   <th className="py-3 px-4 text-left">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {[1, 2, 3, 4, 5].map(i => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => (
                   <tr key={i} className="border-b hover:bg-muted/50">
+                    <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
-                    <td className="py-4 px-4">etudiant{i}@example.com</td>
-                    <td className="py-4 px-4">{i % 3 + 1}ème année</td>
+                    {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
+                    <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
                     <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
                     <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
                     <td className="py-4 px-4">
-                      <div className="flex items-center space-x-2">
+                    {['Basique', 'Recommandé', 'Avancé'][i % 3]}
+                    {/* <div className="flex items-center space-x-2">
                         <div className="w-24 bg-secondary rounded-full h-2">
                           <div 
                             className="bg-primary rounded-full h-2" 
@@ -294,7 +297,7 @@ const EnhancedStudents = ({ navigate }) => (
                           />
                         </div>
                         <span className="text-xs">{60 + i * 5}%</span>
-                      </div>
+                      </div> */}
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex space-x-2">
@@ -334,6 +337,14 @@ const EnhancedStudents = ({ navigate }) => (
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium mb-1">Type</label>
+                <select className="w-full px-3 py-2 border rounded-md">
+                  <option>Sélectionner un type</option>
+                  <option>International</option>
+                  <option>Général</option>
+                </select>
+              </div>
+              <div>
                 <label className="block text-sm font-medium mb-1">Classe</label>
                 <select className="w-full px-3 py-2 border rounded-md">
                   <option>Sélectionner une classe</option>
@@ -362,8 +373,8 @@ const EnhancedStudents = ({ navigate }) => (
                 <label className="block text-sm font-medium mb-1">Structure du CSV</label>
                 <div className="text-xs bg-muted p-3 rounded">
                   <p className="font-medium">Format requis:</p>
-                  <p>nom,prenom,email,date_naissance,genre</p>
-                  <p>Exemple: Dupont,Jean,jean.dupont@example.com,2005-06-15,M</p>
+                  <p>nom,prenom,date_naissance</p>
+                  <p>Exemple: Dupont,Jean,2005-06-15</p>
                 </div>
               </div>
               <div className="flex justify-end space-x-2 pt-4">
@@ -412,15 +423,14 @@ const EnhancedClasses = () => (
       <TabsContent value="list">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { name: 'Classe 1A', level: '1ère année', type: 'Général', students: 32, status: 'active' },
+            { name: 'Classe 1A', level: '1ère année', type: 'Général', students: 32, status: 'Inactif' },
             { name: 'Classe 1B', level: '1ère année', type: 'International', students: 28, status: 'active' },
-            { name: 'Classe 2A', level: '2ème année', type: 'Général', students: 30, status: 'active' },
-            { name: 'Classe 2B', level: '2ème année', type: 'International', students: 26, status: 'active' },
-            { name: 'Classe 3A', level: '3ème année', type: 'Général', students: 31, status: 'active' },
-            { name: 'Classe 3B', level: '3ème année', type: 'International', students: 27, status: 'active' },
+            { name: 'Classe 2A', level: '2ème année', type: 'Général', students: 30, status: 'Inactif' },
+            { name: 'Classe 2B', level: '2ème année', type: 'International', students: 26, status: 'Inactif' },
+            { name: 'Classe 1C', level: '1ère année', type: 'Général', students: 31, status: 'Inactif' },
           ].map((classItem, i) => (
             <Card key={i} className="overflow-hidden">
-              <div className={`h-2 ${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
+              <div className={`h-2 ${classItem.level === '1ère année' ? 'bg-blue-500' : 'bg-purple-500'}`}></div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
@@ -439,14 +449,14 @@ const EnhancedClasses = () => (
                     <span>Élèves:</span>
                     <span>{classItem.students}</span>
                   </div>
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span>Semestres:</span>
                     <span>2</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Cours planifiés:</span>
                     <span>24</span>
-                  </div>
+                  </div> */}
                   <div className="pt-2">
                     <div className="flex justify-between text-sm mb-2">
                       <span>Progression moyenne:</span>
@@ -454,7 +464,7 @@ const EnhancedClasses = () => (
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
                       <div 
-                        className={`${classItem.type === 'Général' ? 'bg-blue-500' : 'bg-purple-500'} rounded-full h-2`}
+                        className={`${classItem.level === '1ère année' ? 'bg-blue-500' : 'bg-purple-500'} rounded-full h-2`}
                         style={{ width: `${70 + i * 3}%` }}
                       />
                     </div>
@@ -462,9 +472,9 @@ const EnhancedClasses = () => (
                 </div>
                 
                 <div className="flex justify-between mt-6">
-                  <button className="px-3 py-1.5 border rounded text-sm">Élèves</button>
+                  <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Élèves</button>
                   <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
-                  <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button>
+                  {/* <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button> */}
                 </div>
               </div>
             </Card>
