@@ -68,7 +68,7 @@ const Index = () => {
             )}
             
             {currentView === 'students' && (
-              <EnhancedStudents navigate={navigate} classItem={null} />
+              <EnhancedStudents navigate={navigate} />
             )}
             
             {currentView === 'classes' && (
@@ -226,7 +226,7 @@ const EnhancedDashboard = () => (
 );
 
 // Enhanced Students section with import functionality
-const EnhancedStudents = ({ navigate, classItem }) => (
+const EnhancedStudents = ({ navigate }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
@@ -285,9 +285,9 @@ const EnhancedStudents = ({ navigate, classItem }) => (
                     <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
-                    <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">Classe {i <= 2 ? '1A' : i <= 4 ? '1B' : i <= 6 ? '2A' : i <= 8 ? '2B' : '1C'}</td>
-                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">{classItem ? classItem.level : i % 2 ? '1ère' : '2ème'} année</td>
+                    <td className="py-4 px-4">{classItem ? classItem.name : 'Classe 1A'}</td>
+                    <td className="py-4 px-4">{classItem ? classItem.type : i % 2 ? 'International' : 'Général'}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
