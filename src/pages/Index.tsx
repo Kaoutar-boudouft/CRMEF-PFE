@@ -72,7 +72,7 @@ const Index = () => {
             )}
             
             {currentView === 'classes' && (
-              <EnhancedClasses />
+              <EnhancedClasses setCurrentView={setCurrentView} />
             )}
           </main>
         </div>
@@ -391,7 +391,7 @@ const EnhancedStudents = ({ navigate }) => (
 );
 
 // Enhanced Classes view
-const EnhancedClasses = () => (
+const EnhancedClasses = ({ setCurrentView }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
