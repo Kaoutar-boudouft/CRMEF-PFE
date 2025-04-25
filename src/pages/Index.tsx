@@ -274,7 +274,7 @@ const EnhancedStudents = ({ navigate }) => (
                   <th className="py-3 px-4 text-left">Niveau collégial</th>
                   <th className="py-3 px-4 text-left">Classe</th>
                   <th className="py-3 px-4 text-left">Type</th>
-                  <th className="py-3 px-4 text-left">Niveau</th>
+                  {/* <th className="py-3 px-4 text-left">Niveau</th> */}
                   <th className="py-3 px-4 text-left">Actions</th>
                 </tr>
               </thead>
@@ -285,10 +285,10 @@ const EnhancedStudents = ({ navigate }) => (
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
                     <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">Classe {Math.floor(i / 2) + 1}{String.fromCharCode(65 + i % 2)}</td>
+                    <td className="py-4 px-4">Classe{['1', '2'][i % 2]}{String.fromCharCode(65 + i % 3)}</td>
                     <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
-                    <td className="py-4 px-4">
-                    {['Basique', 'Recommandé', 'Avancé'][i % 3]}
+                    {/* <td className="py-4 px-4">
+                    {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
                         <div className="w-24 bg-secondary rounded-full h-2">
                           <div 
@@ -298,7 +298,7 @@ const EnhancedStudents = ({ navigate }) => (
                         </div>
                         <span className="text-xs">{60 + i * 5}%</span>
                       </div> */}
-                    </td>
+                    {/* </td> */}
                     <td className="py-4 px-4">
                       <div className="flex space-x-2">
                         <button className="p-1 text-blue-600 hover:text-blue-800">
