@@ -285,9 +285,9 @@ const EnhancedStudents = ({ navigate }) => (
                     <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
-                    <td className="py-4 px-4">{classItem ? classItem.level : i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">{classItem ? classItem.name : 'Classe 1A'}</td>
-                    <td className="py-4 px-4">{classItem ? classItem.type : i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
+                    <td className="py-4 px-4">Classe{['1', '2'][i % 2]}{String.fromCharCode(65 + i % 3)}</td>
+                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
