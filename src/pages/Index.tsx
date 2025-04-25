@@ -69,7 +69,7 @@ const Index = () => {
             )}
 
             {currentView === 'students' && (
-              <EnhancedStudents navigate={navigate} selectedClass={selectedClass} /> {/* Pass selectedClass prop */}
+              <EnhancedStudents navigate={navigate} selectedClass={selectedClass} setCurrentView={setCurrentView} /> {/* Pass selectedClass prop */}
             )}
 
             {currentView === 'classes' && (
@@ -227,7 +227,7 @@ const EnhancedDashboard = () => (
 );
 
 // Enhanced Students section with import functionality
-const EnhancedStudents = ({ navigate, selectedClass }) => (
+const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
@@ -286,9 +286,9 @@ const EnhancedStudents = ({ navigate, selectedClass }) => (
                     <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
-                    <td className="py-4 px-4">{selectedClass ? selectedClass.level : i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">{selectedClass ? selectedClass.name : `Classe ${['1A', '1B', '2A', '2B', '1C'][i -1]}`}</td>
-                    <td className="py-4 px-4">{selectedClass ? selectedClass.type : i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">{selectedClass?.level || (i % 2 ? '1ère' : '2ème')} année</td>
+                    <td className="py-4 px-4">{selectedClass?.name || `Classe ${['1A', '1B', '2A', '2B', '1C'][i -1]}`}</td>
+                    <td className="py-4 px-4">{selectedClass?.type || (i % 2 ? 'International' : 'Général')}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
