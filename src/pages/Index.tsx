@@ -286,7 +286,7 @@ const EnhancedStudents = ({ navigate }) => (
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
                     <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">Classe{['1', '2'][i % 2]}{String.fromCharCode(65 + i % 3)}</td>
+                    <td className="py-4 px-4">Classe {i <= 2 ? '1A' : i <= 4 ? '1B' : i <= 6 ? '2A' : i <= 8 ? '2B' : '1C'}</td>
                     <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
