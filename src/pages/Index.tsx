@@ -1,16 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  SidebarProvider,
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem 
-} from '@/components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
 import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -19,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Index = () => {
   const navigate = useNavigate();
   const [currentView, setCurrentView] = useState<'dashboard' | 'students' | 'classes'>('dashboard');
-  const [selectedClass, setSelectedClass] = useState(null); // Added state for selected class
 
   // Mock navigation items - removed 'diagram' and 'teachers'
   const navItems = [
@@ -77,13 +66,13 @@ const Index = () => {
             {currentView === 'dashboard' && (
               <EnhancedDashboard />
             )}
-
+            
             {currentView === 'students' && (
-              <EnhancedStudents navigate={navigate} selectedClass={selectedClass} setCurrentView={setCurrentView} /> {/* Pass selectedClass prop */}
+              <EnhancedStudents navigate={navigate} classItem={null} />
             )}
-
+            
             {currentView === 'classes' && (
-              <EnhancedClasses setCurrentView={setCurrentView} setSelectedClass={setSelectedClass} /> {/* Pass setSelectedClass prop */}
+              <EnhancedClasses setCurrentView={setCurrentView} />
             )}
           </main>
         </div>
@@ -118,7 +107,7 @@ const EnhancedDashboard = () => (
         details="5 par niveau en moyenne"
       />
     </div>
-
+    
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card className="p-6">
         <h3 className="text-lg font-medium mb-4 flex items-center"><BarChart className="h-5 w-5 mr-2" /> Répartition des élèves par niveau</h3>
@@ -152,7 +141,7 @@ const EnhancedDashboard = () => (
           </div>
         </div>
       </Card>
-
+      
       <Card className="p-6">
         <h3 className="text-lg font-medium mb-4 flex items-center"><PieChart className="h-5 w-5 mr-2" /> Progression des élèves par niveau</h3>
         <div className="space-y-4">
@@ -180,7 +169,7 @@ const EnhancedDashboard = () => (
         </div>
       </Card>
     </div>
-
+    
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <Card className="p-6">
         <h3 className="text-lg font-medium mb-4 flex items-center"><FileCheck className="h-5 w-5 mr-2" /> Activité Récente</h3>
@@ -204,7 +193,7 @@ const EnhancedDashboard = () => (
           ))}
         </div>
       </Card>
-
+      
       <Card className="p-6">
         <h3 className="text-lg font-medium mb-4">Cours Populaires</h3>
         <div className="space-y-4">
@@ -237,7 +226,7 @@ const EnhancedDashboard = () => (
 );
 
 // Enhanced Students section with import functionality
-const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
+const EnhancedStudents = ({ navigate, classItem }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
@@ -251,7 +240,7 @@ const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
             <span>Importer des élèves</span>
           </TabsTrigger>
         </TabsList>
-
+        
         <div className="flex gap-2">
           <select className="px-3 py-1.5 border rounded-md text-sm">
             <option>Tous les niveaux</option>
@@ -273,7 +262,7 @@ const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
           </button>
         </div>
       </div>
-
+      
       <TabsContent value="list">
         <div className="rounded-lg border bg-card shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
@@ -296,9 +285,9 @@ const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
                     <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
-                    <td className="py-4 px-4">{selectedClass?.level || (i % 2 ? '1ère' : '2ème')} année</td>
-                    <td className="py-4 px-4">{selectedClass?.name || `Classe ${['1A', '1B', '2A', '2B', '1C'][i -1]}`}</td>
-                    <td className="py-4 px-4">{selectedClass?.type || (i % 2 ? 'International' : 'Général')}</td>
+                    <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
+                    <td className="py-4 px-4">Classe {i <= 2 ? '1A' : i <= 4 ? '1B' : i <= 6 ? '2A' : i <= 8 ? '2B' : '1C'}</td>
+                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
@@ -333,7 +322,7 @@ const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
           </div>
         </div>
       </TabsContent>
-
+      
       <TabsContent value="import">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="max-w-xl mx-auto">
@@ -402,7 +391,7 @@ const EnhancedStudents = ({ navigate, selectedClass, setCurrentView }) => (
 );
 
 // Enhanced Classes view
-const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
+const EnhancedClasses = ({ setCurrentView }) => (
   <div className="space-y-6">
     <Tabs defaultValue="list">
       <div className="flex justify-between items-center mb-4">
@@ -416,7 +405,7 @@ const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
             <span>Nouvelle classe</span>
           </TabsTrigger>
         </TabsList>
-
+        
         <div className="flex gap-2">
           <select className="px-3 py-1.5 border rounded-md text-sm">
             <option>Tous les niveaux</option>
@@ -431,7 +420,7 @@ const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
           </select>
         </div>
       </div>
-
+      
       <TabsContent value="list">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
@@ -455,7 +444,7 @@ const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
                     {classItem.status === 'active' ? 'Actif' : 'Inactif'}
                   </span>
                 </div>
-
+                
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span>Élèves:</span>
@@ -482,31 +471,32 @@ const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
                     </div>
                   </div>
                 </div>
-
-                <button 
-                  onClick={() => {
-                    setSelectedClass(classItem);
-                    setCurrentView('students');
-                    setTimeout(() => {
-                      const levelSelect = document.querySelector('select:first-of-type') as HTMLSelectElement;
-                      const classSelect = document.querySelector('select:nth-of-type(2)') as HTMLSelectElement;
-                      if (levelSelect) levelSelect.value = classItem.level;
-                      if (classSelect) classSelect.value = classItem.name;
-                    }, 0);
-                  }} 
-                  className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm"
-                >
-                  Élèves
-                </button>
-
-                <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
-                {/* <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button> */}
+                
+                <div className="flex justify-between mt-6">
+                  <button 
+                    onClick={() => {
+                      setCurrentView('students');
+                      setTimeout(() => {
+                        const levelSelect = document.querySelector('select:first-of-type') as HTMLSelectElement;
+                        const classSelect = document.querySelector('select:nth-of-type(2)') as HTMLSelectElement;
+                        if (levelSelect) levelSelect.value = classItem.level;
+                        if (classSelect) classSelect.value = classItem.name;
+                      }, 0);
+                    }} 
+                    className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm"
+                  >
+                    Élèves
+                  </button>
+                      
+                  <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
+                  {/* <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button> */}
+                </div>
               </div>
             </Card>
           ))}
         </div>
       </TabsContent>
-
+      
       <TabsContent value="new">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="max-w-xl mx-auto">
@@ -571,7 +561,7 @@ const EnhancedClasses = ({ setCurrentView, setSelectedClass }) => (
   </div>
 </div>
 
-
+              
               <div>
                 <label className="block text-sm font-medium mb-1">Description (optionnelle)</label>
                 <textarea className="w-full px-3 py-2 border rounded-md" rows={3}></textarea>
@@ -611,7 +601,7 @@ const TeachersMockup = () => (
         <School className="h-4 w-4 mr-2" /> Ajouter un enseignant
       </button>
     </div>
-
+    
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {[1, 2, 3, 4, 5, 6].map(i => (
         <div key={i} className="rounded-lg border bg-card shadow p-6 flex flex-col">
