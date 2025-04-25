@@ -10,7 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem 
-} from '@/components/ui/sidebar';
+} from '../components/ui/sidebar';
 import { BookOpenCheck, BookText, Calendar, GraduationCap, LayoutDashboard, School, Users, FileCheck, BarChart, PieChart } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
