@@ -1381,7 +1381,7 @@ const handleCourseFileDelete = (
     <FormItem>
       <FormLabel className="flex items-center gap-2">
         <Video className="h-4 w-4" />
-        Vidéo explicative ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+        Vidéo explicative ({activeCourseLevel === 'recommande' ? 'Recommandé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
       </FormLabel>
       <FormControl>
         <div
@@ -1461,7 +1461,7 @@ const handleCourseFileDelete = (
     <FormItem>
       <FormLabel className="flex items-center gap-2">
         <Image className="h-4 w-4" />
-        Images supplémentaires ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+        Images supplémentaires ({activeCourseLevel === 'recommande' ? 'Recommandé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
       </FormLabel>
       <FormControl>
         <div
@@ -1547,7 +1547,7 @@ const handleCourseFileDelete = (
     <FormItem>
       <FormLabel className="flex items-center gap-2">
         <FileText className="h-4 w-4" />
-        Trace du cours ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+        Trace du cours ({activeCourseLevel === 'avancee' ? 'Avancé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
       </FormLabel>
       <FormControl>
         <div
@@ -1610,7 +1610,7 @@ const handleCourseFileDelete = (
     <FormItem>
       <FormLabel className="flex items-center gap-2">
         <Video className="h-4 w-4" />
-        Vidéo explicative ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+        Vidéo explicative ({activeCourseLevel === 'avancee' ? 'Avancé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
       </FormLabel>
       <FormControl>
         <div
