@@ -252,7 +252,10 @@ const EnhancedStudents = ({ navigate, classItem }) => (
             <option>Toutes les classes</option>
             <option>Classe 1A</option>
             <option>Classe 1B</option>
+            <option>Classe 1C</option>
             <option>Classe 2A</option>
+            <option>Classe 2B</option>  
+            <option>Classe 3C</option>
           </select>
           <button
             onClick={() => navigate('/create-student')} 
