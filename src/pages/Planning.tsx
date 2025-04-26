@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal, Upload, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
+import { useRef } from 'react'; // Import useRef
 const Planning = () => {
   const navigate = useNavigate();
   const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses'>('semesters');
@@ -74,15 +74,43 @@ const Planning = () => {
     }
   });
 
-  const courseForm = useForm({
-    defaultValues: {
-      courseName: "",
-      courseLevel: "basic", // Valeur par défaut
-      courseTrace: "",
-      courseVideo: "",
-      courseImages: ""
-    }
-  });
+  // Course form with nested structure for levels and file fields
+const courseForm = useForm<CourseFormData>({
+  defaultValues: {
+    basic: { courseName: "", trace: null, video: null, images: null },
+    recommande: { courseName: "", trace: null, video: null, images: null },
+    avancee: { courseName: "", trace: null, video: null, images: null },
+  }
+});
+
+// State to manage uploaded files for each level and field
+const [uploadedCourseFiles, setUploadedCourseFiles] = useState<Record<string, CourseFiles>>({
+  basic: { trace: null, video: null, images: null },
+  recommande: { trace: null, video: null, images: null },
+  avancee: { trace: null, video: null, images: null },
+});
+
+// Refs for file inputs to manually clear them
+const fileInputRefs = {
+  basic: {
+    trace: useRef<HTMLInputElement>(null),
+    video: useRef<HTMLInputElement>(null),
+    images: useRef<HTMLInputElement>(null),
+  },
+  recommande: {
+    trace: useRef<HTMLInputElement>(null),
+    video: useRef<HTMLInputElement>(null),
+    images: useRef<HTMLInputElement>(null),
+  },
+  avancee: {
+    trace: useRef<HTMLInputElement>(null),
+    video: useRef<HTMLInputElement>(null),
+    images: useRef<HTMLInputElement>(null),
+  },
+};
+
+
+
 
   // Fonctions pour ajouter de nouvelles entités
   const handleAddUnit = (data: { unitName: string }) => {
@@ -133,7 +161,7 @@ const Planning = () => {
     });
   };
 
-  const handleAddCourse = (data: any) => {
+  const handleAddCourse = (data: CourseFormData) => {
     if (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence) {
       toast({
         title: "Erreur",
@@ -142,24 +170,77 @@ const Planning = () => {
       });
       return;
     }
-
-    const newCourse = {
-      id: `course${courses.length + 1}`,
-      name: data.courseName,
-      level: activeCourseLevel,
-      trace: data.courseTrace || "",
-      video: data.courseVideo || "",
-      images: data.courseImages || ""
-    };
-    
-    setCourses([...courses, newCourse]);
+  
+    // Process data for each level
+    const newCourses = [];
+  
+    if (data.basic.courseName) {
+      newCourses.push({
+        id: `course${courses.length + 1}-basic`,
+        name: data.basic.courseName,
+        level: "basic",
+        trace: uploadedCourseFiles.basic.trace ? uploadedCourseFiles.basic.trace.name : "", // Use file name or handle upload
+        video: uploadedCourseFiles.basic.video ? uploadedCourseFiles.basic.video.name : "", // Use file name or handle upload
+        images: uploadedCourseFiles.basic.images ? Array.from(uploadedCourseFiles.basic.images).map(f => f.name).join(',') : "", // Use file names or handle upload
+      });
+    }
+  
+    if (data.recommande.courseName) {
+      newCourses.push({
+        id: `course${courses.length + 1}-recommande`,
+        name: data.recommande.courseName,
+        level: "recommande",
+        trace: uploadedCourseFiles.recommande.trace ? uploadedCourseFiles.recommande.trace.name : "",
+        video: uploadedCourseFiles.recommande.video ? uploadedCourseFiles.recommande.video.name : "",
+        images: uploadedCourseFiles.recommande.images ? Array.from(uploadedCourseFiles.recommande.images).map(f => f.name).join(',') : "",
+      });
+    }
+  
+    if (data.avancee.courseName) {
+      newCourses.push({
+        id: `course${courses.length + 1}-avancee`,
+        name: data.avancee.courseName,
+        level: "avancee",
+        trace: uploadedCourseFiles.avancee.trace ? uploadedCourseFiles.avancee.trace.name : "",
+        video: uploadedCourseFiles.avancee.video ? uploadedCourseFiles.avancee.video.name : "",
+        images: uploadedCourseFiles.avancee.images ? Array.from(uploadedCourseFiles.avancee.images).map(f => f.name).join(',') : "",
+      });
+    }
+  
+    if (newCourses.length === 0) {
+       toast({
+        title: "Erreur",
+        description: "Veuillez renseigner au moins un nom de cours.",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+  
+    setCourses([...courses, ...newCourses]);
     courseForm.reset();
-    
+    setUploadedCourseFiles({
+       basic: { trace: null, video: null, images: null },
+       recommande: { trace: null, video: null, images: null },
+       avancee: { trace: null, video: null, images: null },
+    });
+  
+    // Manually clear file inputs using refs
+    Object.values(fileInputRefs).forEach(levelRefs => {
+        Object.values(levelRefs).forEach(ref => {
+            if (ref.current) {
+                ref.current.value = '';
+            }
+        });
+    });
+  
+  
     toast({
-      title: "Cours ajouté",
-      description: `Le cours ${data.courseName} a été ajouté avec succès.`,
+      title: "Cours(s) ajouté(s)",
+      description: `Les cours ont été ajoutés avec succès.`,
     });
   };
+  
 
   // Navigation functions
   const navigateToUnits = (semesterId: string) => {
@@ -197,6 +278,189 @@ const Planning = () => {
     { id: "sem1", name: "1er semestre" },
     { id: "sem2", name: "2ème semestre" },
   ];
+
+  // Define types for file uploads for each level
+type CourseFiles = {
+  trace: File | null;
+  video: File | null;
+  images: FileList | null; // Use FileList for multiple images
+};
+
+type CourseFormData = {
+  basic: {
+    courseName: string;
+    trace: File | null;
+    video: File | null;
+    images: FileList | null;
+  };
+  recommande: {
+    courseName: string;
+    trace: File | null;
+    video: File | null;
+    images: FileList | null;
+  };
+  avancee: {
+    courseName: string;
+    trace: File | null;
+    video: File | null;
+    images: FileList | null;
+  };
+};
+
+// File upload handlers adapted for multiple fields and levels
+const handleCourseFileChange = (
+  event: React.ChangeEvent<HTMLInputElement>,
+  level: 'basic' | 'recommande' | 'avancee',
+  field: 'trace' | 'video' | 'images',
+  onChange: (value: FileList | null) => void // react-hook-form onChange
+) => {
+  const files = event.target.files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    // Basic file type validation (can be extended)
+    const allowedTraceTypes = ['.pdf', '.doc', '.docx'];
+    const allowedVideoTypes = ['.mp4', '.avi', '.mov'];
+    const allowedImageTypes = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+    let isValid = true;
+
+    if (field === 'trace' && !allowedTraceTypes.includes(fileExtension)) {
+       isValid = false;
+    } else if (field === 'video' && !allowedVideoTypes.includes(fileExtension)) {
+       isValid = false;
+    } else if (field === 'images') {
+       // For images, check each file if multiple are selected
+       for (let i = 0; i < files.length; i++) {
+          const imgExtension = files[i].name.substring(files[i].name.lastIndexOf('.')).toLowerCase();
+          if (!allowedImageTypes.includes(imgExtension)) {
+             isValid = false;
+             break;
+          }
+       }
+    }
+
+    if (isValid) {
+      setUploadedCourseFiles(prev => ({
+        ...prev,
+        [level]: {
+          ...prev[level],
+          [field]: field === 'images' ? files : file, // Store FileList for images, File for others
+        },
+      }));
+      onChange(files); // Update react-hook-form state
+    } else {
+      toast({
+        title: "Type de fichier non supporté",
+        description: `Veuillez télécharger un fichier ${
+           field === 'trace' ? 'PDF ou Word' :
+           field === 'video' ? 'MP4, AVI ou MOV' :
+           'JPG, PNG ou GIF'
+        }.`,
+        variant: "destructive",
+      });
+       // Clear the input value to allow re-selection of the same file after error
+       if (event.target) {
+           event.target.value = '';
+       }
+    }
+  } else {
+     // If files are cleared manually
+     setUploadedCourseFiles(prev => ({
+        ...prev,
+        [level]: {
+           ...prev[level],
+           [field]: null,
+        },
+     }));
+     onChange(null);
+  }
+};
+
+const handleCourseFileDrop = (
+  event: React.DragEvent<HTMLDivElement>,
+  level: 'basic' | 'recommande' | 'avancee',
+  field: 'trace' | 'video' | 'images',
+  onChange: (value: FileList | null) => void // react-hook-form onChange
+) => {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const files = event.dataTransfer.files;
+  if (files && files.length > 0) {
+     // Basic file type validation (can be extended)
+    const allowedTraceTypes = ['.pdf', '.doc', '.docx'];
+    const allowedVideoTypes = ['.mp4', '.avi', '.mov'];
+    const allowedImageTypes = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    let isValid = true;
+    const droppedFiles = field === 'images' ? files : [files[0]]; // Take only the first file for trace/video
+
+    for (let i = 0; i < droppedFiles.length; i++) {
+       const file = droppedFiles[i];
+       const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+       if (field === 'trace' && !allowedTraceTypes.includes(fileExtension)) {
+          isValid = false;
+          break;
+       } else if (field === 'video' && !allowedVideoTypes.includes(fileExtension)) {
+          isValid = false;
+          break;
+       } else if (field === 'images' && !allowedImageTypes.includes(fileExtension)) {
+          isValid = false;
+          break;
+       }
+    }
+
+
+    if (isValid) {
+      setUploadedCourseFiles(prev => ({
+        ...prev,
+        [level]: {
+          ...prev[level],
+          [field]: field === 'images' ? files : files[0], // Store FileList for images, File for others
+        },
+      }));
+      onChange(files); // Update react-hook-form state
+    } else {
+      toast({
+        title: "Type de fichier non supporté",
+        description: `Veuillez télécharger un fichier ${
+           field === 'trace' ? 'PDF ou Word' :
+           field === 'video' ? 'MP4, AVI ou MOV' :
+           'JPG, PNG ou GIF'
+        }.`,
+        variant: "destructive",
+      });
+    }
+  }
+};
+
+const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+  event.preventDefault();
+  event.stopPropagation();
+};
+
+const handleCourseFileDelete = (
+  level: 'basic' | 'recommande' | 'avancee',
+  field: 'trace' | 'video' | 'images',
+  onChange: (value: FileList | null) => void // react-hook-form onChange
+) => {
+  setUploadedCourseFiles(prev => ({
+    ...prev,
+    [level]: {
+      ...prev[level],
+      [field]: null,
+    },
+  }));
+  onChange(null); // Update react-hook-form state
+   // Find the corresponding file input element and clear its value
+  const inputElement = fileInputRefs[level][field].current;
+  if (inputElement) {
+      inputElement.value = '';
+  }
+};
+
 
   return (
     <SidebarProvider>
@@ -632,15 +896,15 @@ const Planning = () => {
                           <span>Ajouter un cours</span>
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
+<DialogContent className="w-full max-w-none max-h-screen overflow-y-auto rounded-none left-0 translate-x-0">
+                          <DialogHeader>
                           <DialogTitle>Ajouter un nouveau cours</DialogTitle>
                           <DialogDescription>
                             Créez un nouveau cours pour la séquence sélectionnée.
                           </DialogDescription>
                         </DialogHeader>
                         
-                        <Form {...courseForm}>
+                        {/* <Form {...courseForm}>
                           <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
                             <div className="flex justify-between items-center mb-4">
                               <span className="text-sm font-medium">Niveau du cours:</span>
@@ -747,7 +1011,741 @@ const Planning = () => {
                               <Button type="submit">Créer le cours</Button>
                             </DialogFooter>
                           </form>
-                        </Form>
+                        </Form> */}
+
+
+<Form {...courseForm}>
+  <form onSubmit={courseForm.handleSubmit(handleAddCourse)} className="space-y-4">
+    <div className="flex justify-between items-center mb-4">
+      <span className="text-sm font-medium">Niveau du cours:</span>
+      <div className="flex space-x-2">
+        <Button
+          type="button"
+          size="sm"
+          variant={activeCourseLevel === 'basic' ? 'default' : 'outline'}
+          onClick={() => setActiveCourseLevel('basic')}
+          className="text-xs px-3"
+        >
+          Basique
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={activeCourseLevel === 'recommande' ? 'default' : 'outline'}
+          onClick={() => setActiveCourseLevel('recommande')}
+          className="text-xs px-3"
+        >
+          Recommandé
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={activeCourseLevel === 'avancee' ? 'default' : 'outline'}
+          onClick={() => setActiveCourseLevel('avancee')}
+          className="text-xs px-3"
+        >
+          Avancé
+        </Button>
+      </div>
+    </div>
+
+    {/* --- Basic Level Form Fields --- */}
+    {activeCourseLevel === 'basic' && (
+      <>
+        <FormField
+          control={courseForm.control}
+          name="basic.courseName" // Updated name for basic level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nom du cours (Basique)</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Cours 4: Révisions générales (Basique)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.trace`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <FileText className="h-4 w-4" />
+        Trace du cours ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'trace', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].trace.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].trace ? (
+              <div className="flex items-center space-x-2">
+                <FileText className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].trace.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'trace', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX</p>
+              </>
+            )}
+          </div>
+          <input
+            id={`course-file-upload-${activeCourseLevel}-trace`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].trace}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'trace', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".pdf,.doc,.docx"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+{/* Repeat similar structure for 'video' field */}
+ <FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.video`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Video className="h-4 w-4" />
+        Vidéo explicative ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'video', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].video.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].video ? (
+              <div className="flex items-center space-x-2">
+                <Video className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].video.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'video', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">MP4, AVI, MOV</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-video`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].video}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'video', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".mp4,.avi,.mov"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.images`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Image className="h-4 w-4" />
+        Images supplémentaires ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'images', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].images.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].images && uploadedCourseFiles[activeCourseLevel].images.length > 0 ? (
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {Array.from(uploadedCourseFiles[activeCourseLevel].images).map((file, index) => (
+                   <span key={index} className="flex items-center space-x-1 text-sm font-medium text-gray-900 dark:text-white">
+                      <Image className="h-4 w-4 text-green-500" />
+                      {file.name}
+                   </span>
+                ))}
+                 <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                   onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'images', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, GIF (plusieurs fichiers autorisés)</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-images`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].images}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'images', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".jpg,.jpeg,.png,.gif"
+            multiple // Allow multiple file selection
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+      </>
+    )}
+
+    {/* --- Recommended Level Form Fields --- */}
+    {activeCourseLevel === 'recommande' && (
+      <>
+        <FormField
+          control={courseForm.control}
+          name="recommande.courseName" // Updated name for recommended level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nom du cours (Recommandé)</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Cours 4: Révisions générales (Recommandé)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* <FormField
+          control={courseForm.control}
+          name="recommande.courseTrace" // Updated name for recommended level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Trace du cours (URL ou référence) (Recommandé)
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: https://example.com/cours.pdf (Recommandé)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={courseForm.control}
+          name="recommande.courseVideo" // Updated name for recommended level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <Video className="h-4 w-4" />
+                Vidéo explicative (URL) (Recommandé)
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: https://youtube.com/watch?v=... (Recommandé)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.trace`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <FileText className="h-4 w-4" />
+        Trace du cours ({activeCourseLevel === 'recommande' ? 'Recommandé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'trace', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].trace.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].trace ? (
+              <div className="flex items-center space-x-2">
+                <FileText className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].trace.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'trace', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX</p>
+              </>
+            )}
+          </div>
+          <input
+            id={`course-file-upload-${activeCourseLevel}-trace`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].trace}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'trace', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".pdf,.doc,.docx"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+{/* Repeat similar structure for 'video' field */}
+ <FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.video`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Video className="h-4 w-4" />
+        Vidéo explicative ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'video', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].video.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].video ? (
+              <div className="flex items-center space-x-2">
+                <Video className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].video.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'video', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">MP4, AVI, MOV</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-video`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].video}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'video', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".mp4,.avi,.mov"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+        {/* <FormField
+          control={courseForm.control}
+          name="recommande.courseImages" // Updated name for recommended level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <Image className="h-4 w-4" />
+                Images supplémentaires (URLs séparées par des virgules) (Recommandé)
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: https://example.com/image1.jpg, https://example.com/image2.jpg (Recommandé)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.images`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Image className="h-4 w-4" />
+        Images supplémentaires ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'images', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].images.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].images && uploadedCourseFiles[activeCourseLevel].images.length > 0 ? (
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {Array.from(uploadedCourseFiles[activeCourseLevel].images).map((file, index) => (
+                   <span key={index} className="flex items-center space-x-1 text-sm font-medium text-gray-900 dark:text-white">
+                      <Image className="h-4 w-4 text-green-500" />
+                      {file.name}
+                   </span>
+                ))}
+                 <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                   onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'images', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, GIF (plusieurs fichiers autorisés)</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-images`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].images}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'images', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".jpg,.jpeg,.png,.gif"
+            multiple // Allow multiple file selection
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+
+      </>
+    )}
+
+    {/* --- Advanced Level Form Fields --- */}
+    {activeCourseLevel === 'avancee' && (
+      <>
+        <FormField
+          control={courseForm.control}
+          name="avancee.courseName" // Updated name for advanced level
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nom du cours (Avancé)</FormLabel>
+              <FormControl>
+                <Input placeholder="Ex: Cours 4: Révisions générales (Avancé)" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.trace`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <FileText className="h-4 w-4" />
+        Trace du cours ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'trace', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].trace.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].trace ? (
+              <div className="flex items-center space-x-2">
+                <FileText className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].trace.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'trace', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX</p>
+              </>
+            )}
+          </div>
+          <input
+            id={`course-file-upload-${activeCourseLevel}-trace`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].trace}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'trace', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".pdf,.doc,.docx"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+{/* Repeat similar structure for 'video' field */}
+ <FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.video`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Video className="h-4 w-4" />
+        Vidéo explicative ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'video', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].video.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].video ? (
+              <div className="flex items-center space-x-2">
+                <Video className="h-5 w-5 text-green-500" />
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {uploadedCourseFiles[activeCourseLevel].video.name}
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'video', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">MP4, AVI, MOV</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-video`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].video}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'video', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".mp4,.avi,.mov"
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+<FormField
+  control={courseForm.control}
+  name={`${activeCourseLevel}.images`} // Use dynamic name
+  render={({ field: { onChange, onBlur, name, ref } }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        <Image className="h-4 w-4" />
+        Images supplémentaires ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+      </FormLabel>
+      <FormControl>
+        <div
+          className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          onDrop={(e) => handleCourseFileDrop(e, activeCourseLevel, 'images', onChange)}
+          onDragOver={handleDragOver}
+          onClick={() => fileInputRefs[activeCourseLevel].images.current?.click()}
+        >
+          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            {uploadedCourseFiles[activeCourseLevel].images && uploadedCourseFiles[activeCourseLevel].images.length > 0 ? (
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {Array.from(uploadedCourseFiles[activeCourseLevel].images).map((file, index) => (
+                   <span key={index} className="flex items-center space-x-1 text-sm font-medium text-gray-900 dark:text-white">
+                      <Image className="h-4 w-4 text-green-500" />
+                      {file.name}
+                   </span>
+                ))}
+                 <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                   onClick={(e) => {
+                    e.stopPropagation(); // Prevent triggering the file input click
+                    handleCourseFileDelete(activeCourseLevel, 'images', onChange);
+                  }}
+                >
+                  <X className="h-4 w-4 text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">JPG, PNG, GIF (plusieurs fichiers autorisés)</p>
+              </>
+            )}
+          </div>
+          <input
+             id={`course-file-upload-${activeCourseLevel}-images`}
+            type="file"
+            className="hidden"
+            ref={fileInputRefs[activeCourseLevel].images}
+            onChange={(e) => handleCourseFileChange(e, activeCourseLevel, 'images', onChange)}
+            onBlur={onBlur}
+            name={name}
+            accept=".jpg,.jpeg,.png,.gif"
+            multiple // Allow multiple file selection
+          />
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
+      </>
+    )}
+
+    <DialogFooter>
+      <DialogClose asChild>
+        <Button variant="outline">Annuler</Button>
+      </DialogClose>
+      <Button type="submit">Créer le cours</Button>
+    </DialogFooter>
+  </form>
+</Form>
+
+
+
+
+                        
                       </DialogContent>
                     </Dialog>
                   </div>
