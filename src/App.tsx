@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Planning from "./pages/Planning";
+import Affectation from "./pages/Affectation";
 import CreateStudent from "./pages/CreateStudent";
 import CreateClass from "./pages/CreateClass";
 
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/planning" element={<Planning />} />
+          <Route path="/affectation" element={<Affectation />} />
           <Route path="/create-student" element={<CreateStudent />} />
           <Route path="/create-class" element={<CreateClass />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

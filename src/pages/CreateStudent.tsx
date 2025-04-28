@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save } from 'lucide-react';
+import { Calendar, GraduationCap, LayoutDashboard, Users, ArrowLeft, Save, Link2Icon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,6 +51,7 @@ const CreateStudent = () => {
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
+    { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" },
   ];
   
   // Mock class data

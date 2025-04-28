@@ -1,7 +1,7 @@
 
 import { useForm } from "react-hook-form";
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, FileText, GraduationCap, LayoutDashboard, Save, Upload, Users, X } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, GraduationCap, LayoutDashboard, Link2Icon, Save, Upload, Users, X } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '../components/ui/sidebar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -108,6 +108,7 @@ const CreateClass = () => {
     { title: "Étudiants", id: "students", icon: Users, path: "/" },
     { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
+    { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" },
   ];
   
   return (
