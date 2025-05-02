@@ -53,9 +53,10 @@ const Affectation = () => {
 
   // Définition des éléments de navigation pour la barre latérale (comme dans Planning.tsx)
   const navItems = [
-    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
-    { title: "Étudiants", id: "students", icon: Users, path: "/" }, // Adaptez le chemin si nécessaire
-    { title: "Classes", id: "classes", icon: GraduationCap, path: "/" }, // Adaptez le chemin si nécessaire
+    // { title: "Acceuil", id: "acceuil", icon: LayoutDashboard, path: "/index" },
+    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { title: "Étudiants", id: "students", icon: Users, path: "/students" }, // Adaptez le chemin si nécessaire
+    { title: "Classes", id: "classes", icon: GraduationCap, path: "/classes" }, // Adaptez le chemin si nécessaire
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
     { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" }, // Nouvel élément
   ];

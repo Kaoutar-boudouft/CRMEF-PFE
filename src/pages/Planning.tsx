@@ -260,9 +260,10 @@ const fileInputRefs = {
 
   // Mock navigation items
   const navItems = [
-    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
-    { title: "Étudiants", id: "students", icon: Users, path: "/" },
-    { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
+    // { title: "Acceuil", id: "acceuil", icon: LayoutDashboard, path: "/index" },
+    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { title: "Étudiants", id: "students", icon: Users, path: "/students" },
+    { title: "Classes", id: "classes", icon: GraduationCap, path: "/classes" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
     { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" },
   ];

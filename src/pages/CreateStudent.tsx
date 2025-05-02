@@ -42,14 +42,15 @@ const CreateStudent = () => {
     });
     
     // Optionally navigate back to students list
-    navigate("/");
+    navigate("/students");
   };
   
   // Mock navigation items
   const navItems = [
-    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/" },
-    { title: "Étudiants", id: "students", icon: Users, path: "/" },
-    { title: "Classes", id: "classes", icon: GraduationCap, path: "/" },
+    // { title: "Acceuil", id: "acceuil", icon: LayoutDashboard, path: "/index" },
+    { title: "Tableau de bord", id: "dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { title: "Étudiants", id: "students", icon: Users, path: "/students" },
+    { title: "Classes", id: "classes", icon: GraduationCap, path: "/classes" },
     { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
     { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" },
   ];
@@ -95,7 +96,7 @@ const CreateStudent = () => {
         <div className="flex-1 overflow-hidden">
           <header className="border-b px-6 py-3 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/students")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Retour
               </Button>
