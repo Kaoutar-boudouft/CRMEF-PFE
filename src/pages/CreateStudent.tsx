@@ -57,9 +57,13 @@ const CreateStudent = () => {
   
   // Mock class data
   const classes = [
-    { id: "class1", name: "1ère année - Général" },
-    { id: "class2", name: "2ème année - International" },
-    { id: "class3", name: "3ème année - Général" },
+    { id: "class1", name: "Classe 1A" },
+    { id: "class2", name: "Classe 1B" },
+    { id: "class3", name: "Classe 1C" },
+    { id: "class4", name: "Classe 2A" },
+    { id: "class5", name: "Classe 2B" },
+    { id: "class6", name: "Classe 2C" },
+
   ];
 
   return (
@@ -78,7 +82,7 @@ const CreateStudent = () => {
                   {navItems.map((item) => (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton 
-                        className={location.pathname === item.path && item.id === 'students' ? "bg-accent" : ""}
+                        className={ item.id === 'students' ? "bg-accent" : ""}
                         onClick={() => navigate(item.path)}
                       >
                         <item.icon className="h-5 w-5 mr-2" />

@@ -9,11 +9,11 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Classes = () => {
-    
+
     const navigate = useNavigate(); // Utilisez votre hook de navigation
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-  
+
     // Définition des éléments de navigation pour la barre latérale (comme dans Planning.tsx)
       const navItems = [
         // { title: "Acceuil", id: "acceuil", icon: LayoutDashboard, path: "/index" },
@@ -81,7 +81,7 @@ const Classes = () => {
             <span>Nouvelle classe</span>
           </TabsTrigger>
         </TabsList>
-        
+
         <div className="flex gap-2">
           <select className="px-3 py-1.5 border rounded-md text-sm">
             <option>Tous les niveaux</option>
@@ -96,7 +96,7 @@ const Classes = () => {
           </select>
         </div>
       </div>
-      
+
       <TabsContent value="list">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
@@ -120,7 +120,7 @@ const Classes = () => {
                     {classItem.status === 'active' ? 'Actif' : 'Inactif'}
                   </span>
                 </div>
-                
+
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span>Élèves:</span>
@@ -140,31 +140,22 @@ const Classes = () => {
                       <span>{70 + i * 3}%</span>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2">
-                      <div 
+                      <div
                         className={`${classItem.level === '1ère année' ? 'bg-blue-500' : 'bg-purple-500'} rounded-full h-2`}
                         style={{ width: `${70 + i * 3}%` }}
                       />
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between mt-6">
-                  <button 
-                    // onClick={() => {
-                    //   setCurrentView('students');
-                    //   setTimeout(() => {
-                    //     const levelSelect = document.querySelector('select:first-of-type') as HTMLSelectElement;
-                    //     const classSelect = document.querySelector('select:nth-of-type(2)') as HTMLSelectElement;
-                    //     if (levelSelect) levelSelect.value = classItem.level;
-                    //     if (classSelect) classSelect.value = classItem.name;
-                    //   }, 0);
-                    // }} 
-                    onClick={() => navigate('/students')}
+                  <button
+                    onClick={() => navigate('/students', { state: { level: classItem.level, className: classItem.name, type: classItem.type } })}
                     className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm"
                   >
                     Élèves
                   </button>
-                      
+
                   <button className="px-3 py-1.5 border rounded text-sm">Emploi du temps</button>
                   {/* <button className="px-3 py-1.5 bg-primary text-primary-foreground rounded text-sm">Gérer</button> */}
                 </div>
@@ -173,7 +164,7 @@ const Classes = () => {
           ))}
         </div>
       </TabsContent>
-      
+
       <TabsContent value="new">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="max-w-xl mx-auto">
@@ -219,11 +210,11 @@ const Classes = () => {
     <div className="mt-4 flex text-sm justify-center">
       <label className="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary-focus">
         <span>Choisir un fichier</span>
-        <input 
-          id="emploi-upload" 
-          name="emploi-upload" 
-          type="file" 
-          accept=".pdf,.doc,.docx" 
+        <input
+          id="emploi-upload"
+          name="emploi-upload"
+          type="file"
+          accept=".pdf,.doc,.docx"
           className="sr-only"
           onChange={(e) => {
             const fileName = e.target.files?.[0]?.name || "Aucun fichier";
@@ -238,7 +229,7 @@ const Classes = () => {
   </div>
 </div>
 
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1">Description (optionnelle)</label>
                 <textarea className="w-full px-3 py-2 border rounded-md" rows={3}></textarea>
@@ -253,7 +244,7 @@ const Classes = () => {
       </TabsContent>
     </Tabs>
   </div>
-            
+
           </main>
         </div>
       </div>

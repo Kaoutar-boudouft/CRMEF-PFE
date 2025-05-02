@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLocation } from 'react-router-dom';
+
 const Students = () => {
 
       const navigate = useNavigate(); // Utilisez votre hook de navigation
@@ -23,6 +25,21 @@ const Students = () => {
           { title: "Planning", id: "planning", icon: Calendar, path: "/planning" },
           { title: "Affectations", id: "affectation", icon: Link2Icon, path: "/affectation" }, // Nouvel élément
         ];
+
+        // Inside your Students component
+        const location = useLocation();
+        const { level, className, type } = location.state || {}; // Destructure with a default empty object
+        
+        useEffect(() => {
+          if (level && className && type) {
+            // Fetch or filter students based on level and className
+            console.log(`Filtering students for Level: ${level}, Class: ${className}, type: ${type}`);
+            // Implement your filtering logic here
+          } else {
+            // Load all students or handle the case where no class is selected
+            console.log("Loading all students");
+          }
+        }, [level, className]); // Re-run effect when level or className changes
 
     return(
         <SidebarProvider>
@@ -79,20 +96,35 @@ const Students = () => {
         </TabsList>
         
         <div className="flex gap-2">
-          <select className="px-3 py-1.5 border rounded-md text-sm">
-            <option>Tous les niveaux</option>
-            <option>1ère année</option>
-            <option>2ème année</option>
-            <option>3ème année</option>
+        <select
+            className="px-3 py-1.5 border rounded-md text-sm"
+            value={level || 'Tous les niveaux'} // Set the value based on state
+            onChange={(e) => {
+              // Optional: Add logic here to handle manual selection change
+              console.log("Selected level:", e.target.value);
+              // You might want to update the URL state or fetch new data
+            }}
+          >
+            <option value="Tous les niveaux">Tous les niveaux</option>
+            <option value="1ère année">1ère année</option>
+            <option value="2ème année">2ème année</option>
+            <option value="3ème année">3ème année</option>
           </select>
-          <select className="px-3 py-1.5 border rounded-md text-sm">
+          <select className="px-3 py-1.5 border rounded-md text-sm"
+          value={className || 'Toutes les classes'}
+          onChange={(e) => {
+            // Optional: Add logic here to handle manual selection change
+            console.log("Selected classe:", e.target.value);
+            // You might want to update the URL state or fetch new data
+          }}
+          >
             <option>Toutes les classes</option>
             <option>Classe 1A</option>
             <option>Classe 1B</option>
             <option>Classe 1C</option>
             <option>Classe 2A</option>
             <option>Classe 2B</option>  
-            <option>Classe 3C</option>
+            <option>Classe 2C</option>
           </select>
           <button
             onClick={() => navigate('/create-student')} 
@@ -125,9 +157,9 @@ const Students = () => {
                     <td className="py-4 px-4 text-center">{i}</td>
                     <td className="py-4 px-4">Étudiant {i}</td>
                     {/* <td className="py-4 px-4">Utilisateur{i}</td> */}
-                    <td className="py-4 px-4">{i % 2 ? '1ère' : '2ème'} année</td>
-                    <td className="py-4 px-4">Classe {i <= 2 ? '1A' : i <= 4 ? '1B' : i <= 6 ? '2A' : i <= 8 ? '2B' : '1C'}</td>
-                    <td className="py-4 px-4">{i % 2 ? 'International' : 'Général'}</td>
+                    <td className="py-4 px-4">{level ?? (i % 2 ? '1ère année' : '2ème année')} </td>
+                    <td className="py-4 px-4">{className ?? ('Classe' + (i <= 2 ? '1A' : i <= 4 ? '1B' : i <= 6 ? '2A' : i <= 8 ? '2B' : '1C'))}</td>
+                    <td className="py-4 px-4">{type ?? (i % 2 ? 'International' : 'Général')}</td>
                     {/* <td className="py-4 px-4">
                     {['Basique', 'Recommandé', 'Avancé'][i % 3]} */}
                     {/* <div className="flex items-center space-x-2">
@@ -191,7 +223,10 @@ const Students = () => {
                   <option>Sélectionner une classe</option>
                   <option>Classe 1A</option>
                   <option>Classe 1B</option>
+                  <option>Classe 1C</option>
                   <option>Classe 2A</option>
+                  <option>Classe 2B</option>  
+                  <option>Classe 2C</option>
                 </select>
               </div>
               <div>

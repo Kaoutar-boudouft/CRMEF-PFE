@@ -26,22 +26,26 @@ const Planning = () => {
   const [activeCourseLevel, setActiveCourseLevel] = useState<'basic' | 'recommande' | 'avancee'>('basic');
   
   const [units, setUnits] = useState([
-    { id: "unit1", name: "Unité 1: Programmation" },
-    { id: "unit2", name: "Unité 2: Base de données" },
-    { id: "unit3", name: "Unité 3: Web" },
+    { id: "unit1", semestre: 'sem1', name: "Unité 1", sequences : 2, cours: 6, progression: '100%' },
+    { id: "unit2", semestre: 'sem1', name: "Unité 2", sequences : 2, cours: 5, progression: '60%' },
+    { id: "unit3", semestre: 'sem1', name: "Unité 3", sequences : 1, cours: 7, progression: '0%'},
+    { id: "unit4", semestre: 'sem2', name: "Unité 1", sequences : 3, cours: 8, progression: '75%' },
+    { id: "unit5", semestre: 'sem2', name: "Unité 2", sequences : 2, cours: 4, progression: '0%' },
   ]);
+
+
   
   const [sequences, setSequences] = useState([
-    { id: "seq1", name: "Séquence 1: Introduction" },
-    { id: "seq2", name: "Séquence 2: Concepts avancés" },
-    { id: "seq3", name: "Séquence 3: Projet pratique" },
+    { id: "seq1", unite : "unit1", name: "Séquence 1: Système informatique", cours: 3, exercices : 5, progression: '100%' },
+    { id: "seq2", unite : "unit1", name: "Séquence 2: Système d’exploitation", cours: 3, exercices : 7, progression: '100%' },
+    // { id: "seq3", name: "Séquence 3: Projet pratique" },
   ]);
   
   // Fix the courses state by explicitly adding trace and video properties
   const [courses, setCourses] = useState([
-    { id: "course1", name: "Cours 1: Fondamentaux", level: "basic", trace: "", video: "" },
-    { id: "course2", name: "Cours 2: Applications", level: "recommande", trace: "", video: "" },
-    { id: "course3", name: "Cours 3: Techniques avancées", level: "avancee", trace: "", video: "" },
+    { id: "course1", name: "Cours 1: Introduction aux notions Information - Informatique - Système informatique", sequence: 'seq1', exercices : 4, progression : '85%'},
+    { id: "course2", name: "Cours 2: Connectivité", sequence: 'seq1', exercices : 3, progression : '90%' },
+    { id: "course3", name: "Cours 3: Logiciels", sequence: 'seq1', exercices : 2, progression : '75%' },
   ]);
 
   // Set default values for dropdowns
@@ -463,6 +467,11 @@ const handleCourseFileDelete = (
   }
 };
 
+const filteredUnits = units.filter(unit => unit.semestre === selectedSemester);
+const filteredSequences = sequences.filter(sequence => sequence.unite === selectedUnit);
+const filteredCourses = courses.filter(course => course.sequence === selectedSequence);
+const selectedUnitDetails = units.find(unit => unit.id === selectedUnit);
+const selectedSequenceDetails = sequences.find(sequence => sequence.id === selectedSequence);
 
   return (
     <SidebarProvider>
@@ -497,7 +506,7 @@ const handleCourseFileDelete = (
         {/* Main Content */}
         <div className="flex-1 overflow-hidden">
           <header className="border-b px-6 py-3">
-            <h1 className="text-2xl text-center font-bold">Planning Pédagogique</h1>
+            <h1 className="text-2xl text-center font-bold">Planification</h1>
           </header>
 
           <main className="p-6">
@@ -543,7 +552,84 @@ const handleCourseFileDelete = (
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {semesters.map((semester) => (
+                      <Card key='sem1'>
+                        <CardHeader>
+                          <CardTitle className="flex justify-between">
+                            <span>1ère semestre</span>
+                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Actif</span>
+                          </CardTitle>
+                          <CardDescription>Année Scolaire 2024-2025</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Unités:</span>
+                              <span>3</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Séquences:</span>
+                              <span>9</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Cours:</span>
+                              <span>27</span>
+                            </div>
+                            <div className="pt-2">
+                              <div className="flex justify-between text-sm mb-2">
+                                <span>Progression:</span>
+                                <span>65%</span>
+                              </div>
+                              <div className="w-full bg-secondary rounded-full h-2">
+                                <div className="bg-primary rounded-full h-2" style={{ width: '65%' }} />
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-end space-x-2">
+                          <Button variant="outline">Dupliquer</Button>
+                          <Button onClick={() => navigateToUnits('sem1')}>Gérer</Button>
+                        </CardFooter>
+                      </Card>
+
+                      <Card key='sem2'>
+                        <CardHeader>
+                          <CardTitle className="flex justify-between">
+                            <span>2ème semestre</span>
+                            <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">Inactif</span>
+                          </CardTitle>
+                          <CardDescription>Année Scolaire 2024-2025</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Unités:</span>
+                              <span>2</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Séquences:</span>
+                              <span>5</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Cours:</span>
+                              <span>10</span>
+                            </div>
+                            <div className="pt-2">
+                              <div className="flex justify-between text-sm mb-2">
+                                <span>Progression:</span>
+                                <span>0%</span>
+                              </div>
+                              <div className="w-full bg-secondary rounded-full h-2">
+                                <div className="bg-primary rounded-full h-2" style={{ width: '0%' }} />
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="flex justify-end space-x-2">
+                          <Button variant="outline">Dupliquer</Button>
+                          <Button onClick={() => navigateToUnits('sem2')}>Gérer</Button>
+                        </CardFooter>
+                      </Card>
+                    {/* {semesters.map((semester) => (
                       <Card key={semester.id}>
                         <CardHeader>
                           <CardTitle className="flex justify-between">
@@ -582,7 +668,7 @@ const handleCourseFileDelete = (
                           <Button onClick={() => navigateToUnits(semester.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
-                    ))}
+                    ))} */}
                   </div>
                 </div>
               </TabsContent>
@@ -665,29 +751,29 @@ const handleCourseFileDelete = (
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {units.map((unit) => (
+                    {filteredUnits.map((unit) => (
                       <Card key={unit.id}>
                         <CardHeader>
                           <CardTitle>{unit.name}</CardTitle>
-                          <CardDescription>Semestre 1 - 2023-2024</CardDescription>
+                          <CardDescription>{selectedSemester=='sem1' ? "1ère semestre" : "2ème semestre"} - 2024-2025</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span>Séquences:</span>
-                              <span>3</span>
+                              <span>{unit.sequences}</span>
                             </div>
                             <div className="flex justify-between">
                               <span>Cours:</span>
-                              <span>9</span>
+                              <span>{unit.cours}</span>
                             </div>
                             <div className="pt-2">
                               <div className="flex justify-between text-sm mb-2">
                                 <span>Progression:</span>
-                                <span>50%</span>
+                                <span>{unit.progression}</span>
                               </div>
                               <div className="w-full bg-secondary rounded-full h-2">
-                                <div className="bg-primary rounded-full h-2" style={{ width: '50%' }} />
+                                <div className="bg-primary rounded-full h-2" style={{ width: unit.progression }} />
                               </div>
                             </div>
                           </div>
@@ -793,29 +879,29 @@ const handleCourseFileDelete = (
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {sequences.map((sequence) => (
+                    {filteredSequences.map((sequence) => (
                       <Card key={sequence.id}>
                         <CardHeader>
                           <CardTitle>{sequence.name}</CardTitle>
-                          <CardDescription>Unité 1: Programmation</CardDescription>
+                          <CardDescription>{selectedUnitDetails.name}</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span>Cours:</span>
-                              <span>3</span>
+                              <span>{sequence.cours}</span>
                             </div>
                             <div className="flex justify-between">
                               <span>Exercices:</span>
-                              <span>6</span>
+                              <span>{sequence.exercices}</span>
                             </div>
                             <div className="pt-2">
                               <div className="flex justify-between text-sm mb-2">
                                 <span>Progression:</span>
-                                <span>75%</span>
+                                <span>{sequence.progression}</span>
                               </div>
                               <div className="w-full bg-secondary rounded-full h-2">
-                                <div className="bg-primary rounded-full h-2" style={{ width: '75%' }} />
+                                <div className="bg-primary rounded-full h-2" style={{ width: sequence.progression }} />
                               </div>
                             </div>
                           </div>
@@ -1753,56 +1839,61 @@ const handleCourseFileDelete = (
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {courses.map((course) => (
-                      <Card key={course.id} className={`border-l-4 ${
-                        course.level === 'basic' ? 'border-l-green-500' : 
-                        course.level === 'recommande' ? 'border-l-blue-500' : 'border-l-purple-500'
-                      }`}>
+                    {filteredCourses.map((course) => (
+                      <Card key={course.id} 
+                      // className=
+                      // {`border-l-4 ${
+                      //   course.level === 'basic' ? 'border-l-green-500' : 
+                      //   course.level === 'recommande' ? 'border-l-blue-500' : 'border-l-purple-500'
+                      // }`}
+                      >
                         <CardHeader>
                           <div className="flex justify-between items-center">
-                            <CardTitle>{course.name}</CardTitle>
-                            <span className={`text-xs px-2 py-1 rounded ${
+                            <CardTitle className=''>{course.name}</CardTitle>
+                            {/* <span className={`text-xs px-2 py-1 rounded ${
                               course.level === 'basic' ? 'bg-green-100 text-green-800' : 
                               course.level === 'recommande' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
                             }`}>
                               {course.level === 'basic' ? 'Basique' : 
                                course.level === 'recommande' ? 'Recommandé' : 'Avancé'}
-                            </span>
+                            </span> */}
                           </div>
-                          <CardDescription>Séquence 1: Introduction</CardDescription>
+                          <CardDescription>{selectedSequenceDetails.name}</CardDescription>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span>Exercices:</span>
-                              <span>2</span>
+                              <span>{course.exercices}</span>
                             </div>
                             <div className="flex justify-between">
                               <span>Durée:</span>
-                              <span>2 heures</span>
+                              <span>1 heure</span>
                             </div>
-                            {course.trace && (
+                            
                               <div className="flex items-center gap-2 text-primary">
                                 <FileText className="h-4 w-4" />
                                 <span>Trace de cours disponible</span>
                               </div>
-                            )}
-                            {course.video && (
+                            
+                           
                               <div className="flex items-center gap-2 text-primary">
                                 <Video className="h-4 w-4" />
                                 <span>Vidéo explicative disponible</span>
                               </div>
-                            )}
+
+                              <div className="flex items-center gap-2 text-primary">
+                                <Image className="h-4 w-4" />
+                                <span>Image explicative disponible</span>
+                              </div>
+                            
                             <div className="pt-2">
                               <div className="flex justify-between text-sm mb-2">
                                 <span>Progrès moyen des élèves:</span>
-                                <span>60%</span>
+                                <span>{course.progression}</span>
                               </div>
                               <div className="w-full bg-secondary rounded-full h-2">
-                                <div className={`rounded-full h-2 ${
-                                  course.level === 'basic' ? 'bg-green-500' : 
-                                  course.level === 'recommande' ? 'bg-blue-500' : 'bg-purple-500'
-                                }`} style={{ width: '60%' }} />
+                                <div className={`rounded-full h-2 bg-green-500`} style={{ width: course.progression }} />
                               </div>
                             </div>
                           </div>
