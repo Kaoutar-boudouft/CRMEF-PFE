@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
-import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal, Upload, X, Link2Icon } from 'lucide-react';
+import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal, Upload, X, Link2Icon, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,21 +16,22 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useRef } from 'react'; // Import useRef
 const Planning = () => {
   const navigate = useNavigate();
-  const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses'>('semesters');
+  const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses' | 'exercices'>('semesters');
   
   // State management
   const [selectedLevel, setSelectedLevel] = useState<string>('1');
   const [selectedSemester, setSelectedSemester] = useState<string>('sem1');
   const [selectedUnit, setSelectedUnit] = useState<string>('unit1');
+  const [selectedCours, setSelectedCours] = useState<string>('cours1');
   const [selectedSequence, setSelectedSequence] = useState<string>('seq1');
   const [activeCourseLevel, setActiveCourseLevel] = useState<'basic' | 'recommande' | 'avancee'>('basic');
   
   const [units, setUnits] = useState([
-    { id: "unit1", semestre: 'sem1', name: "Unité 1", sequences : 2, cours: 6, progression: '100%' },
-    { id: "unit2", semestre: 'sem1', name: "Unité 2", sequences : 2, cours: 5, progression: '60%' },
-    { id: "unit3", semestre: 'sem1', name: "Unité 3", sequences : 1, cours: 7, progression: '0%'},
-    { id: "unit4", semestre: 'sem2', name: "Unité 1", sequences : 3, cours: 8, progression: '75%' },
-    { id: "unit5", semestre: 'sem2', name: "Unité 2", sequences : 2, cours: 4, progression: '0%' },
+    { id: "unit1", semestre: 'sem1', name: "Unité 1", sequences : 2, cours: 6, progression: '100%', testDiagno: true },
+    { id: "unit2", semestre: 'sem1', name: "Unité 2", sequences : 2, cours: 5, progression: '60%', testDiagno: false },
+    { id: "unit3", semestre: 'sem1', name: "Unité 3", sequences : 1, cours: 7, progression: '0%', testDiagno: false},
+    { id: "unit4", semestre: 'sem2', name: "Unité 1", sequences : 3, cours: 8, progression: '75%', testDiagno: true },
+    { id: "unit5", semestre: 'sem2', name: "Unité 2", sequences : 2, cours: 4, progression: '0%', testDiagno: false },
   ]);
 
 
@@ -43,9 +44,15 @@ const Planning = () => {
   
   // Fix the courses state by explicitly adding trace and video properties
   const [courses, setCourses] = useState([
-    { id: "course1", name: "Cours 1: Introduction aux notions Information - Informatique - Système informatique", sequence: 'seq1', exercices : 4, progression : '85%'},
-    { id: "course2", name: "Cours 2: Connectivité", sequence: 'seq1', exercices : 3, progression : '90%' },
-    { id: "course3", name: "Cours 3: Logiciels", sequence: 'seq1', exercices : 2, progression : '75%' },
+    { id: "cours1", name: "Cours 1: Introduction aux notions Information - Informatique - Système informatique", sequence: 'seq1', exercices : 4, progression : '85%'},
+    { id: "cours2", name: "Cours 2: Connectivité", sequence: 'seq1', exercices : 3, progression : '90%' },
+    { id: "cours3", name: "Cours 3: Logiciels", sequence: 'seq1', exercices : 2, progression : '75%' },
+  ]);
+
+  const [exercices, setExercices] = useState([
+    { id: "ex1", name: "Ex 1: Type d'information", cours: 'cours1', questions : 2, progression : '93%'},
+    { id: "ex2", name: "Ex 2: Signification de mot informatique", cours: 'cours1', questions : 2, progression : '86%' },
+    { id: "ex3", name: "Ex 3: Composantes d'un système informatique", cours: 'cours1', exercices : 3, progression : '80%' },
   ]);
 
   // Set default values for dropdowns
@@ -63,7 +70,14 @@ const Planning = () => {
       setSelectedUnit('unit1');
       setSelectedSequence('seq1');
     }
-  }, [currentPlanningTab, selectedLevel, selectedSemester, selectedUnit, selectedSequence]);
+    else if (currentPlanningTab === 'exercices' && (!selectedLevel || !selectedSemester || !selectedUnit || !selectedSequence || !selectedCours)) {
+    setSelectedLevel('1');
+    setSelectedSemester('sem1');
+    setSelectedUnit('unit1');
+    setSelectedSequence('seq1');
+    setSelectedCours('cours1');
+  }
+  }, [currentPlanningTab, selectedLevel, selectedSemester, selectedUnit, selectedSequence, selectedCours]);
 
   // Formulaires pour les nouvelles entités
   const unitForm = useForm({
@@ -130,6 +144,11 @@ const fileInputRefs = {
     const newUnit = {
       id: `unit${units.length + 1}`,
       name: data.unitName,
+      semestre: selectedSemester,
+      sequences: 0,
+      cours: 0,
+      progression: '0%',
+      testDiagno: false, // Default value for testDiagno
     };
     
     setUnits([...units, newUnit]);
@@ -153,11 +172,24 @@ const fileInputRefs = {
 
     const newSequence = {
       id: `seq${sequences.length + 1}`,
+      unite: selectedUnit,
       name: data.sequenceName,
+      cours: 0,
+      exercices: 0,
+      progression: '0%',
     };
     
     setSequences([...sequences, newSequence]);
     sequenceForm.reset();
+
+    const newExercice = {
+      id: `ex${exercices.length + 1}`,
+      name: "New Exercice",
+      cours: selectedCours,
+      questions: 0,
+      progression: '0%',
+    };
+    setExercices([...exercices, newExercice]);
     
     toast({
       title: "Séquence ajoutée",
@@ -260,6 +292,11 @@ const fileInputRefs = {
   const navigateToCourses = (sequenceId: string) => {
     setSelectedSequence(sequenceId);
     setCurrentPlanningTab('courses');
+  };
+
+  const navigateToExercices = (coursId: string) => {
+    setSelectedCours(coursId);
+    setCurrentPlanningTab('exercices');
   };
 
   // Mock navigation items
@@ -470,8 +507,10 @@ const handleCourseFileDelete = (
 const filteredUnits = units.filter(unit => unit.semestre === selectedSemester);
 const filteredSequences = sequences.filter(sequence => sequence.unite === selectedUnit);
 const filteredCourses = courses.filter(course => course.sequence === selectedSequence);
+const filteredExercices = exercices.filter(exercice => exercice.cours === selectedCours);
 const selectedUnitDetails = units.find(unit => unit.id === selectedUnit);
 const selectedSequenceDetails = sequences.find(sequence => sequence.id === selectedSequence);
+const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
 
   return (
     <SidebarProvider>
@@ -527,6 +566,10 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
                 <TabsTrigger value="courses" className="flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
                   <span>Cours</span>
+                </TabsTrigger>
+                <TabsTrigger value="exercices" className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Exercices</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -629,46 +672,7 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
                           <Button onClick={() => navigateToUnits('sem2')}>Gérer</Button>
                         </CardFooter>
                       </Card>
-                    {/* {semesters.map((semester) => (
-                      <Card key={semester.id}>
-                        <CardHeader>
-                          <CardTitle className="flex justify-between">
-                            <span>{semester.name}</span>
-                            <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Actif</span>
-                          </CardTitle>
-                          <CardDescription>Année Scolaire 2023-2024</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span>Unités:</span>
-                              <span>3</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Séquences:</span>
-                              <span>9</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Cours:</span>
-                              <span>27</span>
-                            </div>
-                            <div className="pt-2">
-                              <div className="flex justify-between text-sm mb-2">
-                                <span>Progression:</span>
-                                <span>65%</span>
-                              </div>
-                              <div className="w-full bg-secondary rounded-full h-2">
-                                <div className="bg-primary rounded-full h-2" style={{ width: '65%' }} />
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Exporter</Button>
-                          <Button onClick={() => navigateToUnits(semester.id)}>Gérer</Button>
-                        </CardFooter>
-                      </Card>
-                    ))} */}
+                    {}
                   </div>
                 </div>
               </TabsContent>
@@ -779,8 +783,14 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
+                          <Button variant="outline">Dupliquer</Button>
                           <Button onClick={() => navigateToSequences(unit.id)}>Gérer</Button>
                         </CardFooter>
+
+                        <CardFooter className="flex justify-end space-x-2">
+                        { unit.testDiagno ? (<Button className='' >Appercu T.Diagnostique</Button>) : (<Button >Générer T.Diagnostique</Button>)}
+                        </CardFooter>
+                        
                       </Card>
                     ))}
                   </div>
@@ -907,6 +917,7 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
+                        <Button variant="outline">Dupliquer</Button>
                           <Button onClick={() => navigateToCourses(sequence.id)}>Gérer</Button>
                         </CardFooter>
                       </Card>
@@ -1760,7 +1771,7 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
     <FormItem>
       <FormLabel className="flex items-center gap-2">
         <Image className="h-4 w-4" />
-        Images supplémentaires ({activeCourseLevel === 'basic' ? 'Basique' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
+        Images supplémentaires ({activeCourseLevel === 'avancee' ? 'Avancé' : activeCourseLevel === 'recommande' ? 'Recommandé' : 'Avancé'})
       </FormLabel>
       <FormControl>
         <div
@@ -1899,14 +1910,191 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
                           </div>
                         </CardContent>
                         <CardFooter className="flex justify-end space-x-2">
-                          <Button variant="outline">Exercices</Button>
-                          <Button>Modifier</Button>
+                          <Button variant="outline" onClick={() => navigateToExercices(course.id)}>Exercices</Button>
+                          <Button>Appercu</Button>
                         </CardFooter>
                       </Card>
                     ))}
                   </div>
                 </div>
               </TabsContent>
+              
+              {/* Exercices Tab */}
+              <TabsContent value="exercices">
+                              <div className="space-y-6">
+                                <div className="flex items-center justify-between flex-wrap gap-4">
+                                  <div className="flex gap-4 flex-wrap md:w-4/5">
+                                    <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Niveau collégial" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Niveau Collégial</SelectLabel>
+                                          {collegialLevels.map((level) => (
+                                            <SelectItem key={level.id} value={level.id}>{level.name}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                    
+                                    <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Semestre" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Semestre</SelectLabel>
+                                          {semesters.map((semester) => (
+                                            <SelectItem key={semester.id} value={semester.id}>{semester.name}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                    
+                                    <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Unité" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Unité</SelectLabel>
+                                          {units.map((unit) => (
+                                            <SelectItem key={unit.id} value={unit.id}>{unit.name}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                    
+                                    <Select value={selectedSequence} onValueChange={setSelectedSequence}>
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Séquence" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Séquence</SelectLabel>
+                                          {sequences.map((sequence) => (
+                                            <SelectItem key={sequence.id} value={sequence.id}>{sequence.name}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+
+                                    <Select value={selectedCours} onValueChange={setSelectedCours}>
+                                      <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Cours" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          <SelectLabel>Cours</SelectLabel>
+                                          {courses.map((cours) => (
+                                            <SelectItem key={cours.id} value={cours.id}>{cours.name}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+
+                                  <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" />
+                          <span>Générer exercice</span>
+                        </Button>
+                      </DialogTrigger>
+                      {/* <DialogContent className="w-full max-w-none max-h-screen overflow-y-auto rounded-none left-0 translate-x-0">
+                          <DialogHeader>
+                          <DialogTitle>Ajouter un nouveau cours</DialogTitle>
+                          <DialogDescription>
+                            Créez un nouveau cours pour la séquence sélectionnée.
+                          </DialogDescription>
+                        </DialogHeader>
+                        
+
+
+
+
+
+
+          
+                      </DialogContent> */}
+                    </Dialog>
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                  {filteredExercices.map((exercice) => (
+                                    <Card key={exercice.id} 
+                                    // className=
+                                    // {`border-l-4 ${
+                                    //   course.level === 'basic' ? 'border-l-green-500' : 
+                                    //   course.level === 'recommande' ? 'border-l-blue-500' : 'border-l-purple-500'
+                                    // }`}
+                                    >
+                                      <CardHeader>
+                                        <div className="flex justify-between items-center">
+                                          <CardTitle className=''>{exercice.name}</CardTitle>
+                                          {/* <span className={`text-xs px-2 py-1 rounded ${
+                                            course.level === 'basic' ? 'bg-green-100 text-green-800' : 
+                                            course.level === 'recommande' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'
+                                          }`}>
+                                            {course.level === 'basic' ? 'Basique' : 
+                                            course.level === 'recommande' ? 'Recommandé' : 'Avancé'}
+                                          </span> */}
+                                        </div>
+                                        <CardDescription>{selectedCoursDetails.name}</CardDescription>
+                                      </CardHeader>
+                                      <CardContent>
+                                        <div className="space-y-2 text-sm">
+                                          <div className="flex justify-between">
+                                            <span>Questions:</span>
+                                            <span>{exercice.questions}</span>
+                                          </div>
+                                          {/* <div className="flex justify-between">
+                                            <span>Durée:</span>
+                                            <span>1 heure</span>
+                                          </div> */}
+                                          
+                                            {/* <div className="flex items-center gap-2 text-primary">
+                                              <FileText className="h-4 w-4" />
+                                              <span>Trace de cours disponible</span>
+                                            </div> */}
+                                          
+                                        
+                                            {/* <div className="flex items-center gap-2 text-primary">
+                                              <Video className="h-4 w-4" />
+                                              <span>Vidéo explicative disponible</span>
+                                            </div> */}
+
+                                            {/* <div className="flex items-center gap-2 text-primary">
+                                              <Image className="h-4 w-4" />
+                                              <span>Image explicative disponible</span>
+                                            </div> */}
+                                          
+                                          <div className="pt-2">
+                                            <div className="flex justify-between text-sm mb-2">
+                                              <span>Progrès moyen des élèves:</span>
+                                              <span>{exercice.progression}</span>
+                                            </div>
+                                            <div className="w-full bg-secondary rounded-full h-2">
+                                              <div className={`rounded-full h-2 bg-green-500`} style={{ width: exercice.progression }} />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </CardContent>
+                                      <CardFooter className="flex justify-end space-x-2">
+                                        {/* <Button variant="outline">Exercices</Button> */}
+                                        <Button>Appercu</Button>
+                                      </CardFooter>
+                                    </Card>
+                                  ))}
+                                </div>
+                                
+                                </div>
+
+                               
+                              </div>
+              </TabsContent>
+
+
             </Tabs>
           </main>
         </div>
@@ -1916,3 +2104,5 @@ const selectedSequenceDetails = sequences.find(sequence => sequence.id === selec
 };
 
 export default Planning;
+
+
