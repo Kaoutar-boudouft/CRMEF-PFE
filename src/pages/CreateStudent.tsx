@@ -72,9 +72,20 @@ const CreateStudent = () => {
         {/* Sidebar Navigation */}
         <Sidebar className="border-r">
           <SidebarContent>
-            <div className="py-4 px-3">
-              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
-            </div>
+          <div className="py-4 px-5">
+                    <div className="flex items-center space-x-3">
+            <button 
+              // onClick={resetSelection} 
+              className="flex items-center focus:outline-none text-2xl font-bold"
+            >
+              <span className="text-black">اونلاين</span> <span className="text-yellow-500">قسمي</span>
+            </button>
+            <img 
+              src="/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png" 
+              alt="Graduation Cap Icon" 
+              className="w-14 h-14 rounded-full shadow-lg border-2 border-yellow-500"
+            />
+          </div>                    </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
               <SidebarGroupContent>

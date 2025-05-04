@@ -518,9 +518,20 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
         {/* Sidebar Navigation */}
         <Sidebar className="border-r">
           <SidebarContent>
-            <div className="py-4 px-3">
-              <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
-            </div>
+          <div className="py-4 px-5">
+                    <div className="flex items-center space-x-3">
+            <button 
+              // onClick={resetSelection} 
+              className="flex items-center focus:outline-none text-2xl font-bold"
+            >
+              <span className="text-black">اونلاين</span> <span className="text-yellow-500">قسمي</span>
+            </button>
+            <img 
+              src="/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png" 
+              alt="Graduation Cap Icon" 
+              className="w-14 h-14 rounded-full shadow-lg border-2 border-yellow-500"
+            />
+          </div>                    </div>
             <SidebarGroup>
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
               <SidebarGroupContent>
@@ -788,7 +799,7 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
                         </CardFooter>
 
                         <CardFooter className="flex justify-end space-x-2">
-                        { unit.testDiagno ? (<Button className='' >Appercu T.Diagnostique</Button>) : (<Button >Générer T.Diagnostique</Button>)}
+                        { unit.testDiagno ? (<Button onClick={() => navigate('/consult-diagnostique-Test')}  className='' >Appercu T.Diagnostique</Button>) : (<Button onClick={() => navigate('/generate-diagnostique-Test')}>Générer T.Diagnostique</Button>)}
                         </CardFooter>
                         
                       </Card>

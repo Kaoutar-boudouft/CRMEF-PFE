@@ -9,6 +9,9 @@ import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLocation } from 'react-router-dom';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 const Students = () => {
 
@@ -54,9 +57,20 @@ const Students = () => {
                 {/* Sidebar Navigation */}
                 <Sidebar className="border-r">
                   <SidebarContent>
-                    <div className="py-4 px-3">
-                      <h2 className="text-xl text-center font-bold text-primary">قسمي اونلاين</h2>
-                    </div>
+                  <div className="py-4 px-5">
+                    <div className="flex items-center space-x-3">
+            <button 
+              // onClick={resetSelection} 
+              className="flex items-center focus:outline-none text-2xl font-bold"
+            >
+              <span className="text-black">اونلاين</span> <span className="text-yellow-500">قسمي</span>
+            </button>
+            <img 
+              src="/graduation-cap-svg-icon-free-graduation-cap-icon-11553393846gq7rcr1qsx.png" 
+              alt="Graduation Cap Icon" 
+              className="w-14 h-14 rounded-full shadow-lg border-2 border-yellow-500"
+            />
+          </div>                    </div>
                     <SidebarGroup>
                       <SidebarGroupLabel>Navigation</SidebarGroupLabel>
                       <SidebarGroupContent>
@@ -100,6 +114,10 @@ const Students = () => {
             <FileCheck className="h-4 w-4" />
             <span>Ajouter nouvelle affectations</span>
           </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            <span>Vue Calendrier</span>
+            </TabsTrigger>
         </TabsList>
         
         <div className="flex gap-2">
@@ -291,6 +309,35 @@ const Students = () => {
           </div>
         </div>
       </TabsContent>
+
+      <TabsContent value="calendar">
+            <div className="rounded-lg border bg-card p-6 shadow-sm">
+              <h3 className="text-lg font-medium mb-4">Vue Calendrier</h3>
+              <div className="overflow-hidden">
+                <div className="h-auto">
+                {/* Intégration du composant FullCalendar */}
+                <FullCalendar
+                  plugins={[dayGridPlugin, interactionPlugin]}
+                  initialView="dayGridMonth"
+                  events={affectations.map((affectation) => ({
+                  title: `${affectation.Cours} - ${affectation.Classe}`,
+                  start: isNaN(new Date(affectation.Date).getTime()) ? null : new Date(affectation.Date).toISOString(), // Validate date before conversion
+                  }))}
+                  headerToolbar={{
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth,dayGridWeek,dayGridDay',
+                  }}
+                  editable={false}
+                  selectable={true}
+                  eventClick={(info) => {
+                  alert(`Affectation: ${info.event.title}`);
+                  }}
+                />
+                </div>
+              </div>
+            </div>
+            </TabsContent>
     </Tabs>
   </div>
 
