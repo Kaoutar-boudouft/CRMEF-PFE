@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CheckCircle, BookOpen, FileText, Play, Award } from 'lucide-react';
+import { ArrowLeft, CheckCircle, BookOpen, FileText, Play, Award, Layers } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from "@/hooks/use-toast";
 
@@ -30,6 +30,10 @@ const StudentCourse = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showLevelOptions, setShowLevelOptions] = useState(false);
+  
+  // Determine if the course level is already advanced
+  const isAdvancedLevel = course?.level === 'Avancé';
 
   useEffect(() => {
     // Mock API call to fetch course data
@@ -166,11 +170,32 @@ const StudentCourse = () => {
   };
   
   const finishCourse = () => {
+    if (isAdvancedLevel) {
+      // If already at advanced level, simply finish the course
+      toast({
+        title: "Cours terminé",
+        description: "Félicitations! Vous avez terminé ce cours au niveau avancé.",
+      });
+      navigate('/student-dashboard');
+    } else {
+      // Show level selection options
+      setShowLevelOptions(true);
+    }
+  };
+  
+  const selectNextLevel = (nextLevel: string) => {
     toast({
-      title: "Cours terminé",
-      description: "Félicitations! Vous avez terminé ce cours.",
+      title: "Niveau sélectionné",
+      description: `Vous allez continuer avec le niveau ${nextLevel}`,
     });
-    navigate('/student-dashboard');
+    
+    // In a real application, we would redirect to the appropriate course
+    // with the selected level or update the current course
+    
+    // For now, we'll simulate a delay then return to dashboard
+    setTimeout(() => {
+      navigate('/student-dashboard');
+    }, 1500);
   };
 
   const renderLessonContent = (lesson: LessonUnit) => {
@@ -271,110 +296,189 @@ const StudentCourse = () => {
       </header>
 
       <main className="max-w-4xl mx-auto p-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-2">{course.title}</h1>
-          <p className="text-gray-600 mb-4">{course.description}</p>
-          
-          <div className="mb-6">
-            <div className="flex justify-between mb-1">
-              <span className="text-sm font-medium">Progression du cours</span>
-              <span className="text-sm font-medium">{course.progress}%</span>
-            </div>
-            <Progress value={course.progress} className="h-2" />
-          </div>
-          
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md mb-6">
-            <div className="flex">
-              <Award className="h-5 w-5 text-blue-500 mr-2" />
-              <p className="text-sm text-blue-700">
-                <span className="font-semibold">Niveau recommandé:</span> {course.level}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="flex mb-6">
-          <div className="w-1/4 pr-4">
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <h3 className="font-medium text-lg mb-4">Modules du cours</h3>
-              <ul className="space-y-2">
-                {course.lessons.map((lesson, index) => (
-                  <li key={lesson.id}>
-                    <button 
-                      className={`w-full text-left px-3 py-2 rounded-md flex items-center text-sm ${
-                        index === currentLessonIndex 
-                          ? 'bg-blue-100 text-blue-700' 
-                          : 'hover:bg-gray-100'
-                      }`}
-                      onClick={() => setCurrentLessonIndex(index)}
-                    >
-                      {lesson.completed && <CheckCircle className="h-4 w-4 mr-2 text-green-500" />}
-                      {!lesson.completed && (
-                        lesson.type === 'text' ? <FileText className="h-4 w-4 mr-2 text-gray-500" /> :
-                        lesson.type === 'video' ? <Play className="h-4 w-4 mr-2 text-gray-500" /> :
-                        <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
-                      )}
-                      <span className="truncate">{lesson.title}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+        {showLevelOptions ? (
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-2xl font-bold mb-6 text-center">Choisir votre prochain niveau</h2>
+            <p className="text-center mb-8 text-gray-600">
+              Vous avez terminé ce cours au niveau {course.level}. Souhaitez-vous continuer à progresser?
+            </p>
+            
+            <div className="grid md:grid-cols-3 gap-4">
+              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Basique' ? 'border-green-500 border-2' : ''}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Layers className="h-5 w-5 mr-2 text-blue-500" />
+                    Niveau Basique
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Cours adaptés aux débutants avec concepts fondamentaux.</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    disabled={course.level === 'Basique'}
+                    onClick={() => selectNextLevel('Basique')}
+                  >
+                    {course.level === 'Basique' ? 'Niveau actuel' : 'Choisir'}
+                  </Button>
+                </CardContent>
+              </Card>
               
-              {/* Finish Course Button */}
-              <div className="mt-6">
-                <Button 
-                  onClick={finishCourse} 
-                  variant="secondary" 
-                  className="w-full bg-green-600 hover:bg-green-700 text-white"
-                >
-                  Terminer le cours
-                </Button>
+              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Recommandé' ? 'border-green-500 border-2' : ''}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Layers className="h-5 w-5 mr-2 text-yellow-500" />
+                    Niveau Recommandé
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Cours avec difficulté intermédiaire pour une progression équilibrée.</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    disabled={course.level === 'Recommandé'}
+                    onClick={() => selectNextLevel('Recommandé')}
+                  >
+                    {course.level === 'Recommandé' ? 'Niveau actuel' : 'Choisir'}
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Avancé' ? 'border-green-500 border-2' : ''}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Layers className="h-5 w-5 mr-2 text-red-500" />
+                    Niveau Avancé
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Cours avec concepts avancés et exercices plus complexes.</p>
+                  <Button 
+                    variant={course.level === 'Avancé' ? 'outline' : 'default'}
+                    className="w-full"
+                    disabled={course.level === 'Avancé'}
+                    onClick={() => selectNextLevel('Avancé')}
+                  >
+                    {course.level === 'Avancé' ? 'Niveau actuel' : 'Choisir'}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="mt-6 text-center">
+              <Button variant="ghost" onClick={() => navigate('/student-dashboard')}>
+                Retour au tableau de bord
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold mb-2">{course.title}</h1>
+              <p className="text-gray-600 mb-4">{course.description}</p>
+              
+              <div className="mb-6">
+                <div className="flex justify-between mb-1">
+                  <span className="text-sm font-medium">Progression du cours</span>
+                  <span className="text-sm font-medium">{course.progress}%</span>
+                </div>
+                <Progress value={course.progress} className="h-2" />
+              </div>
+              
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md mb-6">
+                <div className="flex">
+                  <Award className="h-5 w-5 text-blue-500 mr-2" />
+                  <p className="text-sm text-blue-700">
+                    <span className="font-semibold">Niveau actuel:</span> {course.level}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="w-3/4">
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center">
-                    {currentLesson.type === 'text' && <FileText className="h-5 w-5 mr-2" />}
-                    {currentLesson.type === 'video' && <Play className="h-5 w-5 mr-2" />}
-                    {currentLesson.type === 'quiz' && <BookOpen className="h-5 w-5 mr-2" />}
-                    {currentLesson.title}
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {renderLessonContent(currentLesson)}
-                
-                {currentLesson.type !== 'quiz' && (
-                  <div className="mt-8">
-                    <Button onClick={markLessonComplete} disabled={currentLesson.completed}>
-                      {currentLesson.completed ? 'Déjà terminé' : 'Marquer comme terminé'}
+            
+            <div className="flex mb-6">
+              <div className="w-1/4 pr-4">
+                <div className="bg-white rounded-lg shadow-sm p-4">
+                  <h3 className="font-medium text-lg mb-4">Modules du cours</h3>
+                  <ul className="space-y-2">
+                    {course.lessons.map((lesson, index) => (
+                      <li key={lesson.id}>
+                        <button 
+                          className={`w-full text-left px-3 py-2 rounded-md flex items-center text-sm ${
+                            index === currentLessonIndex 
+                              ? 'bg-blue-100 text-blue-700' 
+                              : 'hover:bg-gray-100'
+                          }`}
+                          onClick={() => setCurrentLessonIndex(index)}
+                        >
+                          {lesson.completed && <CheckCircle className="h-4 w-4 mr-2 text-green-500" />}
+                          {!lesson.completed && (
+                            lesson.type === 'text' ? <FileText className="h-4 w-4 mr-2 text-gray-500" /> :
+                            lesson.type === 'video' ? <Play className="h-4 w-4 mr-2 text-gray-500" /> :
+                            <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
+                          )}
+                          <span className="truncate">{lesson.title}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  {/* Finish Course Button */}
+                  <div className="mt-6">
+                    <Button 
+                      onClick={finishCourse} 
+                      variant="secondary" 
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      {isAdvancedLevel ? 'Terminer le cours' : 'Terminer et choisir niveau'}
                     </Button>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-            
-            <div className="flex justify-between mt-4">
-              <Button 
-                variant="outline" 
-                onClick={handlePreviousLesson}
-                disabled={currentLessonIndex === 0}
-              >
-                Leçon précédente
-              </Button>
-              <Button 
-                onClick={handleNextLesson}
-                disabled={currentLessonIndex === course.lessons.length - 1}
-              >
-                Leçon suivante
-              </Button>
+                </div>
+              </div>
+              
+              <div className="w-3/4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <div className="flex items-center">
+                        {currentLesson.type === 'text' && <FileText className="h-5 w-5 mr-2" />}
+                        {currentLesson.type === 'video' && <Play className="h-5 w-5 mr-2" />}
+                        {currentLesson.type === 'quiz' && <BookOpen className="h-5 w-5 mr-2" />}
+                        {currentLesson.title}
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {renderLessonContent(currentLesson)}
+                    
+                    {currentLesson.type !== 'quiz' && (
+                      <div className="mt-8">
+                        <Button onClick={markLessonComplete} disabled={currentLesson.completed}>
+                          {currentLesson.completed ? 'Déjà terminé' : 'Marquer comme terminé'}
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <div className="flex justify-between mt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={handlePreviousLesson}
+                    disabled={currentLessonIndex === 0}
+                  >
+                    Leçon précédente
+                  </Button>
+                  <Button 
+                    onClick={handleNextLesson}
+                    disabled={currentLessonIndex === course.lessons.length - 1}
+                  >
+                    Leçon suivante
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </main>
       
       <footer className="bg-black text-white py-6 mt-8">
