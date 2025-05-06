@@ -136,7 +136,7 @@ const HomePage: React.FC = () => {
             </div>
             <div className="text-center md:text-right">
               <p className="text-sm text-gray-300">
-                © 2025 AdaptiLearn. All rights reserved.
+                © 2025 Tous droits réservés.
               </p>
             </div>
           </div>
