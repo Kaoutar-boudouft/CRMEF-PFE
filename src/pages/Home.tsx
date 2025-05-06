@@ -88,7 +88,7 @@ const HomePage: React.FC = () => {
             <UserTypeCard
               type="teacher"
               title="ENSEIGNANT"
-              imageUrl="\Coding workshop-bro.png"
+              imageUrl="\Codingworkshop-bro.png"
               description="Commencer votre parcours d'enseignement"
               onSelect={() => setSelectedUserType('teacher')}
             />
