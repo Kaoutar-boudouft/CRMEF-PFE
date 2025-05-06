@@ -25,6 +25,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Question {
   question: string;
@@ -212,8 +215,20 @@ export default function ConsultDiagnosticTest() {
   //   setQuestions(updated);
   // };
 
+  const navigate = useNavigate();
+
+
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6">
+      <header className="border-b px-6 py-3 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" onClick={() => navigate("/planning")}>
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Retour
+                    </Button>
+                    <h1 className="text-2xl font-bold">Ajouter un Étudiant</h1>
+                  </div>
+                </header>
       <h1 className="text-2xl font-bold">Test Diagnostique – Système informatique</h1>
 
       {/* <div>

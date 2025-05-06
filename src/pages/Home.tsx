@@ -88,14 +88,14 @@ const HomePage: React.FC = () => {
             <UserTypeCard
               type="teacher"
               title="ENSEIGNANT"
-              imageUrl="public\Coding workshop-bro.png"
+              imageUrl="\Coding workshop-bro.png"
               description="Commencer votre parcours d'enseignement"
               onSelect={() => setSelectedUserType('teacher')}
             />
             <UserTypeCard
               type="student"
               title="APPRENANT"
-              imageUrl="public\Dictionary-pana.png"
+              imageUrl="\Dictionary-pana.png"
               description="Commencer votre parcours d'apprentissage"
               onSelect={() => setSelectedUserType('student')}
             />
@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="flex flex-col items-center">
               <img
-                src="public\Image1.jpg"
+                src="\Image1.jpg"
                 alt="Illustration"
                 className="w-52 h-auto"
               />
