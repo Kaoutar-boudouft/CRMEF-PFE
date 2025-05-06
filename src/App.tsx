@@ -12,10 +12,9 @@ import Planning from "./pages/Planning";
 import GenerateDiagnostiqueTest from "./pages/GenerateTestDiagnostique";
 import ConsultDiagnostiqueTest from "./pages/ConsultTestDiagnostique";
 import Affectation from "./pages/Affectation";
-import CreateStudent from "./pages/CreateStudent";
-import CreateClass from "./pages/CreateClass";
+import StudentDashboard from "./pages/StudentDashboard";
+import StudentDiagnosticTest from "./pages/StudentDiagnosticTest";
 import NotFound from "./pages/NotFound";
-
 
 const queryClient = new QueryClient();
 
@@ -34,8 +33,9 @@ const App = () => (
           <Route path="/generate-diagnostique-Test" element={<GenerateDiagnostiqueTest />} />
           <Route path="/consult-diagnostique-Test" element={<ConsultDiagnostiqueTest />} />
           <Route path="/affectation" element={<Affectation />} />
-          <Route path="/create-student" element={<CreateStudent />} />
-          <Route path="/create-class" element={<CreateClass />} />
+          {/* Student Routes */}
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/student-diagnostique-test/:courseId" element={<StudentDiagnosticTest />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

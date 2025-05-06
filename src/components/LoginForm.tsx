@@ -1,24 +1,50 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Lock } from 'lucide-react';
 import Button from './Button';
+import { toast } from "@/hooks/use-toast";
 
 interface LoginFormProps {
   userType: 'teacher' | 'student';
   onLogin: (email: string, password: string) => void;
 }
 
-  const LoginForm: React.FC<LoginFormProps> = ({ userType, onLogin }) => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-  
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      onLogin(email, password);
-    };
-  
-    return (
+const LoginForm: React.FC<LoginFormProps> = ({ userType, onLogin }) => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onLogin(email, password);
+    
+    // Simple mock authentication
+    if (email && password) {
+      // Navigate to the appropriate dashboard based on user type
+      if (userType === 'teacher') {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans votre espace enseignant",
+        });
+        navigate('/dashboard');
+      } else {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans votre espace apprenant",
+        });
+        navigate('/student-dashboard');
+      }
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: "Veuillez vérifier vos informations de connexion",
+      });
+    }
+  };
+
+  return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md animate-fadeIn">
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-navy-100 mb-4">
@@ -57,7 +83,7 @@ interface LoginFormProps {
         
         <div className="mb-6">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-          Mot de passe
+            Mot de passe
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -75,15 +101,19 @@ interface LoginFormProps {
           </div>
         </div>
         
-        <Button type="submit" variant="primary" className="bg-black text-white hover:bg-yellow-500 hover:text-black"
- fullWidth  onClick={() => navigate('/dashboard')}>
+        <Button 
+          type="submit" 
+          variant="primary" 
+          className="bg-black text-white hover:bg-yellow-500 hover:text-black"
+          fullWidth
+        >
           Se connecter
         </Button>
       </form>
       
       <div className="mt-4 text-center">
         <a href="#" className="text-sm text-navy-600 hover:text-navy-800 transition-colors">
-        Mot de passe oublié ?
+          Mot de passe oublié ?
         </a>
       </div>
     </div>
@@ -91,5 +121,3 @@ interface LoginFormProps {
 };
 
 export default LoginForm;
-
-
