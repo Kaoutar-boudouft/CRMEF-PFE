@@ -164,6 +164,14 @@ const StudentCourse = () => {
   const returnToDashboard = () => {
     navigate('/student-dashboard');
   };
+  
+  const finishCourse = () => {
+    toast({
+      title: "Cours terminé",
+      description: "Félicitations! Vous avez terminé ce cours.",
+    });
+    navigate('/student-dashboard');
+  };
 
   const renderLessonContent = (lesson: LessonUnit) => {
     switch (lesson.type) {
@@ -311,6 +319,17 @@ const StudentCourse = () => {
                   </li>
                 ))}
               </ul>
+              
+              {/* Finish Course Button */}
+              <div className="mt-6">
+                <Button 
+                  onClick={finishCourse} 
+                  variant="secondary" 
+                  className="w-full bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Terminer le cours
+                </Button>
+              </div>
             </div>
           </div>
           
