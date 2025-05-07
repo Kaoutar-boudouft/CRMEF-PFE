@@ -1,13 +1,27 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Book, FileCheck, TestTube, Medal } from 'lucide-react';
+import { Book, FileCheck, TestTube, Medal, User } from 'lucide-react';
+import { 
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
+  const [studentName, setStudentName] = useState('Mohamed'); // Example student name, could be fetched from API/context
   
   // Mock data for student progress
   const courses = [
@@ -48,15 +62,46 @@ const StudentDashboard = () => {
               className="w-14 h-14 rounded-full shadow-lg border-2 border-yellow-500"
             />
           </div>
-          <Button variant="ghost" onClick={() => navigate('/')}>
-            Déconnexion
-          </Button>
+          
+          <div className="flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10 border-2 border-primary">
+                    <AvatarImage src="" alt={studentName} />
+                    <AvatarFallback className="bg-primary text-primary-foreground">{studentName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{studentName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">etudiant@qismi.ma</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => console.log('Profile settings')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => console.log('View progress')}>
+                  <Medal className="mr-2 h-4 w-4" />
+                  <span>Ma progression</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/')}>
+                  <span>Déconnexion</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-navy-900 mb-2">Bienvenue, Apprenant</h1>
+          <h1 className="text-3xl font-bold text-navy-900 mb-2">Bienvenue, {studentName}</h1>
           <p className="text-gray-600">Suivez votre progression et accédez à vos unités d'apprentissage</p>
         </div>
 
