@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 // Importez les composants de la barre latérale
-import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '../components/ui/sidebar';
+import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 // Importez les icônes nécessaires (par exemple, Link2Icon pour Affectations)
 import { LayoutDashboard, Users, GraduationCap, Calendar, Link2Icon, BookText, BarChart, PieChart, FileCheck } from 'lucide-react';
 // Importez votre hook de navigation (par exemple, useNavigate de react-router-dom)

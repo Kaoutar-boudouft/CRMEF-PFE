@@ -5,16 +5,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Home";
-import Dashboard from "./pages/Dashboard";
-import Students from "./pages/Students";
-import Classes from "./pages/Classes";
-import Planning from "./pages/Planning";
-import GenerateDiagnostiqueTest from "./pages/GenerateTestDiagnostique";
-import ConsultDiagnostiqueTest from "./pages/ConsultTestDiagnostique";
-import Affectation from "./pages/Affectation";
-import StudentDashboard from "./pages/StudentDashboard";
-import StudentDiagnosticTest from "./pages/StudentDiagnosticTest";
-import StudentCourse from "./pages/StudentCourse";
+import Dashboard from "./pages/Teacher/Dashboard";
+import Students from "./pages/Teacher/Students";
+import Classes from "./pages/Teacher/Classes";
+import Planning from "./pages/Teacher/Planning";
+import GenerateDiagnostiqueTest from "./pages/Teacher/GenerateTestDiagnostique";
+import ConsultDiagnostiqueTest from "./pages/Teacher/ConsultTestDiagnostique";
+import Affectation from "./pages/Teacher/Affectation";
+import CreateStudent from "./pages/Teacher/CreateStudent";
+import CreateClass from "./pages/Teacher/CreateClass";
+import StudentDashboard from "./pages/Student/StudentDashboard";
+import StudentDiagnosticTest from "./pages/Student/StudentDiagnosticTest";
+import StudentCourse from "./pages/Student/StudentCourse";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
           <Route path="/generate-diagnostique-Test" element={<GenerateDiagnostiqueTest />} />
           <Route path="/consult-diagnostique-Test" element={<ConsultDiagnostiqueTest />} />
           <Route path="/affectation" element={<Affectation />} />
+          <Route path="/create-student" element={<CreateStudent />} />
+          <Route path="/create-class" element={<CreateClass />} />
           {/* Student Routes */}
           <Route path="/student-dashboard" element={<StudentDashboard />} />
           <Route path="/student-diagnostique-test/:courseId" element={<StudentDiagnosticTest />} />
