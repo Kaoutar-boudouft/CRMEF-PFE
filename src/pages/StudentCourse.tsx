@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle, BookOpen, FileText, Play, Award, Layers } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface LessonUnit {
   id: number;
@@ -34,7 +35,7 @@ const StudentCourse = () => {
   
   // Get the level from URL query parameters if available
   const queryParams = new URLSearchParams(location.search);
-  const levelFromUrl = queryParams.get('level');
+  const levelFromUrl = queryParams.get('level') || 'Recommandé';
   
   // Determine if the course level is already advanced
   const isAdvancedLevel = course?.level === 'Avancé';
@@ -48,7 +49,7 @@ const StudentCourse = () => {
       setLoading(true);
       
       // Get level from URL or use default
-      const courseLevel = levelFromUrl || 'Recommandé';
+      const courseLevel = levelFromUrl;
       
       // Simulated data - in a real app, this would come from an API
       const mockCourse: Course = {
@@ -73,6 +74,7 @@ const StudentCourse = () => {
                 <li>Logiciel (software) : système d'exploitation, applications, etc.</li>
               </ul>
               <p>Ces éléments travaillent ensemble pour exécuter des programmes et traiter des données.</p>
+              <p class="font-bold">Niveau: ${courseLevel}</p>
             `
           },
           {
@@ -97,6 +99,7 @@ const StudentCourse = () => {
                 <li>Linux : système open-source avec de nombreuses distributions</li>
               </ul>
               <p>Chacun offre différentes interfaces et fonctionnalités pour l'utilisateur.</p>
+              <p class="font-bold">Niveau: ${courseLevel}</p>
             `
           },
           {
@@ -201,6 +204,17 @@ const StudentCourse = () => {
     
     // Directly navigate to the same course with the selected level as a URL parameter
     navigate(`/student-course/${courseId}?level=${nextLevel}`);
+    setShowLevelOptions(false);
+  };
+
+  const switchLevel = (level: string) => {
+    if (level !== course?.level) {
+      toast({
+        title: "Changement de niveau",
+        description: `Vous passez au niveau ${level}`,
+      });
+      navigate(`/student-course/${courseId}?level=${level}`);
+    }
   };
 
   const renderLessonContent = (lesson: LessonUnit) => {
@@ -390,13 +404,32 @@ const StudentCourse = () => {
                 <Progress value={course.progress} className="h-2" />
               </div>
               
-              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md mb-6">
-                <div className="flex">
-                  <Award className="h-5 w-5 text-blue-500 mr-2" />
-                  <p className="text-sm text-blue-700">
-                    <span className="font-semibold">Niveau actuel:</span> {course.level}
-                  </p>
-                </div>
+              {/* Level Selector Tabs */}
+              <div className="mb-6">
+                <Tabs defaultValue={course.level} className="w-full">
+                  <TabsList className="grid grid-cols-3 mb-2">
+                    <TabsTrigger value="Basique" onClick={() => switchLevel("Basique")}>
+                      <Layers className="h-4 w-4 mr-1 text-blue-500" />
+                      Basique
+                    </TabsTrigger>
+                    <TabsTrigger value="Recommandé" onClick={() => switchLevel("Recommandé")}>
+                      <Layers className="h-4 w-4 mr-1 text-yellow-500" />
+                      Recommandé
+                    </TabsTrigger>
+                    <TabsTrigger value="Avancé" onClick={() => switchLevel("Avancé")}>
+                      <Layers className="h-4 w-4 mr-1 text-red-500" />
+                      Avancé
+                    </TabsTrigger>
+                  </TabsList>
+                  <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md">
+                    <div className="flex">
+                      <Award className="h-5 w-5 text-blue-500 mr-2" />
+                      <p className="text-sm text-blue-700">
+                        <span className="font-semibold">Niveau actuel:</span> {course.level}
+                      </p>
+                    </div>
+                  </div>
+                </Tabs>
               </div>
             </div>
             
@@ -427,7 +460,7 @@ const StudentCourse = () => {
                     ))}
                   </ul>
                   
-                  {/* Finish Course Button - now disabled until all modules are completed */}
+                  {/* Finish Course Button - disabled until all modules are completed */}
                   <div className="mt-6">
                     <Button 
                       onClick={finishCourse} 
