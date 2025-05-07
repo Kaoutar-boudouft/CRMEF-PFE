@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, CheckCircle, BookOpen, FileText, Play, Award, Layers } from 'lucide-react';
@@ -26,10 +26,15 @@ interface Course {
 const StudentCourse = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [showLevelOptions, setShowLevelOptions] = useState(false);
+  
+  // Get the level from URL query parameters if available
+  const queryParams = new URLSearchParams(location.search);
+  const levelFromUrl = queryParams.get('level');
   
   // Determine if the course level is already advanced
   const isAdvancedLevel = course?.level === 'Avancé';
@@ -42,6 +47,9 @@ const StudentCourse = () => {
     const fetchCourse = () => {
       setLoading(true);
       
+      // Get level from URL or use default
+      const courseLevel = levelFromUrl || 'Recommandé';
+      
       // Simulated data - in a real app, this would come from an API
       const mockCourse: Course = {
         id: Number(courseId),
@@ -49,7 +57,7 @@ const StudentCourse = () => {
                courseId === '2' ? 'Programmation avec Logo' : 'Traitement de texte',
         description: 'Apprenez les concepts fondamentaux de l\'informatique pour développer vos compétences.',
         progress: 60,
-        level: 'Recommandé',
+        level: courseLevel, // Use the level from URL or default
         lessons: [
           {
             id: 1,
@@ -129,7 +137,7 @@ const StudentCourse = () => {
     };
     
     fetchCourse();
-  }, [courseId]);
+  }, [courseId, levelFromUrl]); // Add levelFromUrl as dependency to reload when it changes
 
   const handleNextLesson = () => {
     if (course && currentLessonIndex < course.lessons.length - 1) {
@@ -191,12 +199,8 @@ const StudentCourse = () => {
       description: `Vous allez continuer avec le niveau ${nextLevel}`,
     });
     
-    // Simulate redirecting to the next level course
-    // In a real app, you would navigate to the appropriate course with the selected level
-    setTimeout(() => {
-      // Redirect to the same course but with a different level
-      navigate(`/student-course/${courseId}?level=${nextLevel}`);
-    }, 1000);
+    // Directly navigate to the same course with the selected level as a URL parameter
+    navigate(`/student-course/${courseId}?level=${nextLevel}`);
   };
 
   const renderLessonContent = (lesson: LessonUnit) => {
