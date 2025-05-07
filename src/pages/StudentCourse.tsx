@@ -208,6 +208,15 @@ const StudentCourse = () => {
   };
 
   const switchLevel = (level: string) => {
+    // Don't switch if the level is not allowed
+    if (!isLevelAllowed(level)) {
+      toast({
+        title: "Niveau non disponible",
+        description: `Vous devez d'abord terminer le niveau ${course?.level} pour accéder au niveau ${level}`,
+      });
+      return;
+    }
+    
     if (level !== course?.level) {
       toast({
         title: "Changement de niveau",
@@ -265,6 +274,32 @@ const StudentCourse = () => {
       default:
         return <p>Contenu non disponible</p>;
     }
+  };
+
+  // Function to check if a level is allowed based on current level completion
+  const isLevelAllowed = (targetLevel: string) => {
+    // Always allow moving to lower levels
+    if (targetLevel === 'Basique') return true;
+    
+    // For Recommandé level, only allow if current level is Basique and all modules are completed
+    // or if current level is already Recommandé or Avancé
+    if (targetLevel === 'Recommandé') {
+      if (course?.level === 'Basique') {
+        return areAllModulesCompleted;
+      }
+      return course?.level === 'Recommandé' || course?.level === 'Avancé';
+    }
+    
+    // For Avancé level, only allow if current level is Recommandé and all modules are completed
+    // or if current level is already Avancé
+    if (targetLevel === 'Avancé') {
+      if (course?.level === 'Recommandé') {
+        return areAllModulesCompleted;
+      }
+      return course?.level === 'Avancé';
+    }
+    
+    return false;
   };
 
   if (loading) {
@@ -408,25 +443,49 @@ const StudentCourse = () => {
               <div className="mb-6">
                 <Tabs defaultValue={course.level} className="w-full">
                   <TabsList className="grid grid-cols-3 mb-2">
-                    <TabsTrigger value="Basique" onClick={() => switchLevel("Basique")}>
+                    <TabsTrigger 
+                      value="Basique" 
+                      onClick={() => switchLevel("Basique")}
+                    >
                       <Layers className="h-4 w-4 mr-1 text-blue-500" />
                       Basique
                     </TabsTrigger>
-                    <TabsTrigger value="Recommandé" onClick={() => switchLevel("Recommandé")}>
+                    <TabsTrigger 
+                      value="Recommandé" 
+                      onClick={() => switchLevel("Recommandé")}
+                      disabled={!isLevelAllowed('Recommandé')}
+                    >
                       <Layers className="h-4 w-4 mr-1 text-yellow-500" />
                       Recommandé
+                      {!isLevelAllowed('Recommandé') && course?.level === 'Basique' && (
+                        <span className="ml-1 text-xs">🔒</span>
+                      )}
                     </TabsTrigger>
-                    <TabsTrigger value="Avancé" onClick={() => switchLevel("Avancé")}>
+                    <TabsTrigger 
+                      value="Avancé" 
+                      onClick={() => switchLevel("Avancé")}
+                      disabled={!isLevelAllowed('Avancé')}
+                    >
                       <Layers className="h-4 w-4 mr-1 text-red-500" />
                       Avancé
+                      {!isLevelAllowed('Avancé') && course?.level !== 'Avancé' && (
+                        <span className="ml-1 text-xs">🔒</span>
+                      )}
                     </TabsTrigger>
                   </TabsList>
                   <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md">
-                    <div className="flex">
-                      <Award className="h-5 w-5 text-blue-500 mr-2" />
-                      <p className="text-sm text-blue-700">
-                        <span className="font-semibold">Niveau actuel:</span> {course.level}
-                      </p>
+                    <div className="flex flex-col">
+                      <div className="flex items-center">
+                        <Award className="h-5 w-5 text-blue-500 mr-2" />
+                        <p className="text-sm text-blue-700">
+                          <span className="font-semibold">Niveau actuel:</span> {course.level}
+                        </p>
+                      </div>
+                      {!areAllModulesCompleted && course.level !== 'Avancé' && (
+                        <p className="text-xs text-blue-600 mt-1 ml-7">
+                          Terminez tous les modules pour débloquer le niveau suivant
+                        </p>
+                      )}
                     </div>
                   </div>
                 </Tabs>
