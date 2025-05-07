@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +33,9 @@ const StudentCourse = () => {
   
   // Determine if the course level is already advanced
   const isAdvancedLevel = course?.level === 'Avancé';
+  
+  // Check if all modules are completed
+  const areAllModulesCompleted = course?.lessons.every(lesson => lesson.completed) || false;
 
   useEffect(() => {
     // Mock API call to fetch course data
@@ -79,7 +81,7 @@ const StudentCourse = () => {
             completed: false,
             content: `
               <h2>Les systèmes d'exploitation</h2>
-              <p>Le système d'exploitation est le logiciel principal d'un ordinateur qui gère les ressources matérielles et les applications.</p>
+              <p>Le système d'exploitation est le logiciel principal d'un ordinateur qui gère les ressources matérielles et logicielles de l'ordinateur.</p>
               <p>Les principaux systèmes d'exploitation sont :</p>
               <ul>
                 <li>Windows : développé par Microsoft</li>
@@ -189,13 +191,12 @@ const StudentCourse = () => {
       description: `Vous allez continuer avec le niveau ${nextLevel}`,
     });
     
-    // In a real application, we would redirect to the appropriate course
-    // with the selected level or update the current course
-    
-    // For now, we'll simulate a delay then return to dashboard
+    // Simulate redirecting to the next level course
+    // In a real app, you would navigate to the appropriate course with the selected level
     setTimeout(() => {
-      navigate('/student-dashboard');
-    }, 1500);
+      // Redirect to the same course but with a different level
+      navigate(`/student-course/${courseId}?level=${nextLevel}`);
+    }, 1000);
   };
 
   const renderLessonContent = (lesson: LessonUnit) => {
@@ -314,7 +315,7 @@ const StudentCourse = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Cours adaptés aux débutants avec concepts fondamentaux.</p>
                   <Button 
-                    variant="outline" 
+                    variant={course.level === 'Basique' ? 'outline' : 'default'}
                     className="w-full"
                     disabled={course.level === 'Basique'}
                     onClick={() => selectNextLevel('Basique')}
@@ -334,7 +335,7 @@ const StudentCourse = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Cours avec difficulté intermédiaire pour une progression équilibrée.</p>
                   <Button 
-                    variant="outline" 
+                    variant={course.level === 'Recommandé' ? 'outline' : 'default'}
                     className="w-full"
                     disabled={course.level === 'Recommandé'}
                     onClick={() => selectNextLevel('Recommandé')}
@@ -422,15 +423,21 @@ const StudentCourse = () => {
                     ))}
                   </ul>
                   
-                  {/* Finish Course Button */}
+                  {/* Finish Course Button - now disabled until all modules are completed */}
                   <div className="mt-6">
                     <Button 
                       onClick={finishCourse} 
                       variant="secondary" 
                       className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      disabled={!areAllModulesCompleted}
                     >
                       {isAdvancedLevel ? 'Terminer le cours' : 'Terminer et choisir niveau'}
                     </Button>
+                    {!areAllModulesCompleted && (
+                      <p className="text-xs text-gray-500 mt-2 text-center">
+                        Terminez tous les modules pour continuer
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
