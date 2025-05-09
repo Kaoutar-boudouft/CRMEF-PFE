@@ -10,9 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface LessonUnit {
   id: number;
   title: string;
-  type: 'video' | 'text' | 'quiz';
+  type: 'video' | 'text' | 'quiz' | 'image';
   completed: boolean;
   content: string;
+  lien?: string; // Optional property for image lessons
 }
 
 interface CourseContent {
@@ -65,49 +66,37 @@ const StudentCourse = () => {
             lessons: [
               {
                 id: 1,
-                title: 'Introduction aux systèmes informatiques',
+                title: 'Introduction',
                 type: 'text',
                 completed: true,
                 content: `
-                  <h2>Introduction aux systèmes informatiques</h2>
-                  <p>Un système informatique est un ensemble de composants électroniques et logiciels qui permettent de traiter l'information.</p>
-                  <p>Il est composé de :</p>
+                  <h2 class="font-bold">Définition simple :</h2>
+                  <p>Le système d’exploitation est un logiciel de base qui fait fonctionner l’ordinateur.</p>
+                  <p class="font-bold mt-2">Exemple imagé :</p>
                   <ul>
-                    <li>Matériel (hardware) : processeur, mémoire, disque dur, etc.</li>
-                    <li>Logiciel (software) : système d'exploitation, applications, etc.</li>
+                    <li>Il est comme un chef d’orchestre qui fait marcher les logiciel d'applications comme (jeux, Word, etc.) et le matériel comme (clavier, Souris, Unité centrale).</li>
                   </ul>
-                  <p>Ces éléments travaillent ensemble pour exécuter des programmes et traiter des données.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
                 `
               },
               {
                 id: 2,
-                title: 'Composants matériels d\'un ordinateur',
-                type: 'video',
+                title: 'Exemples',
+                type: 'image',
                 completed: true,
-                content: 'https://example.com/video-placeholder'
+                content: "<p class=' mb-4'>Il existe plusieurs types de système d'exploitation par exemple on a :</p>",
+                lien: '/sistema-operativo-5.jpg'
               },
               {
                 id: 3,
-                title: 'Les différents systèmes d\'exploitation',
-                type: 'text',
+                title: 'Vidéo explicative',
+                type: 'video',
                 completed: false,
-                content: `
-                  <h2>Les systèmes d'exploitation</h2>
-                  <p>Le système d'exploitation est le logiciel principal d'un ordinateur qui gère les ressources matérielles et logicielles de l'ordinateur.</p>
-                  <p>Les principaux systèmes d'exploitation sont :</p>
-                  <ul>
-                    <li>Windows : développé par Microsoft</li>
-                    <li>macOS : développé par Apple</li>
-                    <li>Linux : système open-source avec de nombreuses distributions</li>
-                  </ul>
-                  <p>Chacun offre différentes interfaces et fonctionnalités pour l'utilisateur.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
-                `
+                content: ``,
+                lien:"https://www.youtube.com/embed/AcZ87MTiXr4?si=zN_JkDXI-4MKxNX4"
               },
               {
                 id: 4,
-                title: 'Quiz sur les bases des systèmes informatiques',
+                title: 'Quiz',
                 type: 'quiz',
                 completed: false,
                 content: JSON.stringify({
@@ -115,23 +104,23 @@ const StudentCourse = () => {
                     {
                       question: "Qu'est-ce qu'un système d'exploitation ?",
                       options: [
-                        "Un logiciel de traitement de texte",
-                        "Un programme qui gère les ressources matérielles et logicielles de l'ordinateur",
-                        "Un composant matériel de l'ordinateur",
-                        "Une application de navigation web"
+                        "Un jeu installé sur l'ordinateur",
+                        "Un logiciel de base qui permet de gérer l’ordinateur",
+                        "Une page internet",
+                        "Une imprimante"
                       ],
                       answer: 1
                     },
                     {
-                      question: "Quel élément n'est PAS un périphérique d'entrée ?",
+                      question: "Lequel de ces exemples est un système d'exploitation ?",
                       options: [
-                        "Clavier",
-                        "Souris",
-                        "Écran",
-                        "Microphone"
+                        "Google Chrome",
+                        "Instagram",
+                        "Windows",
+                        "Clavier"
                       ],
                       answer: 2
-                    }
+                    },
                   ]
                 })
               }
@@ -142,73 +131,68 @@ const StudentCourse = () => {
             lessons: [
               {
                 id: 1,
-                title: 'Introduction aux systèmes informatiques (Niveau Recommandé)',
+                title: 'Introduction',
                 type: 'text',
                 completed: false,
                 content: `
-                  <h2>Introduction aux systèmes informatiques</h2>
-                  <p>Un système informatique est un ensemble de composants électroniques et logiciels sophistiqués qui permettent de traiter l'information de manière efficace et structurée.</p>
-                  <p>Il est composé de :</p>
+                  <h2 class="font-bold">Définition :</h2>
+                  <p>Le système d’exploitation est un logiciel qui permet de gérer les composants de l’ordinateur (écran, clavier, fichiers, etc.) et d’exécuter d’autres logiciels.</p>
+                  <p class="font-bold mt-2">Fonctions principales :</p>
                   <ul>
-                    <li>Matériel (hardware) : processeur, mémoire RAM et ROM, disque dur, carte mère, etc.</li>
-                    <li>Logiciel (software) : système d'exploitation, applications système et utilisateur, etc.</li>
-                    <li>Périphériques d'entrée/sortie : permettant l'interaction avec l'utilisateur</li>
+                    <li>Gérer le matériel (clavier, écran, souris…).</li>
+                    <li>Lancer et fermer les programmes.</li>
+                    <li>Organiser les fichiers et dossiers.</li>
                   </ul>
-                  <p>Ces éléments travaillent de concert pour exécuter des programmes complexes et traiter des données variées.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
-                `
+                  <p class="font-bold mt-2">Les systèmes d’exploitations ne sont pas que sur les ordinateurs :</p>
+                  <ul>
+                      <li>PC : Windows, macOS, Linux.</li>
+                      <li>Téléphones : Android, iOS.</li>
+                      <li>Tablettes / Smart TV / Montres connectées.</li>
+                    </ul>
+                  `
               },
               {
                 id: 2,
-                title: 'Composants matériels d\'un ordinateur moderne',
-                type: 'video',
-                completed: false,
-                content: 'https://example.com/video-recommended-hardware'
+                title: 'Exemples',
+                type: 'image',
+                completed: true,
+                content: "<p class=' mb-4'>Il existe plusieurs types de système d'exploitation par exemple on a :</p>",
+                lien: '/ser.png'
               },
               {
                 id: 3,
-                title: 'Architecture des systèmes d\'exploitation modernes',
-                type: 'text',
+                title: 'Vidéo explicative',
+                type: 'video',
                 completed: false,
-                content: `
-                  <h2>Architecture des systèmes d'exploitation</h2>
-                  <p>Le système d'exploitation est l'ensemble des programmes qui gèrent les ressources matérielles et logicielles de l'ordinateur.</p>
-                  <p>Architecture en couches des principaux systèmes d'exploitation :</p>
-                  <ul>
-                    <li>Windows : noyau NT, sous-systèmes et services système</li>
-                    <li>macOS : basé sur Darwin, avec un noyau XNU et des technologies propriétaires</li>
-                    <li>Linux : noyau monolithique avec modules chargeables, distributions variées</li>
-                  </ul>
-                  <p>Chaque système propose différentes interfaces de programmation et utilisateur.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
-                `
+                content: ``,
+                lien:"https://www.youtube.com/embed/lqVvAnxEkag?si=k_T4SJnVWVjrDndF"
               },
               {
                 id: 4,
-                title: 'Quiz intermédiaire sur les systèmes d\'exploitation',
+                title: 'Quiz',
                 type: 'quiz',
                 completed: false,
                 content: JSON.stringify({
                   questions: [
                     {
-                      question: "Quelle est la fonction principale du noyau d'un système d'exploitation ?",
+                      question: "Parmi ces appareils, lequel a besoin d’un système d’exploitation pour fonctionner ?",
                       options: [
-                        "Gérer l'interface utilisateur",
-                        "Servir d'intermédiaire entre le matériel et les logiciels",
-                        "Stocker les fichiers utilisateurs",
-                        "Exécuter des applications bureautiques"
+                        "Un ordinateur seulement",
+                        "Un téléphone portable seulement",
+                        "Une tablette seulement",
+                        "Tous les appareils numériques (ordinateur, tablette, téléphone)"
                       ],
-                      answer: 1
+                      answer: 3
                     },
                     {
-                      question: "Qu'est-ce qui distingue Linux des systèmes propriétaires ?",
+                      question: "Quel est le rôle d’un système d’exploitation ?",
                       options: [
-                        "Il ne peut pas exécuter de jeux vidéo",
-                        "Il est payant pour une utilisation en entreprise",
-                        "Son code source est ouvert et modifiable",
-                        "Il fonctionne uniquement sur des ordinateurs portables"
+                        "Gérer le matériel et permettre l’utilisation des applications",
+                        "Regarder des vidéos sur YouTube",
+                        "Jouer uniquement à des jeux",
+                        "Éteindre l’appareil automatiquement"
                       ],
-                      answer: 2
+                      answer: 0
                     }
                   ]
                 })
@@ -220,75 +204,87 @@ const StudentCourse = () => {
             lessons: [
               {
                 id: 1,
-                title: 'Architectures avancées des systèmes informatiques',
+                title: 'Introduction',
                 type: 'text',
                 completed: false,
                 content: `
-                  <h2>Architectures avancées des systèmes informatiques</h2>
-                  <p>Un système informatique moderne repose sur des architectures complexes optimisées pour différents cas d'usage.</p>
-                  <p>Concepts avancés :</p>
+                  <h2 class="font-bold">Définition :</h2>
+                  <p>Un système d’exploitation est un programme spécial qui :
+                  <br>
                   <ul>
-                    <li>Architectures multi-cœurs et parallélisme</li>
-                    <li>Virtualisation et conteneurisation</li>
-                    <li>Architectures distribuées et cloud computing</li>
-                    <li>Systèmes temps réel et embarqués</li>
+                  <li>Fait fonctionner l’ordinateur.
+                  <li>Aide tous les autres programmes à bien marcher.
+                  <li>Organise l’utilisation des ressources (mémoire, processeur, fichiers…).</p>
                   </ul>
-                  <p>Ces architectures permettent de répondre à des besoins spécifiques en termes de performance, fiabilité et sécurité.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
-                `
+                  <p class="font-bold mt-2">Les fonctions avancées du système d’exploitation :</p>
+                  <ul>
+                    <li><h5 class="font-bold mt-2">a. Gestion des tâches (Multitâche)</h5>
+                    Le SE peut faire tourner plusieurs programmes en même temps.
+                    <br />
+                    Exemple : Écouter de la musique tout en écrivant un document.
+                    </li>
+                    <li><h5 class="font-bold mt-2">b. Gestion des utilisateurs</h5>
+                    Le SE peut créer plusieurs comptes :
+
+                    Un compte pour chaque utilisateur.
+                    <br />
+                    Chacun a ses propres fichiers et droits d’accès.
+                    </li>
+                  </ul>
+                  `
               },
               {
                 id: 2,
-                title: 'Technologies de virtualisation et conteneurs',
-                type: 'video',
+                title: 'Explication',
+                type: 'image',
                 completed: false,
-                content: 'https://example.com/video-advanced-virtualization'
+                content: '',
+                lien:"/fonctionnement_OS.png"
               },
               {
                 id: 3,
-                title: 'Noyaux et processus du système d\'exploitation',
-                type: 'text',
+                title: 'Vidéo explicative',
+                type: 'video',
                 completed: false,
-                content: `
-                  <h2>Noyaux et processus du système d'exploitation</h2>
-                  <p>Le noyau constitue le cœur du système d'exploitation, gérant les ressources système critiques.</p>
-                  <p>Composants avancés d'un système d'exploitation :</p>
-                  <ul>
-                    <li>Ordonnancement des processus et threads</li>
-                    <li>Gestion de la mémoire virtuelle et pagination</li>
-                    <li>Systèmes de fichiers journalisés et distribués</li>
-                    <li>Sécurité et isolation entre processus</li>
-                  </ul>
-                  <p>La compréhension de ces mécanismes permet d'optimiser les performances et la stabilité des applications.</p>
-                  <p class="font-bold">Niveau: ${currentLevel}</p>
-                `
+                content: ``,
+                lien:"https://www.youtube.com/embed/YScMI8lsy9s?si=CAek_y4-_2I31xBY"
               },
               {
                 id: 4,
-                title: 'Quiz avancé sur l\'architecture des systèmes d\'exploitation',
+                title: 'Quiz',
                 type: 'quiz',
                 completed: false,
                 content: JSON.stringify({
                   questions: [
                     {
-                      question: "Quelle technique permet à plusieurs systèmes d'exploitation de coexister sur une même machine physique ?",
+                      question: "Que permet la fonction multitâche d’un système d’exploitation ?",
                       options: [
-                        "La multiprogrammation",
-                        "La virtualisation",
-                        "Le multithreading",
-                        "La compilation juste-à-temps"
+                        "Exécuter un seul programme à la fois",
+                        "Exécuter plusieurs programmes simultanément",
+                        "Redémarrer l’ordinateur automatiquement",
+                        "Créer de nouveaux utilisateurs"
                       ],
                       answer: 1
                     },
                     {
-                      question: "Qu'est-ce que la pagination dans un système d'exploitation moderne ?",
+                      question: "Un exemple d'utilisation du multitâche dans un système d’exploitation est :",
                       options: [
-                        "Une technique de compression des fichiers",
-                        "Un mécanisme de gestion de mémoire virtuelle",
-                        "Une méthode d'indexation des données",
-                        "Un protocole de communication réseau"
+                        "Regarder un film sans utiliser d'autres applications",
+                        "Écouter de la musique tout en écrivant un document",
+                        "Installer un jeu vidéo",
+                        "Imprimer un document sans ouvrir d’autre programme"
                       ],
                       answer: 1
+                    },
+                    {
+                      question: "Que permet la gestion des utilisateurs dans un système d’exploitation ?",
+                      options: [
+                        "Partager un seul compte pour tous les utilisateurs",
+                        "Ouvrir plusieurs sessions utilisateur sur le même compte",
+                        "Créer un compte pour chaque utilisateur avec des fichiers et des droits d’accès distincts",
+                        "Désactiver les comptes d’utilisateurs"
+                      ],
+                      answer: 2
                     }
                   ]
                 })
@@ -407,50 +403,76 @@ const StudentCourse = () => {
   const renderLessonContent = (lesson: LessonUnit) => {
     switch (lesson.type) {
       case 'text':
-        return (
-          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content.replace('${courseLevel}', currentLevel) }} />
-        );
+      return (
+        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content.replace('${courseLevel}', currentLevel) }} />
+      );
       case 'video':
-        return (
-          <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-md mb-4">
-            <Play className="h-16 w-16 text-gray-400" />
-            <p className="text-gray-500">Vidéo simulée (dans une vraie application, une vidéo serait diffusée ici)</p>
-          </div>
-        );
+      return (
+        <div className="flex flex-col items-center">
+          {lesson.lien ? (
+        <iframe
+          src={lesson.lien}
+          title={lesson.title}
+          className="w-full aspect-video rounded-md shadow-md mb-4"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+          ) : (
+        <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-md mb-4">
+          <Play className="h-16 w-16 text-gray-400" />
+          <p className="text-gray-500">Vidéo non disponible</p>
+        </div>
+          )}
+          {lesson.content && (
+        <div className="prose max-w-none mt-4" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+          )}
+        </div>
+      );
+      case 'image':
+      return (
+        <div className="flex flex-col ">
+          {lesson.content && (
+        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+          )}
+          {lesson.lien && (
+        <img src={lesson.lien} alt={lesson.title} className="rounded-md shadow-md max-w-full mb-4" />
+          )}
+        </div>
+      );
       case 'quiz':
-        try {
-          const quizData = JSON.parse(lesson.content);
-          return (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Quiz</h3>
-              {quizData.questions.map((q: any, i: number) => (
-                <Card key={i} className="mb-4">
-                  <CardContent className="pt-4">
-                    <p className="font-medium mb-2">{i + 1}. {q.question}</p>
-                    <div className="space-y-2">
-                      {q.options.map((option: string, j: number) => (
-                        <div 
-                          key={j} 
-                          className="p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
-                        >
-                          <label className="flex items-start cursor-pointer">
-                            <input type="radio" className="mt-1 mr-2" name={`question-${i}`} />
-                            <span>{option}</span>
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+      try {
+        const quizData = JSON.parse(lesson.content);
+        return (
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Quiz</h3>
+          {quizData.questions.map((q: any, i: number) => (
+          <Card key={i} className="mb-4">
+            <CardContent className="pt-4">
+            <p className="font-medium mb-2">{i + 1}. {q.question}</p>
+            <div className="space-y-2">
+              {q.options.map((option: string, j: number) => (
+              <div 
+                key={j} 
+                className="p-2 border rounded-md hover:bg-gray-50 cursor-pointer"
+              >
+                <label className="flex items-start cursor-pointer">
+                <input type="radio" className="mt-1 mr-2" name={`question-${i}`} />
+                <span>{option}</span>
+                </label>
+              </div>
               ))}
-              <Button onClick={() => markLessonComplete()}>Soumettre les réponses</Button>
             </div>
-          );
-        } catch (e) {
-          return <p>Erreur lors du chargement du quiz</p>;
-        }
+            </CardContent>
+          </Card>
+          ))}
+          <Button onClick={() => markLessonComplete()}>Soumettre les réponses</Button>
+        </div>
+        );
+      } catch (e) {
+        return <p>Erreur lors du chargement du quiz</p>;
+      }
       default:
-        return <p>Contenu non disponible</p>;
+      return <p>Contenu non disponible</p>;
     }
   };
 
