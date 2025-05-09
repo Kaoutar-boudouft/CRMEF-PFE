@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,13 +16,17 @@ interface LessonUnit {
   content: string;
 }
 
+interface CourseContent {
+  level: string;
+  lessons: LessonUnit[];
+}
+
 interface Course {
   id: number;
   title: string;
   description: string;
   progress: number;
-  lessons: LessonUnit[];
-  level: string;
+  content: CourseContent[];
 }
 
 const StudentCourse = () => {
@@ -36,105 +41,266 @@ const StudentCourse = () => {
   // Get the level from URL query parameters if available
   const queryParams = new URLSearchParams(location.search);
   const levelFromUrl = queryParams.get('level') || 'Basique';
+  const [currentLevel, setCurrentLevel] = useState(levelFromUrl);
   
-  // Determine if the course level is already advanced
-  const isAdvancedLevel = course?.level === 'Avancé';
+  // Get the current content based on selected level
+  const currentContent = course?.content.find(content => content.level === currentLevel);
   
-  // Check if all modules are completed
-  const areAllModulesCompleted = course?.lessons.every(lesson => lesson.completed) || false;
+  // Check if all modules for the current level are completed
+  const areAllModulesCompleted = currentContent?.lessons.every(lesson => lesson.completed) || false;
 
   useEffect(() => {
     // Mock API call to fetch course data
     const fetchCourse = () => {
       setLoading(true);
       
-      // Get level from URL or use default
-      const courseLevel = levelFromUrl;
-      
       // Simulated data - in a real app, this would come from an API
       const mockCourse: Course = {
         id: Number(courseId),
         title: 'Notion de système d\'exploitation',
-        description: 'Permettre à l’élève de comprendre ce qu’est un système d’exploitation, son rôle et ses principaux types, à travers des contenus adaptés à son niveau.',
+        description: 'Permettre à l'élève de comprendre ce qu'est un système d'exploitation, son rôle et ses principaux types, à travers des contenus adaptés à son niveau.',
         progress: 60,
-        level: courseLevel, // Use the level from URL or default
-        lessons: [
+        content: [
           {
-            id: 1,
-            title: 'Introduction aux systèmes informatiques',
-            type: 'text',
-            completed: true,
-            content: `
-              <h2>Introduction aux systèmes informatiques</h2>
-              <p>Un système informatique est un ensemble de composants électroniques et logiciels qui permettent de traiter l'information.</p>
-              <p>Il est composé de :</p>
-              <ul>
-                <li>Matériel (hardware) : processeur, mémoire, disque dur, etc.</li>
-                <li>Logiciel (software) : système d'exploitation, applications, etc.</li>
-              </ul>
-              <p>Ces éléments travaillent ensemble pour exécuter des programmes et traiter des données.</p>
-              <p class="font-bold">Niveau: ${courseLevel}</p>
-            `
+            level: "Basique",
+            lessons: [
+              {
+                id: 1,
+                title: 'Introduction aux systèmes informatiques',
+                type: 'text',
+                completed: true,
+                content: `
+                  <h2>Introduction aux systèmes informatiques</h2>
+                  <p>Un système informatique est un ensemble de composants électroniques et logiciels qui permettent de traiter l'information.</p>
+                  <p>Il est composé de :</p>
+                  <ul>
+                    <li>Matériel (hardware) : processeur, mémoire, disque dur, etc.</li>
+                    <li>Logiciel (software) : système d'exploitation, applications, etc.</li>
+                  </ul>
+                  <p>Ces éléments travaillent ensemble pour exécuter des programmes et traiter des données.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 2,
+                title: 'Composants matériels d\'un ordinateur',
+                type: 'video',
+                completed: true,
+                content: 'https://example.com/video-placeholder'
+              },
+              {
+                id: 3,
+                title: 'Les différents systèmes d\'exploitation',
+                type: 'text',
+                completed: false,
+                content: `
+                  <h2>Les systèmes d'exploitation</h2>
+                  <p>Le système d'exploitation est le logiciel principal d'un ordinateur qui gère les ressources matérielles et logicielles de l'ordinateur.</p>
+                  <p>Les principaux systèmes d'exploitation sont :</p>
+                  <ul>
+                    <li>Windows : développé par Microsoft</li>
+                    <li>macOS : développé par Apple</li>
+                    <li>Linux : système open-source avec de nombreuses distributions</li>
+                  </ul>
+                  <p>Chacun offre différentes interfaces et fonctionnalités pour l'utilisateur.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 4,
+                title: 'Quiz sur les bases des systèmes informatiques',
+                type: 'quiz',
+                completed: false,
+                content: JSON.stringify({
+                  questions: [
+                    {
+                      question: "Qu'est-ce qu'un système d'exploitation ?",
+                      options: [
+                        "Un logiciel de traitement de texte",
+                        "Un programme qui gère les ressources matérielles et logicielles de l'ordinateur",
+                        "Un composant matériel de l'ordinateur",
+                        "Une application de navigation web"
+                      ],
+                      answer: 1
+                    },
+                    {
+                      question: "Quel élément n'est PAS un périphérique d'entrée ?",
+                      options: [
+                        "Clavier",
+                        "Souris",
+                        "Écran",
+                        "Microphone"
+                      ],
+                      answer: 2
+                    }
+                  ]
+                })
+              }
+            ]
           },
           {
-            id: 2,
-            title: 'Composants matériels d\'un ordinateur',
-            type: 'video',
-            completed: true,
-            content: 'https://example.com/video-placeholder'
+            level: "Recommandé",
+            lessons: [
+              {
+                id: 1,
+                title: 'Introduction aux systèmes informatiques (Niveau Recommandé)',
+                type: 'text',
+                completed: false,
+                content: `
+                  <h2>Introduction aux systèmes informatiques</h2>
+                  <p>Un système informatique est un ensemble de composants électroniques et logiciels sophistiqués qui permettent de traiter l'information de manière efficace et structurée.</p>
+                  <p>Il est composé de :</p>
+                  <ul>
+                    <li>Matériel (hardware) : processeur, mémoire RAM et ROM, disque dur, carte mère, etc.</li>
+                    <li>Logiciel (software) : système d'exploitation, applications système et utilisateur, etc.</li>
+                    <li>Périphériques d'entrée/sortie : permettant l'interaction avec l'utilisateur</li>
+                  </ul>
+                  <p>Ces éléments travaillent de concert pour exécuter des programmes complexes et traiter des données variées.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 2,
+                title: 'Composants matériels d\'un ordinateur moderne',
+                type: 'video',
+                completed: false,
+                content: 'https://example.com/video-recommended-hardware'
+              },
+              {
+                id: 3,
+                title: 'Architecture des systèmes d\'exploitation modernes',
+                type: 'text',
+                completed: false,
+                content: `
+                  <h2>Architecture des systèmes d'exploitation</h2>
+                  <p>Le système d'exploitation est l'ensemble des programmes qui gèrent les ressources matérielles et logicielles de l'ordinateur.</p>
+                  <p>Architecture en couches des principaux systèmes d'exploitation :</p>
+                  <ul>
+                    <li>Windows : noyau NT, sous-systèmes et services système</li>
+                    <li>macOS : basé sur Darwin, avec un noyau XNU et des technologies propriétaires</li>
+                    <li>Linux : noyau monolithique avec modules chargeables, distributions variées</li>
+                  </ul>
+                  <p>Chaque système propose différentes interfaces de programmation et utilisateur.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 4,
+                title: 'Quiz intermédiaire sur les systèmes d\'exploitation',
+                type: 'quiz',
+                completed: false,
+                content: JSON.stringify({
+                  questions: [
+                    {
+                      question: "Quelle est la fonction principale du noyau d'un système d'exploitation ?",
+                      options: [
+                        "Gérer l'interface utilisateur",
+                        "Servir d'intermédiaire entre le matériel et les logiciels",
+                        "Stocker les fichiers utilisateurs",
+                        "Exécuter des applications bureautiques"
+                      ],
+                      answer: 1
+                    },
+                    {
+                      question: "Qu'est-ce qui distingue Linux des systèmes propriétaires ?",
+                      options: [
+                        "Il ne peut pas exécuter de jeux vidéo",
+                        "Il est payant pour une utilisation en entreprise",
+                        "Son code source est ouvert et modifiable",
+                        "Il fonctionne uniquement sur des ordinateurs portables"
+                      ],
+                      answer: 2
+                    }
+                  ]
+                })
+              }
+            ]
           },
           {
-            id: 3,
-            title: 'Les différents systèmes d\'exploitation',
-            type: 'text',
-            completed: false,
-            content: `
-              <h2>Les systèmes d'exploitation</h2>
-              <p>Le système d'exploitation est le logiciel principal d'un ordinateur qui gère les ressources matérielles et logicielles de l'ordinateur.</p>
-              <p>Les principaux systèmes d'exploitation sont :</p>
-              <ul>
-                <li>Windows : développé par Microsoft</li>
-                <li>macOS : développé par Apple</li>
-                <li>Linux : système open-source avec de nombreuses distributions</li>
-              </ul>
-              <p>Chacun offre différentes interfaces et fonctionnalités pour l'utilisateur.</p>
-              <p class="font-bold">Niveau: ${courseLevel}</p>
-            `
-          },
-          {
-            id: 4,
-            title: 'Quiz sur les bases des systèmes informatiques',
-            type: 'quiz',
-            completed: false,
-            content: JSON.stringify({
-              questions: [
-                {
-                  question: "Qu'est-ce qu'un système d'exploitation ?",
-                  options: [
-                    "Un logiciel de traitement de texte",
-                    "Un programme qui gère les ressources matérielles et logicielles de l'ordinateur",
-                    "Un composant matériel de l'ordinateur",
-                    "Une application de navigation web"
-                  ],
-                  answer: 1
-                },
-                {
-                  question: "Quel élément n'est PAS un périphérique d'entrée ?",
-                  options: [
-                    "Clavier",
-                    "Souris",
-                    "Écran",
-                    "Microphone"
-                  ],
-                  answer: 2
-                }
-              ]
-            })
+            level: "Avancé",
+            lessons: [
+              {
+                id: 1,
+                title: 'Architectures avancées des systèmes informatiques',
+                type: 'text',
+                completed: false,
+                content: `
+                  <h2>Architectures avancées des systèmes informatiques</h2>
+                  <p>Un système informatique moderne repose sur des architectures complexes optimisées pour différents cas d'usage.</p>
+                  <p>Concepts avancés :</p>
+                  <ul>
+                    <li>Architectures multi-cœurs et parallélisme</li>
+                    <li>Virtualisation et conteneurisation</li>
+                    <li>Architectures distribuées et cloud computing</li>
+                    <li>Systèmes temps réel et embarqués</li>
+                  </ul>
+                  <p>Ces architectures permettent de répondre à des besoins spécifiques en termes de performance, fiabilité et sécurité.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 2,
+                title: 'Technologies de virtualisation et conteneurs',
+                type: 'video',
+                completed: false,
+                content: 'https://example.com/video-advanced-virtualization'
+              },
+              {
+                id: 3,
+                title: 'Noyaux et processus du système d\'exploitation',
+                type: 'text',
+                completed: false,
+                content: `
+                  <h2>Noyaux et processus du système d'exploitation</h2>
+                  <p>Le noyau constitue le cœur du système d'exploitation, gérant les ressources système critiques.</p>
+                  <p>Composants avancés d'un système d'exploitation :</p>
+                  <ul>
+                    <li>Ordonnancement des processus et threads</li>
+                    <li>Gestion de la mémoire virtuelle et pagination</li>
+                    <li>Systèmes de fichiers journalisés et distribués</li>
+                    <li>Sécurité et isolation entre processus</li>
+                  </ul>
+                  <p>La compréhension de ces mécanismes permet d'optimiser les performances et la stabilité des applications.</p>
+                  <p class="font-bold">Niveau: ${currentLevel}</p>
+                `
+              },
+              {
+                id: 4,
+                title: 'Quiz avancé sur l\'architecture des systèmes d\'exploitation',
+                type: 'quiz',
+                completed: false,
+                content: JSON.stringify({
+                  questions: [
+                    {
+                      question: "Quelle technique permet à plusieurs systèmes d'exploitation de coexister sur une même machine physique ?",
+                      options: [
+                        "La multiprogrammation",
+                        "La virtualisation",
+                        "Le multithreading",
+                        "La compilation juste-à-temps"
+                      ],
+                      answer: 1
+                    },
+                    {
+                      question: "Qu'est-ce que la pagination dans un système d'exploitation moderne ?",
+                      options: [
+                        "Une technique de compression des fichiers",
+                        "Un mécanisme de gestion de mémoire virtuelle",
+                        "Une méthode d'indexation des données",
+                        "Un protocole de communication réseau"
+                      ],
+                      answer: 1
+                    }
+                  ]
+                })
+              }
+            ]
           }
         ]
       };
       
       setCourse(mockCourse);
+      setCurrentLevel(levelFromUrl);
       setLoading(false);
     };
     
@@ -142,7 +308,7 @@ const StudentCourse = () => {
   }, [courseId, levelFromUrl]); // Add levelFromUrl as dependency to reload when it changes
 
   const handleNextLesson = () => {
-    if (course && currentLessonIndex < course.lessons.length - 1) {
+    if (currentContent && currentLessonIndex < currentContent.lessons.length - 1) {
       setCurrentLessonIndex(currentLessonIndex + 1);
       window.scrollTo(0, 0);
     }
@@ -156,20 +322,30 @@ const StudentCourse = () => {
   };
 
   const markLessonComplete = () => {
-    if (!course) return;
+    if (!course || !currentContent) return;
     
-    const updatedLessons = [...course.lessons];
-    updatedLessons[currentLessonIndex].completed = true;
+    // Create a deep copy of the course object to modify it
+    const updatedCourse = { ...course };
+    
+    // Find the content array for the current level
+    const contentIndex = updatedCourse.content.findIndex(
+      content => content.level === currentLevel
+    );
+    
+    if (contentIndex === -1) return;
+    
+    // Update the completed status of the current lesson
+    updatedCourse.content[contentIndex].lessons[currentLessonIndex].completed = true;
     
     // Calculate new progress
-    const completedCount = updatedLessons.filter(lesson => lesson.completed).length;
-    const newProgress = Math.round((completedCount / updatedLessons.length) * 100);
+    const currentLevelLessons = updatedCourse.content[contentIndex].lessons;
+    const completedCount = currentLevelLessons.filter(lesson => lesson.completed).length;
+    const newProgress = Math.round((completedCount / currentLevelLessons.length) * 100);
     
-    setCourse({
-      ...course,
-      lessons: updatedLessons,
-      progress: newProgress
-    });
+    // Update progress
+    updatedCourse.progress = newProgress;
+    
+    setCourse(updatedCourse);
     
     toast({
       title: "Leçon terminée",
@@ -182,7 +358,7 @@ const StudentCourse = () => {
   };
   
   const finishCourse = () => {
-    if (isAdvancedLevel) {
+    if (currentLevel === 'Avancé') {
       // If already at advanced level, simply finish the course
       toast({
         title: "Cours terminé",
@@ -211,16 +387,20 @@ const StudentCourse = () => {
     if (!isLevelAllowed(level)) {
       toast({
         title: "Niveau non disponible",
-        description: `Vous devez d'abord terminer le niveau ${course?.level} pour accéder au niveau ${level}`,
+        description: `Vous devez d'abord terminer le niveau ${currentLevel} pour accéder au niveau ${level}`,
       });
       return;
     }
     
-    if (level !== course?.level) {
+    if (level !== currentLevel) {
       toast({
         title: "Changement de niveau",
         description: `Vous passez au niveau ${level}`,
       });
+      
+      // Update current level and reset lesson index
+      setCurrentLevel(level);
+      setCurrentLessonIndex(0);
       navigate(`/student-course/${courseId}?level=${level}`);
     }
   };
@@ -229,7 +409,7 @@ const StudentCourse = () => {
     switch (lesson.type) {
       case 'text':
         return (
-          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content.replace('${courseLevel}', currentLevel) }} />
         );
       case 'video':
         return (
@@ -283,19 +463,19 @@ const StudentCourse = () => {
     // For Recommandé level, only allow if current level is Basique and all modules are completed
     // or if current level is already Recommandé or Avancé
     if (targetLevel === 'Recommandé') {
-      if (course?.level === 'Basique') {
+      if (currentLevel === 'Basique') {
         return areAllModulesCompleted;
       }
-      return course?.level === 'Recommandé' || course?.level === 'Avancé';
+      return currentLevel === 'Recommandé' || currentLevel === 'Avancé';
     }
     
     // For Avancé level, only allow if current level is Recommandé and all modules are completed
     // or if current level is already Avancé
     if (targetLevel === 'Avancé') {
-      if (course?.level === 'Recommandé') {
+      if (currentLevel === 'Recommandé') {
         return areAllModulesCompleted;
       }
-      return course?.level === 'Avancé';
+      return currentLevel === 'Avancé';
     }
     
     return false;
@@ -312,7 +492,7 @@ const StudentCourse = () => {
     );
   }
 
-  if (!course) {
+  if (!course || !currentContent) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -325,7 +505,7 @@ const StudentCourse = () => {
     );
   }
 
-  const currentLesson = course.lessons[currentLessonIndex];
+  const currentLesson = currentContent.lessons[currentLessonIndex];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -353,11 +533,11 @@ const StudentCourse = () => {
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h2 className="text-2xl font-bold mb-6 text-center">Choisir votre prochain niveau</h2>
             <p className="text-center mb-8 text-gray-600">
-              Vous avez terminé ce cours au niveau {course.level}. Souhaitez-vous continuer à progresser?
+              Vous avez terminé ce cours au niveau {currentLevel}. Souhaitez-vous continuer à progresser?
             </p>
             
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Basique' ? 'border-green-500 border-2' : ''}`}>
+              <Card className={`hover:shadow-md transition-shadow ${currentLevel === 'Basique' ? 'border-green-500 border-2' : ''}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Layers className="h-5 w-5 mr-2 text-blue-500" />
@@ -367,17 +547,17 @@ const StudentCourse = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Cours adaptés aux débutants avec concepts fondamentaux.</p>
                   <Button 
-                    variant={course.level === 'Basique' ? 'outline' : 'default'}
+                    variant={currentLevel === 'Basique' ? 'outline' : 'default'}
                     className="w-full"
-                    disabled={course.level === 'Basique'}
+                    disabled={currentLevel === 'Basique'}
                     onClick={() => selectNextLevel('Basique')}
                   >
-                    {course.level === 'Basique' ? 'Niveau actuel' : 'Choisir'}
+                    {currentLevel === 'Basique' ? 'Niveau actuel' : 'Choisir'}
                   </Button>
                 </CardContent>
               </Card>
               
-              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Recommandé' ? 'border-green-500 border-2' : ''}`}>
+              <Card className={`hover:shadow-md transition-shadow ${currentLevel === 'Recommandé' ? 'border-green-500 border-2' : ''}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Layers className="h-5 w-5 mr-2 text-yellow-500" />
@@ -387,17 +567,17 @@ const StudentCourse = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Cours avec difficulté intermédiaire pour une progression équilibrée.</p>
                   <Button 
-                    variant={course.level === 'Recommandé' ? 'outline' : 'default'}
+                    variant={currentLevel === 'Recommandé' ? 'outline' : 'default'}
                     className="w-full"
-                    disabled={course.level === 'Recommandé'}
+                    disabled={currentLevel === 'Recommandé'}
                     onClick={() => selectNextLevel('Recommandé')}
                   >
-                    {course.level === 'Recommandé' ? 'Niveau actuel' : 'Choisir'}
+                    {currentLevel === 'Recommandé' ? 'Niveau actuel' : 'Choisir'}
                   </Button>
                 </CardContent>
               </Card>
               
-              <Card className={`hover:shadow-md transition-shadow ${course.level === 'Avancé' ? 'border-green-500 border-2' : ''}`}>
+              <Card className={`hover:shadow-md transition-shadow ${currentLevel === 'Avancé' ? 'border-green-500 border-2' : ''}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center">
                     <Layers className="h-5 w-5 mr-2 text-red-500" />
@@ -407,12 +587,12 @@ const StudentCourse = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Cours avec concepts avancés et exercices plus complexes.</p>
                   <Button 
-                    variant={course.level === 'Avancé' ? 'outline' : 'default'}
+                    variant={currentLevel === 'Avancé' ? 'outline' : 'default'}
                     className="w-full"
-                    disabled={course.level === 'Avancé'}
+                    disabled={currentLevel === 'Avancé'}
                     onClick={() => selectNextLevel('Avancé')}
                   >
-                    {course.level === 'Avancé' ? 'Niveau actuel' : 'Choisir'}
+                    {currentLevel === 'Avancé' ? 'Niveau actuel' : 'Choisir'}
                   </Button>
                 </CardContent>
               </Card>
@@ -440,7 +620,7 @@ const StudentCourse = () => {
               
               {/* Level Selector Tabs */}
               <div className="mb-6">
-                <Tabs defaultValue={course.level} className="w-full">
+                <Tabs defaultValue={currentLevel} className="w-full">
                   <TabsList className="grid grid-cols-3 mb-2">
                     <TabsTrigger 
                       value="Basique" 
@@ -456,7 +636,7 @@ const StudentCourse = () => {
                     >
                       <Layers className="h-4 w-4 mr-1 text-yellow-500" />
                       Recommandé
-                      {!isLevelAllowed('Recommandé') && course?.level === 'Basique' && (
+                      {!isLevelAllowed('Recommandé') && currentLevel === 'Basique' && (
                         <span className="ml-1 text-xs">🔒</span>
                       )}
                     </TabsTrigger>
@@ -467,7 +647,7 @@ const StudentCourse = () => {
                     >
                       <Layers className="h-4 w-4 mr-1 text-red-500" />
                       Avancé
-                      {!isLevelAllowed('Avancé') && course?.level !== 'Avancé' && (
+                      {!isLevelAllowed('Avancé') && currentLevel !== 'Avancé' && (
                         <span className="ml-1 text-xs">🔒</span>
                       )}
                     </TabsTrigger>
@@ -477,10 +657,10 @@ const StudentCourse = () => {
                       <div className="flex items-center">
                         <Award className="h-5 w-5 text-blue-500 mr-2" />
                         <p className="text-sm text-blue-700">
-                          <span className="font-semibold">Niveau actuel:</span> {course.level}
+                          <span className="font-semibold">Niveau actuel:</span> {currentLevel}
                         </p>
                       </div>
-                      {!areAllModulesCompleted && course.level !== 'Avancé' && (
+                      {!areAllModulesCompleted && currentLevel !== 'Avancé' && (
                         <p className="text-xs text-blue-600 mt-1 ml-7">
                           Terminez tous les modules pour débloquer le niveau suivant
                         </p>
@@ -496,7 +676,7 @@ const StudentCourse = () => {
                 <div className="bg-white rounded-lg shadow-sm p-4">
                   <h3 className="font-medium text-lg mb-4">Modules du cours</h3>
                   <ul className="space-y-2">
-                    {course.lessons.map((lesson, index) => (
+                    {currentContent.lessons.map((lesson, index) => (
                       <li key={lesson.id}>
                         <button 
                           className={`w-full text-left px-3 py-2 rounded-md flex items-center text-sm ${
@@ -526,7 +706,7 @@ const StudentCourse = () => {
                       className="w-full bg-green-600 hover:bg-green-700 text-white"
                       disabled={!areAllModulesCompleted}
                     >
-                      {isAdvancedLevel ? 'Terminer le cours' : 'Terminer et choisir niveau'}
+                      {currentLevel === 'Avancé' ? 'Terminer le cours' : 'Terminer et choisir niveau'}
                     </Button>
                     {!areAllModulesCompleted && (
                       <p className="text-xs text-gray-500 mt-2 text-center">
@@ -572,7 +752,7 @@ const StudentCourse = () => {
                   </Button>
                   <Button 
                     onClick={handleNextLesson}
-                    disabled={currentLessonIndex === course.lessons.length - 1}
+                    disabled={currentLessonIndex === currentContent.lessons.length - 1}
                   >
                     Leçon suivante
                   </Button>
@@ -602,3 +782,4 @@ const StudentCourse = () => {
 };
 
 export default StudentCourse;
+
