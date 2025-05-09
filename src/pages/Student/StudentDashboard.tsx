@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Book, FileCheck, TestTube, Medal, User } from 'lucide-react';
+import { Book, FileCheck, TestTube, Medal, User, Repeat } from 'lucide-react';
 import { 
   Avatar,
   AvatarFallback,
@@ -21,30 +21,57 @@ import {
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const [studentName, setStudentName] = useState('Mohamed'); // Example student name, could be fetched from API/context
+  const [studentName, setStudentName] = useState('El amrani Mohamed'); // Example student name, could be fetched from API/context
   
-  // Mock data for student progress
-  const courses = [
+  const unites = [
     {
-      id: 1,
-      title: 'Système informatique',
-      progress: 15,
-      level: 'Basique',
-      requiresDiagnostic: true,
+      id: 'unite1',
+      title: 'Unité 1 : 1ère semestre',
+      progress: 78,
+      level: 'Recommandé',
+      requiresDiagnostic: false,
     },
     {
-      id: 2,
-      title: 'Programmation avec Logo',
+      id: 'unite2',
+      title: 'Unité 2 : 1ère semestre',
       progress: 0,
       level: 'Non déterminé',
       requiresDiagnostic: true,
     },
+    // {
+    //   id: 'unite3',
+    //   title: 'Unité 3 : 1ère semestre',
+    //   progress: 0,
+    //   level: 'Non déterminé',
+    //   requiresDiagnostic: true,
+    // }
+  ];
+
+  // Mock data for student progress
+  const courses = [
     {
-      id: 3,
-      title: 'Traitement de texte',
-      progress: 60,
+      id: 'cours1',
+      title: "La connectivité",
+      unite: "Unité 1",
+      sequence: 'Système informatique',
+      progress: 100,
+      level: 'Avancé',
+    },
+    {
+      id: 'cours2',
+      title: 'Logiciels',
+      unite: "Unité 1",
+      sequence: 'Système informatique',
+      progress: 100,
       level: 'Recommandé',
-      requiresDiagnostic: false,
+    },
+    {
+      id: "cours3",
+      title: 'Notion de système d\'exploitation',
+      unite: "Unité 1",
+      sequence: 'Système d’exploitation',
+      progress: 60,
+      level: 'Basique',
     }
   ];
 
@@ -120,56 +147,134 @@ const StudentDashboard = () => {
 
         <div className="mb-8">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <Book className="mr-2 h-5 w-5" /> Mes cours d'apprentissage
+          </h2>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {courses.map((cours) => (
+              <Card key={cours.id} className="overflow-hidden">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-lg font-semibold">{cours.title}</h3>
+                    {cours.progress != 100 ? (
+                      <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded">
+                        Cours de jour
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
+                        Terminé
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Unité</span>
+                      <span className="text-sm font-medium">{cours.unite}</span>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Séquence</span>
+                      <span className="text-sm font-medium">{cours.sequence}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-4">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-sm">Progression</span>
+                      <span className="text-sm font-medium">{cours.progress}%</span>
+                    </div>
+                    <Progress value={cours.progress} className="h-2" />
+                  </div>
+                  
+                  <div className="flex justify-between text-sm mb-4">
+                    <span>Niveau: {cours.level}</span>
+                  </div>
+                  
+                  {cours.progress != 100 ? (
+                    <Button 
+                       variant="default" 
+                      className="w-full"
+                      onClick={() => navigate('/student-course/' + cours.id)}
+                    >
+                      <TestTube className="mr-2 h-4 w-4" />
+                      Continuer l'apprentissage
+                    </Button>
+                  ) : (<Button
+                    variant='secondary' 
+                      className="w-full btn-secondary"
+                    >
+                      <Repeat className="mr-2 h-4 w-4" />
+                      Reconsulter le cours
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Book className="mr-2 h-5 w-5" /> Mes unités d'apprentissage
           </h2>
           
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {courses.map((course) => (
-              <Card key={course.id} className="overflow-hidden">
+            {unites.map((unite) => (
+              <Card key={unite.id} className="overflow-hidden">
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold">{course.title}</h3>
-                    {course.requiresDiagnostic ? (
+                    <h3 className="text-lg font-semibold">{unite.title}</h3>
+                    {unite.requiresDiagnostic ? (
                       <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs font-medium rounded">
                         Test requis
                       </span>
                     ) : (
-                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
-                        En cours
-                      </span>
+                      unite.progress!==100 ? (<span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                      En cours
+                    </span>) : (<span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
+                        Terminé
+                      </span>)
                     )}
                   </div>
                   
                   <div className="mb-4">
                     <div className="flex justify-between mb-1">
                       <span className="text-sm">Progression</span>
-                      <span className="text-sm font-medium">{course.progress}%</span>
+                      <span className="text-sm font-medium">{unite.progress}%</span>
                     </div>
-                    <Progress value={course.progress} className="h-2" />
+                    <Progress value={unite.progress} className="h-2" />
                   </div>
                   
                   <div className="flex justify-between text-sm mb-4">
-                    <span>Niveau: {course.level}</span>
+                    <span>Niveau: {unite.level}</span>
                   </div>
                   
-                  {course.requiresDiagnostic ? (
+                  {unite.requiresDiagnostic ? (
                     <Button 
                       variant="secondary" 
                       className="w-full"
-                      onClick={() => navigate('/student-diagnostique-test/' + course.id)}
+                      onClick={() => navigate('/student-diagnostique-test/' + unite.id)}
                     >
                       <TestTube className="mr-2 h-4 w-4" />
                       Passer le test diagnostique
                     </Button>
-                  ) : (
-                    <Button 
+                  ) : (unite.progress!==100 ? 
+(                    <Button 
                       variant="default" 
                       className="w-full"
-                      onClick={() => navigate('/student-course/' + course.id)}
                     >
                       <Book className="mr-2 h-4 w-4" />
                       Continuer l'apprentissage
-                    </Button>
+                    </Button>) : (<Button
+                    variant='secondary' 
+                      className="w-full btn-secondary"
+                    >
+                      <Repeat className="mr-2 h-4 w-4" />
+                      Reconsulter les cours
+                    </Button>)
                   )}
                 </div>
               </Card>

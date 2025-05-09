@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 // Importez les composants de la barre latérale
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 // Importez les icônes nécessaires (par exemple, Link2Icon pour Affectations)
-import { LayoutDashboard, Users, GraduationCap, Calendar, Link2Icon, BookText, BarChart, PieChart, FileCheck } from 'lucide-react';
+import { LayoutDashboard, Users, GraduationCap, Calendar, Link2Icon, BookText, BarChart, PieChart, FileCheck, User, Medal } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 // Importez votre hook de navigation (par exemple, useNavigate de react-router-dom)
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -12,8 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Dashboard = () => {
 
   const navigate = useNavigate(); // Utilisez votre hook de navigation
-  const [loading, setLoading] = useState(true);
+  const [teacherName, setTeacherName] = useState('Boudouft Kaoutar'); // Example teacher name, could be fetched from API/context
   const [error, setError] = useState<string | null>(null);
+
+  
 
   // Définition des éléments de navigation pour la barre latérale (comme dans Planning.tsx)
     const navItems = [
@@ -69,9 +74,47 @@ const Dashboard = () => {
         
                 {/* Main Content */}
                 <div className="flex-1 overflow-hidden">
-                  <header className="border-b px-6 py-3">
-                    <h1 className="text-2xl text-center font-bold">Tableau de bord</h1> {/* Titre de la page */}
-                  </header>
+                  
+                <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+                    <div className="">
+          <h1 className="text-3xl font-bold text-navy-900 mb-2">Bienvenue, {teacherName}</h1>
+          <p className="text-gray-600">Suivez votre progression et accédez à vos unités d'apprentissage</p>
+        </div>     
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10 border-2 border-primary">
+                    <AvatarImage src="" alt={teacherName} />
+                    <AvatarFallback className="bg-primary text-primary-foreground">{teacherName.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{teacherName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">admin@qismi.ma</p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => console.log('Profile settings')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profil</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/')}>
+                  <span>Déconnexion</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
         
                   <main className="p-6">
                     {/* Contenu de la page Dashboard */}

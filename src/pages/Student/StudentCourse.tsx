@@ -35,7 +35,7 @@ const StudentCourse = () => {
   
   // Get the level from URL query parameters if available
   const queryParams = new URLSearchParams(location.search);
-  const levelFromUrl = queryParams.get('level') || 'Recommandé';
+  const levelFromUrl = queryParams.get('level') || 'Basique';
   
   // Determine if the course level is already advanced
   const isAdvancedLevel = course?.level === 'Avancé';
@@ -54,9 +54,8 @@ const StudentCourse = () => {
       // Simulated data - in a real app, this would come from an API
       const mockCourse: Course = {
         id: Number(courseId),
-        title: courseId === '1' ? 'Système informatique' : 
-               courseId === '2' ? 'Programmation avec Logo' : 'Traitement de texte',
-        description: 'Apprenez les concepts fondamentaux de l\'informatique pour développer vos compétences.',
+        title: 'Notion de système d\'exploitation',
+        description: 'Permettre à l’élève de comprendre ce qu’est un système d’exploitation, son rôle et ses principaux types, à travers des contenus adaptés à son niveau.',
         progress: 60,
         level: courseLevel, // Use the level from URL or default
         lessons: [
