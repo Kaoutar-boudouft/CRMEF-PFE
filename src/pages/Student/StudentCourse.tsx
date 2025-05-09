@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,7 +57,7 @@ const StudentCourse = () => {
       const mockCourse: Course = {
         id: Number(courseId),
         title: 'Notion de système d\'exploitation',
-        description: 'Permettre à l'élève de comprendre ce qu'est un système d'exploitation, son rôle et ses principaux types, à travers des contenus adaptés à son niveau.',
+        description: "Permettre à l'élève de comprendre ce qu'est un système d'exploitation, son rôle et ses principaux types, à travers des contenus adaptés à son niveau.",
         progress: 60,
         content: [
           {
@@ -782,4 +781,3 @@ const StudentCourse = () => {
 };
 
 export default StudentCourse;
-
