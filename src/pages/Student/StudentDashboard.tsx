@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Book, FileCheck, TestTube, Medal, User, Repeat, ChevronRight, Star, BookOpen, Calendar, History } from 'lucide-react';
+import { Book, FileCheck, TestTube, Medal, User, Repeat, ChevronRight, Star, BookOpen, Calendar } from 'lucide-react';
 import { 
   Avatar,
   AvatarFallback,
@@ -344,18 +344,90 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* Tabs reorganized: Leçons en cours first, Historique second */}
-        <Tabs defaultValue="lessons" className="mt-8">
-          <TabsList className="grid grid-cols-2 mb-6 w-full md:w-auto">
+        {/* Tabs pour mieux organiser les contenus */}
+        <Tabs defaultValue="courses" className="mt-8">
+          <TabsList className="grid grid-cols-3 mb-6 w-full md:w-auto">
+            <TabsTrigger value="courses" className="flex items-center">
+              <Book className="mr-2 h-4 w-4" /> Mes cours
+            </TabsTrigger>
             <TabsTrigger value="lessons" className="flex items-center">
               <BookOpen className="mr-2 h-4 w-4" /> Leçons en cours
             </TabsTrigger>
-            <TabsTrigger value="history" className="flex items-center">
-              <History className="mr-2 h-4 w-4" /> Historique
+            <TabsTrigger value="units" className="flex items-center">
+              <Calendar className="mr-2 h-4 w-4" /> Mes unités
             </TabsTrigger>
           </TabsList>
           
-          {/* Tab 1: Leçons en cours */}
+          <TabsContent value="courses" className="space-y-6">
+            {/* Historique des cours avec navigation hiérarchique */}
+            <Card className="overflow-hidden">
+              <div className="bg-blue-500 px-6 py-4">
+                <h3 className="text-lg font-bold text-white flex items-center">
+                  <Book className="mr-2 h-5 w-5" /> Tous mes cours
+                </h3>
+              </div>
+              <div className="p-4">
+                <Accordion type="single" collapsible className="w-full">
+                  {courseHierarchy.map(unit => (
+                    <AccordionItem key={unit.id} value={unit.id} className="border rounded-lg mb-2 shadow-sm">
+                      <AccordionTrigger className="text-lg font-medium px-4 py-2 hover:bg-blue-50">
+                        <div className="flex items-center text-blue-700">
+                          <Calendar className="h-5 w-5 mr-2" />
+                          {unit.title}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-2">
+                        <div className="pl-4">
+                          {unit.sequences.map(sequence => (
+                            <Accordion type="single" collapsible className="w-full" key={sequence.id}>
+                              <AccordionItem value={sequence.id} className="border-l-2 border-blue-200 ml-2 pl-2">
+                                <AccordionTrigger className="text-md text-gray-800 px-2 py-1 hover:bg-blue-50 rounded">
+                                  <div className="flex items-center text-blue-600">
+                                    <BookOpen className="h-4 w-4 mr-2" />
+                                    {sequence.title}
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="space-y-2 pl-4">
+                                    {sequence.courses.map(course => (
+                                      <div 
+                                        key={course.id} 
+                                        className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer rounded-md border border-blue-100"
+                                        onClick={() => handleCourseSelect(course.id, course.level)}
+                                      >
+                                        <div className="flex items-center">
+                                          <div className={`w-3 h-3 rounded-full mr-3 ${
+                                            course.progress === 100 ? 'bg-green-500' : 
+                                            course.progress > 0 ? 'bg-yellow-500' : 'bg-gray-300'
+                                          }`} />
+                                          <span>{course.title}</span>
+                                          
+                                          {course.progress === 100 && (
+                                            <span className="ml-2 text-green-500">✓</span>
+                                          )}
+                                        </div>
+                                        <div className="flex items-center">
+                                          <div className="mr-3">
+                                            <Progress value={course.progress} className="h-2 w-16" />
+                                          </div>
+                                          <ChevronRight className="h-4 w-4 text-blue-400" />
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </Card>
+          </TabsContent>
+          
           <TabsContent value="lessons" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {courses.map((cours) => (
@@ -424,161 +496,82 @@ const StudentDashboard = () => {
             </div>
           </TabsContent>
           
-          {/* Tab 2: Historique - Combines units and courses history */}
-          <TabsContent value="history" className="space-y-6">
-            {/* Unités */}
-            <Card className="overflow-hidden">
-              <div className="bg-violet-500 px-6 py-4">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <Calendar className="mr-2 h-5 w-5" /> Mes unités
-                </h3>
-              </div>
-              <div className="p-4">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {unites.map((unite) => (
-                    <Card key={unite.id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                      <div className={`bg-${unite.color}-500 p-4 flex justify-between items-center`}>
-                        <h3 className="text-xl font-bold text-white flex items-center">
-                          <span className="mr-2 text-2xl">{unite.emoji}</span>
-                          {unite.title}
-                        </h3>
-                        {unite.requiresDiagnostic ? (
-                          <span className="px-3 py-1 bg-yellow-300 text-yellow-800 text-xs font-bold rounded-full">
-                            Test requis
-                          </span>
-                        ) : (
-                          unite.progress !== 100 ? (
-                            <span className="px-3 py-1 bg-green-300 text-green-800 text-xs font-bold rounded-full">
-                              En cours
-                            </span>
-                          ) : (
-                            <span className="px-3 py-1 bg-blue-300 text-blue-800 text-xs font-bold rounded-full">
-                              Terminé
-                            </span>
-                          )
-                        )}
+          <TabsContent value="units" className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {unites.map((unite) => (
+                <Card key={unite.id} className="overflow-hidden">
+                  <div className={`bg-${unite.color}-500 p-4 flex justify-between items-center`}>
+                    <h3 className="text-xl font-bold text-white flex items-center">
+                      <span className="mr-2 text-2xl">{unite.emoji}</span>
+                      {unite.title}
+                    </h3>
+                    {unite.requiresDiagnostic ? (
+                      <span className="px-3 py-1 bg-yellow-300 text-yellow-800 text-xs font-bold rounded-full">
+                        Test requis
+                      </span>
+                    ) : (
+                      unite.progress !== 100 ? (
+                        <span className="px-3 py-1 bg-green-300 text-green-800 text-xs font-bold rounded-full">
+                          En cours
+                        </span>
+                      ) : (
+                        <span className="px-3 py-1 bg-blue-300 text-blue-800 text-xs font-bold rounded-full">
+                          Terminé
+                        </span>
+                      )
+                    )}
+                  </div>
+                  
+                  <div className="p-6">
+                    <div className="mb-4">
+                      <div className="flex justify-between mb-2">
+                        <span className="text-sm font-medium">Progression</span>
+                        <span className="text-sm font-medium">{unite.progress}%</span>
                       </div>
-                      
-                      <div className="p-6">
-                        <div className="mb-4">
-                          <div className="flex justify-between mb-2">
-                            <span className="text-sm font-medium">Progression</span>
-                            <span className="text-sm font-medium">{unite.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-4">
-                            <div 
-                              className={`bg-${unite.color}-500 h-4 rounded-full text-xs text-white font-medium text-center leading-4`}
-                              style={{ width: `${unite.progress}%` }}
-                            >
-                              {unite.progress > 15 ? `${unite.progress}%` : ''}
-                            </div>
-                          </div>
+                      <div className="w-full bg-gray-200 rounded-full h-4">
+                        <div 
+                          className={`bg-${unite.color}-500 h-4 rounded-full text-xs text-white font-medium text-center leading-4`}
+                          style={{ width: `${unite.progress}%` }}
+                        >
+                          {unite.progress > 15 ? `${unite.progress}%` : ''}
                         </div>
-                        
-                        <div className="flex justify-between text-sm mb-4">
-                          <span className="font-medium">Niveau: </span>
-                          <span className={`font-bold text-${unite.color}-600`}>{unite.level}</span>
-                        </div>
-                        
-                        {unite.requiresDiagnostic ? (
-                          <Button 
-                            variant="secondary" 
-                            className="w-full"
-                            onClick={() => navigate('/student-diagnostique-test/' + unite.id)}
-                          >
-                            <TestTube className="mr-2 h-4 w-4" />
-                            Passer le test diagnostique
-                          </Button>
-                        ) : (unite.progress !== 100 ? 
-                          (<Button 
-                            variant="default" 
-                            className="w-full"
-                          >
-                            <Book className="mr-2 h-4 w-4" />
-                            Continuer l'apprentissage
-                          </Button>) : 
-                          (<Button
-                            variant='secondary' 
-                            className="w-full"
-                          >
-                            <Repeat className="mr-2 h-4 w-4" />
-                            Revoir les cours
-                          </Button>)
-                        )}
                       </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
-            {/* Historique des cours avec navigation hiérarchique */}
-            <Card className="overflow-hidden mt-6">
-              <div className="bg-blue-500 px-6 py-4">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <Book className="mr-2 h-5 w-5" /> Tous mes cours
-                </h3>
-              </div>
-              <div className="p-4">
-                <Accordion type="single" collapsible className="w-full">
-                  {courseHierarchy.map(unit => (
-                    <AccordionItem key={unit.id} value={unit.id} className="border rounded-lg mb-2 shadow-sm">
-                      <AccordionTrigger className="text-lg font-medium px-4 py-2 hover:bg-blue-50">
-                        <div className="flex items-center text-blue-700">
-                          <Calendar className="h-5 w-5 mr-2" />
-                          {unit.title}
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-2">
-                        <div className="pl-4">
-                          {unit.sequences.map(sequence => (
-                            <Accordion type="single" collapsible className="w-full" key={sequence.id}>
-                              <AccordionItem value={sequence.id} className="border-l-2 border-blue-200 ml-2 pl-2">
-                                <AccordionTrigger className="text-md text-gray-800 px-2 py-1 hover:bg-blue-50 rounded">
-                                  <div className="flex items-center text-blue-600">
-                                    <BookOpen className="h-4 w-4 mr-2" />
-                                    {sequence.title}
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div className="space-y-2 pl-4">
-                                    {sequence.courses.map(course => (
-                                      <div 
-                                        key={course.id} 
-                                        className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer rounded-md border border-blue-100"
-                                        onClick={() => handleCourseSelect(course.id, course.level)}
-                                      >
-                                        <div className="flex items-center">
-                                          <div className={`w-3 h-3 rounded-full mr-3 ${
-                                            course.progress === 100 ? 'bg-green-500' : 
-                                            course.progress > 0 ? 'bg-yellow-500' : 'bg-gray-300'
-                                          }`} />
-                                          <span>{course.title}</span>
-                                          
-                                          {course.progress === 100 && (
-                                            <span className="ml-2 text-green-500">✓</span>
-                                          )}
-                                        </div>
-                                        <div className="flex items-center">
-                                          <div className="mr-3">
-                                            <Progress value={course.progress} className="h-2 w-16" />
-                                          </div>
-                                          <ChevronRight className="h-4 w-4 text-blue-400" />
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            </Card>
+                    </div>
+                    
+                    <div className="flex justify-between text-sm mb-4">
+                      <span className="font-medium">Niveau: </span>
+                      <span className={`font-bold text-${unite.color}-600`}>{unite.level}</span>
+                    </div>
+                    
+                    {unite.requiresDiagnostic ? (
+                      <Button 
+                        variant="secondary" 
+                        className="w-full"
+                        onClick={() => navigate('/student-diagnostique-test/' + unite.id)}
+                      >
+                        <TestTube className="mr-2 h-4 w-4" />
+                        Passer le test diagnostique
+                      </Button>
+                    ) : (unite.progress !== 100 ? 
+                      (<Button 
+                        variant="default" 
+                        className="w-full"
+                      >
+                        <Book className="mr-2 h-4 w-4" />
+                        Continuer l'apprentissage
+                      </Button>) : 
+                      (<Button
+                        variant='secondary' 
+                        className="w-full"
+                      >
+                        <Repeat className="mr-2 h-4 w-4" />
+                        Revoir les cours
+                      </Button>)
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </main>
