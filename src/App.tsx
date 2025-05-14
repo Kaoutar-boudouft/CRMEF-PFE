@@ -15,6 +15,7 @@ import Affectation from "./pages/Teacher/Affectation";
 import CreateStudent from "./pages/Teacher/CreateStudent";
 import CreateClass from "./pages/Teacher/CreateClass";
 import StudentDashboard from "./pages/Student/StudentDashboard";
+import StudentProfile from "./pages/Student/StudentProfile";
 import StudentDiagnosticTest from "./pages/Student/StudentDiagnosticTest";
 import StudentCourse from "./pages/Student/StudentCourse";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/create-class" element={<CreateClass />} />
           {/* Student Routes */}
           <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/student-profile" element={<StudentProfile />} />
           <Route path="/student-diagnostique-test/:courseId" element={<StudentDiagnosticTest />} />
           <Route path="/student-course/:courseId" element={<StudentCourse />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

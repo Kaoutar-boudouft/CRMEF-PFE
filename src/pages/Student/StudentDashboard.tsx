@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -208,7 +207,7 @@ const StudentDashboard = () => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => console.log('Profile settings')}>
+                <DropdownMenuItem onClick={() => navigate('/student-profile')}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Mon profil</span>
                 </DropdownMenuItem>
