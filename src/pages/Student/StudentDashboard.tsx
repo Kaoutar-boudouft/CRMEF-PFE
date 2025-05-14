@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Book, FileCheck, TestTube, Medal, User, Repeat, ChevronRight, Star, BookOpen, Calendar } from 'lucide-react';
+import { Book, FileCheck, TestTube, Medal, User, Repeat, ChevronRight, Star, BookOpen, Calendar, Cable } from 'lucide-react';
 import { 
   Avatar,
   AvatarFallback,
@@ -35,7 +35,7 @@ const StudentDashboard = () => {
       progress: 78,
       level: 'Recommandé',
       requiresDiagnostic: false,
-      color: 'blue',
+      color: 'green',
       emoji: '🚀'
     },
     {
@@ -44,7 +44,7 @@ const StudentDashboard = () => {
       progress: 0,
       level: 'Non déterminé',
       requiresDiagnostic: true,
-      color: 'purple',
+      color: 'yellow',
       emoji: '🔍'
     }
   ];
@@ -80,24 +80,6 @@ const StudentDashboard = () => {
             {
               id: 'cours3',
               title: 'Notion de système d\'exploitation',
-              progress: 60,
-              level: 'Basique',
-            }
-          ]
-        }
-      ]
-    },
-    {
-      id: 'unite2',
-      title: 'Unité 2 : 1er semestre',
-      sequences: [
-        {
-          id: 'seq3',
-          title: 'Programmation',
-          courses: [
-            {
-              id: 'cours4',
-              title: 'Introduction à la programmation',
               progress: 0,
               level: 'Basique',
             }
@@ -105,6 +87,25 @@ const StudentDashboard = () => {
         }
       ]
     }
+    // ,
+    // {
+    //   id: 'unite2',
+    //   title: 'Unité 2 : 1er semestre',
+    //   sequences: [
+    //     {
+    //       id: 'seq3',
+    //       title: 'Programmation',
+    //       courses: [
+    //         {
+    //           id: 'cours4',
+    //           title: 'Introduction à la programmation',
+    //           progress: 0,
+    //           level: 'Basique',
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // }
   ];
 
   // Mock data for student progress
@@ -116,8 +117,7 @@ const StudentDashboard = () => {
       sequence: 'Système informatique',
       progress: 100,
       level: 'Avancé',
-      icon: '🌐',
-      color: 'bg-blue-100'
+      icon: <Cable className="h-6 w-6" />
     },
     {
       id: 'cours2',
@@ -126,25 +126,23 @@ const StudentDashboard = () => {
       sequence: 'Système informatique',
       progress: 100,
       level: 'Recommandé',
-      icon: '💻',
-      color: 'bg-green-100'
+      icon: '💻'
     },
     {
       id: "cours3",
       title: 'Notion de système d\'exploitation',
       unite: "Unité 1",
       sequence: "Système d'exploitation", // Fixed string delimiter issue by using double quotes
-      progress: 60,
+      progress: 0,
       level: 'Basique',
-      icon: '⚙️',
-      color: 'bg-purple-100'
+      icon: '⚙️'
     }
   ];
   
   // Statistiques de progression générales
   const stats = {
     totalProgress: 68,
-    coursesCompleted: 2,
+    coursesCompleted: 4,
     totalCourses: 5,
     streakDays: 4,
     stars: 12,
@@ -211,10 +209,10 @@ const StudentDashboard = () => {
                   <User className="mr-2 h-4 w-4" />
                   <span>Mon profil</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => console.log('View progress')}>
+                {/* <DropdownMenuItem onClick={() => console.log('View progress')}>
                   <Medal className="mr-2 h-4 w-4" />
                   <span>Ma progression</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/')}>
                   <span>Déconnexion</span>
@@ -225,49 +223,86 @@ const StudentDashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* En-tête de bienvenue avec emojis amicaux */}
-        <div className="mb-8 bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
-          <h1 className="text-3xl font-bold text-blue-800 mb-2">
-            👋 Salut, {studentName.split(' ')[0]}!
+        <div className="mb-4 bg-white p-4 rounded-lg shadow-sm border-l-4 border-yellow-500">
+          <h1 className="text-3xl font-bold text-black-800 mb-2">
+            👋 Salut, {studentName}!
           </h1>
-          <p className="text-blue-600">Continue ton super apprentissage et gagne des étoiles! ⭐</p>
+          <p className="text-black-600">Continue ton super apprentissage et gagne des étoiles! ⭐</p>
         </div>
 
         {/* Statistiques visuelles pour les enfants */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-blue-800 flex items-center">
+        <div className="mb-1">
+          <h2 className="text-xl font-bold mb-2 text-black-800 flex items-center">
             <Medal className="mr-2 h-6 w-6 text-yellow-500" /> 
             Ma progression
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Carte 1: Progression globale */}
-            <Card className="overflow-hidden border-t-4 border-purple-500">
-              <div className="p-6 bg-gradient-to-br from-purple-50 to-white">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           
+            
+            {/* Carte 2: Réussites */}
+            <Card className="overflow-hidden border-t-4 border-green-500">
+              <div className="p-6 bg-gradient-to-br from-white-50 to-white">
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-purple-800">Mon niveau 🚀</h3>
-                  <div className="text-xl font-bold bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+                  <h3 className="text-lg font-semibold text-black-800">Mes badges 🏆</h3>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-2">
+
+                   <div className="mt-4 bg-green-100 p-4 rounded-xl flex items-center justify-center">
+                  <BookOpen className="text-black-500 h-6 w-6 mr-2" />
+                  <div>
+                    <span className="text-2xl font-bold text-black-700">{stats.coursesCompleted}/{stats.totalCourses}</span>
+                    <div className="text-sm text-black-600">Cours terminés</div>
+                  </div>
+                </div>
+
+                  
+                  
+                  {/* <div className="bg-green-100 p-4 rounded-xl flex flex-col items-center">
+                    <span className="text-2xl font-bold text-green-700">{stats.streakDays}</span>
+                    <span className="text-sm text-green-600">Jours consécutifs</span>
+                  </div> */}
+                </div>
+                
+                <div className="mt-4 bg-green-100 p-4 rounded-xl flex items-center justify-center">
+                  <Star className="text-black-500 h-6 w-6 mr-2" />
+                  <div>
+                    <span className="text-lg font-bold text-black-700">{stats.stars} étoiles</span>
+                    <div className="text-xs text-black-600">Encore {stats.nextMilestone - stats.stars} pour un badge!</div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+             {/* Carte 1: Progression globale */}
+            <Card className="overflow-hidden border-t-4 border-yellow-500">
+              <div className="p-6 bg-gradient-to-br from-yellow-50 to-white">
+                <div className="flex justify-between items-center ">
+                  <h3 className="text-lg font-semibold text-black-800">Mon niveau 🚀</h3>
+                  <div className="text-xl font-bold bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full">
                     Basique
                   </div>
                 </div>
                 
-                <div className="text-center py-3">
-                  <div className="inline-block rounded-full bg-purple-100 p-3">
-                    <div className="relative w-24 h-24">
-                      <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-purple-800">
+                <div className="text-center ">
+                  <div className="inline-block rounded-full bg-yellow-100 p-3">
+                    <div className="relative w-28 h-28">
+                      <div className="absolute inset-0 flex items-center justify-center text-xl font-bold text-yellow-800">
                         {stats.totalProgress}%
                       </div>
-                      <svg className="w-24 h-24 transform -rotate-90">
+                      <svg className="w-28 h-28 transform -rotate-90">
                         <circle 
-                          cx="48" cy="48" r="36" 
-                          stroke="#e2d9f3" 
+                          cx="56" cy="56" r="40" 
+                          stroke="#eab308" 
                           strokeWidth="8" 
                           fill="transparent" 
                         />
                         <circle 
-                          cx="48" cy="48" r="36" 
-                          stroke="#8b5cf6" 
+                          cx="56" cy="56" r="40" 
+                          stroke="#854d0e" 
                           strokeWidth="8" 
                           fill="transparent" 
                           strokeDasharray={`${36 * 2 * Math.PI * stats.totalProgress/100} ${36 * 2 * Math.PI * (1-stats.totalProgress/100)}`}
@@ -276,42 +311,13 @@ const StudentDashboard = () => {
                       </svg>
                     </div>
                   </div>
-                  <p className="mt-2 text-purple-700">Progression totale</p>
-                </div>
-              </div>
-            </Card>
-            
-            {/* Carte 2: Réussites */}
-            <Card className="overflow-hidden border-t-4 border-green-500">
-              <div className="p-6 bg-gradient-to-br from-green-50 to-white">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-semibold text-green-800">Mes réussites 🏆</h3>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-green-100 p-4 rounded-xl flex flex-col items-center">
-                    <span className="text-2xl font-bold text-green-700">{stats.coursesCompleted}/{stats.totalCourses}</span>
-                    <span className="text-sm text-green-600">Cours terminés</span>
-                  </div>
-                  
-                  <div className="bg-green-100 p-4 rounded-xl flex flex-col items-center">
-                    <span className="text-2xl font-bold text-green-700">{stats.streakDays}</span>
-                    <span className="text-sm text-green-600">Jours consécutifs</span>
-                  </div>
-                </div>
-                
-                <div className="mt-4 bg-green-100 p-4 rounded-xl flex items-center justify-center">
-                  <Star className="text-yellow-500 h-6 w-6 mr-2" />
-                  <div>
-                    <span className="text-lg font-bold text-green-700">{stats.stars} étoiles</span>
-                    <div className="text-xs text-green-600">Encore {stats.nextMilestone - stats.stars} pour un badge!</div>
-                  </div>
+                  <p className="mt-2 text-black-700">Progression totale</p>
                 </div>
               </div>
             </Card>
             
             {/* Carte 3: Activité récente */}
-            <Card className="overflow-hidden border-t-4 border-blue-500">
+            {/* <Card className="overflow-hidden border-t-4 border-blue-500">
               <div className="p-6 bg-gradient-to-br from-blue-50 to-white">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-lg font-semibold text-blue-800">Récemment 🕒</h3>
@@ -331,114 +337,45 @@ const StudentDashboard = () => {
                     </div>
                   ))}
                   
-                  <Button 
+                  {/* <Button 
                     variant="ghost" 
                     className="w-full text-blue-500 hover:text-blue-700 hover:bg-blue-50 mt-2"
                   >
                     Voir tout
-                  </Button>
-                </div>
-              </div>
-            </Card>
+                  </Button> */}
+                {/* </div> */}
+              {/* </div> */}
+            {/* </Card> */} 
           </div>
         </div>
 
         {/* Tabs pour mieux organiser les contenus */}
-        <Tabs defaultValue="courses" className="mt-8">
+        <Tabs defaultValue="courses" className="mt-4">
           <TabsList className="grid grid-cols-3 mb-6 w-full md:w-auto">
             <TabsTrigger value="courses" className="flex items-center">
-              <Book className="mr-2 h-4 w-4" /> Mes cours
+              <Book className="mr-2 h-4 w-4" /> Cours récents
             </TabsTrigger>
-            <TabsTrigger value="lessons" className="flex items-center">
-              <BookOpen className="mr-2 h-4 w-4" /> Leçons en cours
+            <TabsTrigger value="historique" className="flex items-center">
+              <BookOpen className="mr-2 h-4 w-4" /> Historique des cours
             </TabsTrigger>
             <TabsTrigger value="units" className="flex items-center">
               <Calendar className="mr-2 h-4 w-4" /> Mes unités
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="courses" className="space-y-6">
-            {/* Historique des cours avec navigation hiérarchique */}
-            <Card className="overflow-hidden">
-              <div className="bg-blue-500 px-6 py-4">
-                <h3 className="text-lg font-bold text-white flex items-center">
-                  <Book className="mr-2 h-5 w-5" /> Tous mes cours
-                </h3>
-              </div>
-              <div className="p-4">
-                <Accordion type="single" collapsible className="w-full">
-                  {courseHierarchy.map(unit => (
-                    <AccordionItem key={unit.id} value={unit.id} className="border rounded-lg mb-2 shadow-sm">
-                      <AccordionTrigger className="text-lg font-medium px-4 py-2 hover:bg-blue-50">
-                        <div className="flex items-center text-blue-700">
-                          <Calendar className="h-5 w-5 mr-2" />
-                          {unit.title}
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-2">
-                        <div className="pl-4">
-                          {unit.sequences.map(sequence => (
-                            <Accordion type="single" collapsible className="w-full" key={sequence.id}>
-                              <AccordionItem value={sequence.id} className="border-l-2 border-blue-200 ml-2 pl-2">
-                                <AccordionTrigger className="text-md text-gray-800 px-2 py-1 hover:bg-blue-50 rounded">
-                                  <div className="flex items-center text-blue-600">
-                                    <BookOpen className="h-4 w-4 mr-2" />
-                                    {sequence.title}
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                  <div className="space-y-2 pl-4">
-                                    {sequence.courses.map(course => (
-                                      <div 
-                                        key={course.id} 
-                                        className="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer rounded-md border border-blue-100"
-                                        onClick={() => handleCourseSelect(course.id, course.level)}
-                                      >
-                                        <div className="flex items-center">
-                                          <div className={`w-3 h-3 rounded-full mr-3 ${
-                                            course.progress === 100 ? 'bg-green-500' : 
-                                            course.progress > 0 ? 'bg-yellow-500' : 'bg-gray-300'
-                                          }`} />
-                                          <span>{course.title}</span>
-                                          
-                                          {course.progress === 100 && (
-                                            <span className="ml-2 text-green-500">✓</span>
-                                          )}
-                                        </div>
-                                        <div className="flex items-center">
-                                          <div className="mr-3">
-                                            <Progress value={course.progress} className="h-2 w-16" />
-                                          </div>
-                                          <ChevronRight className="h-4 w-4 text-blue-400" />
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-                          ))}
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="lessons" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {courses.map((cours) => (
                 <Card key={cours.id} className={`overflow-hidden border-l-4 ${
                   cours.progress === 100 ? 'border-green-500' : 'border-yellow-500'
                 }`}>
-                  <div className={`${cours.color} p-1`}></div>
+                  <div className={`${cours.progress === 100 ? 'bg-green-100' : 'bg-yellow-100'} p-1`}></div>
                   <div className="p-6">
                     <div className="flex items-start mb-4">
                       <div className="text-3xl mr-3">{cours.icon}</div>
                       <div>
-                        <h3 className="text-lg font-semibold">{cours.title}</h3>
+                        <h3 className="text-lg font-semibold">{cours.title} </h3>
+                        <div className='mb-2'>{cours.sequence}</div>
                         {cours.progress !== 100 ? (
                           <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
                             En cours
@@ -495,6 +432,76 @@ const StudentDashboard = () => {
             </div>
           </TabsContent>
           
+          <TabsContent value="historique" className="space-y-6">
+            {/* Historique des cours avec navigation hiérarchique */}
+            <Card className="overflow-hidden">
+              <div className="bg-yellow-500 px-6 py-4">
+                <h3 className="text-lg font-bold text-black flex items-center">
+                  <Book className="mr-2 h-5 w-5" /> Tous mes cours
+                </h3>
+              </div>
+              <div className="p-4">
+                <Accordion type="single" collapsible className="w-full">
+                  {courseHierarchy.map(unit => (
+                    <AccordionItem key={unit.id} value={unit.id} className="border rounded-lg mb-2 shadow-sm">
+                      <AccordionTrigger className="text-lg font-medium px-4 py-2 hover:bg-yellow-50">
+                        <div className="flex items-center text-black-700">
+                          <Calendar className="h-5 w-5 mr-2" />
+                          {unit.title}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-2">
+                        <div className="pl-4">
+                          {unit.sequences.map(sequence => (
+                            <Accordion type="single" collapsible className="w-full" key={sequence.id}>
+                              <AccordionItem value={sequence.id} className="border-l-2 border-black-200 ml-2 pl-2">
+                                <AccordionTrigger className="text-md text-black-800 px-2 py-1 hover:bg-yellow-50 rounded">
+                                  <div className="flex items-center text-blue-600">
+                                    <BookOpen className="h-4 w-4 mr-2" />
+                                    {sequence.title}
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="space-y-2 pl-4">
+                                    {sequence.courses.map(course => (
+                                      <div 
+                                        key={course.id} 
+                                        className="flex items-center justify-between p-3 hover:bg-yellow-50 cursor-pointer rounded-md border border-black-100"
+                                        onClick={() => handleCourseSelect(course.id, course.level)}
+                                      >
+                                        <div className="flex items-center">
+                                          <div className={`w-3 h-3 rounded-full mr-3 ${
+                                            course.progress === 100 ? 'bg-green-500' : 
+                                            course.progress > 0 ? 'bg-yellow-500' : 'bg-gray-300'
+                                          }`} />
+                                          <span>{course.title}</span>
+                                          
+                                          {course.progress === 100 && (
+                                            <span className="ml-2 text-green-500">✓</span>
+                                          )}
+                                        </div>
+                                        <div className="flex items-center">
+                                          <div className="mr-3">
+                                            <Progress value={course.progress} className="h-2 w-16" />
+                                          </div>
+                                          <ChevronRight className="h-4 w-4 text-blue-400" />
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </Card>
+          </TabsContent>
+        
           <TabsContent value="units" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               {unites.map((unite) => (
