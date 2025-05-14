@@ -132,7 +132,7 @@ const StudentDashboard = () => {
       id: "cours3",
       title: 'Notion de système d\'exploitation',
       unite: "Unité 1",
-      sequence: 'Système d'exploitation',
+      sequence: "Système d'exploitation", // Fixed string delimiter issue by using double quotes
       progress: 60,
       level: 'Basique',
     }
