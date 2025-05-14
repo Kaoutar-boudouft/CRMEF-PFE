@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Book, FileCheck, TestTube, Medal, User, Repeat } from 'lucide-react';
+import { Book, FileCheck, TestTube, Medal, User, Repeat, ChevronRight, ChevronDown } from 'lucide-react';
 import { 
   Avatar,
   AvatarFallback,
@@ -18,10 +18,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [studentName, setStudentName] = useState('El amrani Mohamed'); // Example student name, could be fetched from API/context
+  
+  // État pour suivre l'unité, la séquence et le cours sélectionnés
+  const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
+  const [selectedSequence, setSelectedSequence] = useState<string | null>(null);
   
   const unites = [
     {
@@ -46,6 +51,64 @@ const StudentDashboard = () => {
     //   requiresDiagnostic: true,
     // }
   ];
+  
+  // Données pour la hiérarchie des cours (unité > séquence > cours)
+  const courseHierarchy = [
+    {
+      id: 'unite1',
+      title: 'Unité 1 : 1ère semestre',
+      sequences: [
+        {
+          id: 'seq1',
+          title: 'Système informatique',
+          courses: [
+            {
+              id: 'cours1',
+              title: 'La connectivité',
+              progress: 100,
+              level: 'Avancé',
+            },
+            {
+              id: 'cours2',
+              title: 'Logiciels',
+              progress: 100,
+              level: 'Recommandé',
+            }
+          ]
+        },
+        {
+          id: 'seq2',
+          title: 'Système d\'exploitation',
+          courses: [
+            {
+              id: 'cours3',
+              title: 'Notion de système d\'exploitation',
+              progress: 60,
+              level: 'Basique',
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'unite2',
+      title: 'Unité 2 : 1ère semestre',
+      sequences: [
+        {
+          id: 'seq3',
+          title: 'Programmation',
+          courses: [
+            {
+              id: 'cours4',
+              title: 'Introduction à la programmation',
+              progress: 0,
+              level: 'Basique',
+            }
+          ]
+        }
+      ]
+    }
+  ];
 
   // Mock data for student progress
   const courses = [
@@ -69,11 +132,33 @@ const StudentDashboard = () => {
       id: "cours3",
       title: 'Notion de système d\'exploitation',
       unite: "Unité 1",
-      sequence: 'Système d’exploitation',
+      sequence: 'Système d'exploitation',
       progress: 60,
       level: 'Basique',
     }
   ];
+
+  const handleUnitSelect = (unitId: string) => {
+    if (selectedUnit === unitId) {
+      setSelectedUnit(null);
+      setSelectedSequence(null);
+    } else {
+      setSelectedUnit(unitId);
+      setSelectedSequence(null);
+    }
+  };
+
+  const handleSequenceSelect = (sequenceId: string) => {
+    if (selectedSequence === sequenceId) {
+      setSelectedSequence(null);
+    } else {
+      setSelectedSequence(sequenceId);
+    }
+  };
+
+  const handleCourseSelect = (courseId: string, level: string) => {
+    navigate(`/student-course/${courseId}?level=${level}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -143,6 +228,62 @@ const StudentDashboard = () => {
             </div>
             <Progress value={25} className="h-2" />
           </div>
+        </div>
+
+        {/* Historique des cours avec navigation hiérarchique */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4 flex items-center">
+            <Book className="mr-2 h-5 w-5" /> Historique des cours
+          </h2>
+          <Card className="p-4">
+            <Accordion type="single" collapsible className="w-full">
+              {courseHierarchy.map(unit => (
+                <AccordionItem key={unit.id} value={unit.id}>
+                  <AccordionTrigger className="text-lg font-medium px-2">
+                    {unit.title}
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="pl-4">
+                      {unit.sequences.map(sequence => (
+                        <Accordion type="single" collapsible className="w-full" key={sequence.id}>
+                          <AccordionItem value={sequence.id}>
+                            <AccordionTrigger className="text-md text-gray-800 px-2">
+                              {sequence.title}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <div className="space-y-2 pl-4">
+                                {sequence.courses.map(course => (
+                                  <div 
+                                    key={course.id} 
+                                    className="flex items-center justify-between p-2 hover:bg-gray-50 cursor-pointer rounded-md"
+                                    onClick={() => handleCourseSelect(course.id, course.level)}
+                                  >
+                                    <div className="flex items-center">
+                                      <div className={`w-2 h-2 rounded-full mr-2 ${
+                                        course.progress === 100 ? 'bg-green-500' : 
+                                        course.progress > 0 ? 'bg-yellow-500' : 'bg-gray-300'
+                                      }`} />
+                                      <span>{course.title}</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <span className="text-xs text-gray-500 mr-2">
+                                        {course.progress}% • {course.level}
+                                      </span>
+                                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      ))}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Card>
         </div>
 
         <div className="mb-8">
