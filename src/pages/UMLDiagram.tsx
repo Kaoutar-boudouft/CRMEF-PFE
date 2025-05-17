@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Book } from "lucide-react";
@@ -186,7 +187,7 @@ const UMLDiagram = () => {
               <text x="560" y="205" fontSize="12">- date_soumission: DATETIME</text>
 
               {/* Notification */}
-              <rect x="1000" y="800" width="200" height="160" fill="#e8f5e9", stroke="#4caf50" strokeWidth="2" rx="5" />
+              <rect x="1000" y="800" width="200" height="160" fill="#e8f5e9" stroke="#4caf50" strokeWidth="2" rx="5" />
               <text x="1100" y="825" textAnchor="middle" fontWeight="bold" fontSize="16">Notification</text>
               <line x1="1000" y1="835" x2="1200" y2="835" stroke="#4caf50" strokeWidth="2" />
               <text x="1010" y="855" fontSize="12">- id: INT (PK)</text>
