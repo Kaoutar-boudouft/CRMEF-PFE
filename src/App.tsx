@@ -18,7 +18,6 @@ import StudentDashboard from "./pages/Student/StudentDashboard";
 import StudentProfile from "./pages/Student/StudentProfile";
 import StudentDiagnosticTest from "./pages/Student/StudentDiagnosticTest";
 import StudentCourse from "./pages/Student/StudentCourse";
-import UMLDiagram from "./pages/UMLDiagram";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,8 +44,6 @@ const App = () => (
           <Route path="/student-profile" element={<StudentProfile />} />
           <Route path="/student-diagnostique-test/:courseId" element={<StudentDiagnosticTest />} />
           <Route path="/student-course/:courseId" element={<StudentCourse />} />
-          {/* UML Diagram */}
-          <Route path="/uml-diagram" element={<UMLDiagram />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
