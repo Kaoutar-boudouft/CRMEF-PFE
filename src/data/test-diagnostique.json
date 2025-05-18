@@ -1,0 +1,103 @@
+
+[
+  {
+    "question": "Parmi les propositions suivantes, laquelle définit le mieux le mot information ?",
+    "options": [
+      "Un logiciel informatique",
+      "Une donnée traitée et compréhensible",
+      "Un périphérique de sortie",
+      "Un fichier vide"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "Quelle est la différence principale entre donnée et information ?",
+    "options": [
+      "La donnée est une information codée",
+      "La donnée est toujours correcte",
+      "L'information est brute et inutilisable",
+      "Il n'y a aucune différence"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Un système informatique est constitué de :",
+    "options": [
+      "Uniquement d'un ordinateur",
+      "De composants matériels et logiciels qui traitent l'information",
+      "De câbles et d'électricité",
+      "D'applications de messagerie"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "Le rôle d'une carte réseau est :",
+    "options": [
+      "D'enregistrer les données",
+      "D'envoyer et recevoir des données sur un réseau",
+      "D'afficher les images à l'écran",
+      "D'améliorer la vitesse du processeur"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "Lequel des éléments suivants est un périphérique de communication ?",
+    "options": [
+      "Clavier",
+      "Écran",
+      "Modem",
+      "Souris"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Parmi ces types de connexions, lequel utilise un câble ?",
+    "options": [
+      "Wi-Fi",
+      "Bluetooth",
+      "Ethernet",
+      "Infrarouge"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Un logiciel sert à :",
+    "options": [
+      "Alimenter électriquement l'ordinateur",
+      "Faire fonctionner le matériel informatique",
+      "Ajouter plus de mémoire vive",
+      "Créer des fichiers matériels"
+    ],
+    "answer": 1
+  },
+  {
+    "question": "Parmi ces logiciels, lequel est un système d'exploitation ?",
+    "options": [
+      "Windows",
+      "Word",
+      "Google Chrome",
+      "VLC Media Player"
+    ],
+    "answer": 0
+  },
+  {
+    "question": "Un logiciel applicatif permet de :",
+    "options": [
+      "Gérer le matériel de l'ordinateur",
+      "Modifier des paramètres du BIOS",
+      "Réaliser des tâches spécifiques (ex : écrire un texte)",
+      "Démarrer l'ordinateur"
+    ],
+    "answer": 2
+  },
+  {
+    "question": "Quel logiciel utiliseriez-vous pour naviguer sur Internet ?",
+    "options": [
+      "WordPad",
+      "Paint",
+      "Google Chrome",
+      "Excel"
+    ],
+    "answer": 2
+  }
+]

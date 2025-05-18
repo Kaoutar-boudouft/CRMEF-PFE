@@ -1,0 +1,27 @@
+
+[
+  {
+    "id": "1",
+    "type": "course",
+    "name": "La connectivité",
+    "date": "2 jours",
+    "status": "completed",
+    "icon": "🌐"
+  },
+  {
+    "id": "2",
+    "type": "test",
+    "name": "Bases de l'informatique",
+    "date": "3 jours",
+    "status": "passed",
+    "icon": "📝"
+  },
+  {
+    "id": "3",
+    "type": "course",
+    "name": "Système d'exploitation",
+    "date": "5 jours",
+    "status": "in-progress",
+    "icon": "⚙️"
+  }
+]

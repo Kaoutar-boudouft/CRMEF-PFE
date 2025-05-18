@@ -1,0 +1,58 @@
+
+[
+  { 
+    "id": "1",
+    "name": "Classe 1A", 
+    "level": "1ère année", 
+    "type": "Général", 
+    "students": 32, 
+    "status": "Inactif",
+    "progression": 70,
+    "semestres": 2,
+    "coursesPlanned": 24
+  },
+  { 
+    "id": "2",
+    "name": "Classe 1B", 
+    "level": "1ère année", 
+    "type": "International", 
+    "students": 28, 
+    "status": "active",
+    "progression": 73,
+    "semestres": 2,
+    "coursesPlanned": 24
+  },
+  { 
+    "id": "3",
+    "name": "Classe 2A", 
+    "level": "2ème année", 
+    "type": "Général", 
+    "students": 30, 
+    "status": "Inactif",
+    "progression": 76,
+    "semestres": 2,
+    "coursesPlanned": 26
+  },
+  { 
+    "id": "4",
+    "name": "Classe 2B", 
+    "level": "2ème année", 
+    "type": "International", 
+    "students": 26, 
+    "status": "Inactif",
+    "progression": 79,
+    "semestres": 2,
+    "coursesPlanned": 26
+  },
+  { 
+    "id": "5",
+    "name": "Classe 1C", 
+    "level": "1ère année", 
+    "type": "Général", 
+    "students": 31, 
+    "status": "Inactif",
+    "progression": 82,
+    "semestres": 2,
+    "coursesPlanned": 24
+  }
+]

@@ -1,0 +1,63 @@
+
+[
+  {
+    "id": "1",
+    "nom": "El amrani Mohamed",
+    "prenom": "Mohamed",
+    "email": "elamrani@qismi.ma",
+    "classe": "Classe 1A",
+    "niveau": "1ère année",
+    "type": "Général",
+    "dateInscription": "Septembre 2024",
+    "niveau_competence": "Basique",
+    "statut": "Actif",
+    "progress": {
+      "global": 68,
+      "coursesCompleted": 4,
+      "totalCourses": 5,
+      "streakDays": 4,
+      "stars": 12,
+      "hoursStudied": 14.5
+    }
+  },
+  {
+    "id": "2",
+    "nom": "Bennani Yasmina",
+    "prenom": "Yasmina",
+    "email": "bennani@qismi.ma",
+    "classe": "Classe 1B",
+    "niveau": "1ère année",
+    "type": "International",
+    "dateInscription": "Septembre 2024",
+    "niveau_competence": "Recommandé",
+    "statut": "Actif",
+    "progress": {
+      "global": 85,
+      "coursesCompleted": 5,
+      "totalCourses": 5,
+      "streakDays": 7,
+      "stars": 18,
+      "hoursStudied": 20.5
+    }
+  },
+  {
+    "id": "3",
+    "nom": "Alaoui Ahmed",
+    "prenom": "Ahmed",
+    "email": "alaoui@qismi.ma",
+    "classe": "Classe 2A",
+    "niveau": "2ème année",
+    "type": "Général",
+    "dateInscription": "Septembre 2023",
+    "niveau_competence": "Avancé",
+    "statut": "Actif",
+    "progress": {
+      "global": 92,
+      "coursesCompleted": 8,
+      "totalCourses": 8,
+      "streakDays": 12,
+      "stars": 25,
+      "hoursStudied": 30.5
+    }
+  }
+]

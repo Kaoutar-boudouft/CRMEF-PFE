@@ -1,0 +1,27 @@
+
+[
+  { 
+    "id": "1", 
+    "niveauCollegial": "1ère année", 
+    "classe": "Classe 1B", 
+    "type": "Général", 
+    "cours": "Connectivité", 
+    "date": "2024-10-10" 
+  },
+  { 
+    "id": "2", 
+    "niveauCollegial": "1ère année", 
+    "classe": "Classe 1A", 
+    "type": "International", 
+    "cours": "Connectivité", 
+    "date": "2024-10-15" 
+  },
+  { 
+    "id": "3", 
+    "niveauCollegial": "2ème année", 
+    "classe": "Classe 2C", 
+    "type": "Général", 
+    "cours": "Tableur : Fonction si conditionnel", 
+    "date": "2025-04-03" 
+  }
+]

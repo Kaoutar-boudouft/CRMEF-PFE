@@ -1,0 +1,48 @@
+
+[
+  {
+    "id": "1",
+    "title": "La connectivité",
+    "description": "Introduction aux différents types de connexions réseau",
+    "progress": 100,
+    "icon": "🌐",
+    "unit": "Unité 1",
+    "color": "bg-blue-100"
+  },
+  {
+    "id": "2",
+    "title": "Logiciels",
+    "description": "Différenciation entre logiciels système et applicatifs",
+    "progress": 100,
+    "icon": "💻",
+    "unit": "Unité 1",
+    "color": "bg-green-100"
+  },
+  {
+    "id": "3",
+    "title": "Notion de système d'exploitation",
+    "description": "Introduction aux OS et leurs fonctions",
+    "progress": 60,
+    "icon": "⚙️",
+    "unit": "Unité 1",
+    "color": "bg-purple-100"
+  },
+  {
+    "id": "4",
+    "title": "Tableur : Fonction si conditionnel",
+    "description": "Utilisation des formules conditionnelles dans les tableurs",
+    "progress": 0,
+    "icon": "📊",
+    "unit": "Unité 2",
+    "color": "bg-yellow-100"
+  },
+  {
+    "id": "5",
+    "title": "Introduction à l'algorithme",
+    "description": "Bases de la pensée algorithmique",
+    "progress": 0,
+    "icon": "🧮",
+    "unit": "Unité 3",
+    "color": "bg-pink-100"
+  }
+]
