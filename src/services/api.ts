@@ -11,6 +11,7 @@ import testDiagnostiqueData from '../data/test-diagnostique.json';
 import coursesData from '../data/courses.json';
 import activitiesData from '../data/activities.json';
 import badgesData from '../data/badges.json';
+import planningData from '../data/planning.json';
 
 // Define types for each data structure
 export interface Student {
@@ -87,6 +88,18 @@ export interface BadgeType {
   color: string;
 }
 
+export interface PlanningEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  classe: string;
+  level: string;
+  location: string;
+  type: string;
+  color: string;
+}
+
 // Simulate API calls with delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -145,4 +158,15 @@ export const fetchActivities = async (): Promise<Activity[]> => {
 export const fetchBadges = async (): Promise<BadgeType[]> => {
   await delay(300);
   return badgesData;
+};
+
+// Planning API
+export const fetchPlanningEvents = async (): Promise<PlanningEvent[]> => {
+  await delay(300);
+  return planningData;
+};
+
+export const fetchPlanningEventById = async (id: string): Promise<PlanningEvent | undefined> => {
+  await delay(200);
+  return planningData.find(event => event.id === id);
 };
