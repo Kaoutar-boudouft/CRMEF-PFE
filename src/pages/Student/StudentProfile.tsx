@@ -36,7 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { fetchStudentById, fetchActivities, fetchBadges, fetchCourses, Student, Activity, Badge, Course } from '@/services/api';
+import { fetchStudentById, fetchActivities, fetchBadges, fetchCourses, Student, Activity, BadgeType, Course } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 const StudentProfile = () => {
@@ -44,7 +44,7 @@ const StudentProfile = () => {
   const { toast } = useToast();
   const [student, setStudent] = useState<Student | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [badges, setBadges] = useState<Badge[]>([]);
+  const [badges, setBadges] = useState<BadgeType[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
 

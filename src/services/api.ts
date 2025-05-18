@@ -80,7 +80,7 @@ export interface Activity {
   icon: string;
 }
 
-export interface Badge {
+export interface BadgeType {
   id: string;
   name: string;
   icon: string;
@@ -142,7 +142,7 @@ export const fetchActivities = async (): Promise<Activity[]> => {
 };
 
 // Badges API
-export const fetchBadges = async (): Promise<Badge[]> => {
+export const fetchBadges = async (): Promise<BadgeType[]> => {
   await delay(300);
   return badgesData;
 };
