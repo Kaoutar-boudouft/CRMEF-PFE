@@ -1,4 +1,3 @@
-
 /**
  * API Service to fetch data from JSON files
  */
@@ -267,15 +266,15 @@ export const fetchSequencesByUnit = async (unitId: string): Promise<Sequence[]> 
 
 export const fetchExercises = async (): Promise<Exercise[]> => {
   await delay(300);
-  return exercisesData;
+  return exercisesData as Exercise[];
 };
 
 export const fetchExerciseById = async (id: string): Promise<Exercise | undefined> => {
   await delay(200);
-  return exercisesData.find(exercise => exercise.id === id);
+  return exercisesData.find(exercise => exercise.id === id) as Exercise | undefined;
 };
 
 export const fetchExercisesByCourse = async (courseId: string): Promise<Exercise[]> => {
   await delay(300);
-  return exercisesData.filter(exercise => exercise.courseId === courseId);
+  return exercisesData.filter(exercise => exercise.courseId === courseId) as Exercise[];
 };
