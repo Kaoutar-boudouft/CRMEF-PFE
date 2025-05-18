@@ -1,0 +1,36 @@
+
+[
+  {
+    "id": "unite1",
+    "name": "Unité 1: Introduction à l'informatique",
+    "semesterId": "1",
+    "description": "Bases fondamentales de l'informatique",
+    "progress": 78,
+    "level": "Recommandé",
+    "color": "green",
+    "emoji": "🚀",
+    "status": "en cours"
+  },
+  {
+    "id": "unite2",
+    "name": "Unité 2: Logiciels et applications",
+    "semesterId": "1",
+    "description": "Exploration des différents logiciels et applications",
+    "progress": 0,
+    "level": "Non déterminé",
+    "color": "yellow",
+    "emoji": "🔍",
+    "status": "à venir"
+  },
+  {
+    "id": "unite3",
+    "name": "Unité 3: Programmation de base",
+    "semesterId": "2",
+    "description": "Introduction aux concepts de programmation",
+    "progress": 0,
+    "level": "Basique",
+    "color": "blue",
+    "emoji": "💻",
+    "status": "à venir"
+  }
+]

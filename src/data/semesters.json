@@ -1,0 +1,17 @@
+
+[
+  {
+    "id": "1",
+    "name": "1er Semestre",
+    "startDate": "2024-01-01",
+    "endDate": "2024-06-30",
+    "status": "en cours"
+  },
+  {
+    "id": "2",
+    "name": "2ème Semestre",
+    "startDate": "2024-07-01",
+    "endDate": "2024-12-31",
+    "status": "à venir"
+  }
+]
