@@ -11,6 +11,11 @@ import testDiagnostiqueData from '../data/test-diagnostique.json';
 import coursesData from '../data/courses.json';
 import activitiesData from '../data/activities.json';
 import badgesData from '../data/badges.json';
+import semestresData from '../data/semestres.json';
+import unitsData from '../data/units.json';
+import sequencesData from '../data/sequences.json';
+import planningCoursesData from '../data/planning-courses.json';
+import exercicesData from '../data/exercices.json';
 
 // Define types for each data structure
 export interface Student {
@@ -87,6 +92,50 @@ export interface BadgeType {
   color: string;
 }
 
+export interface Semestre {
+  id: string;
+  name: string;
+  annee_collegiale: string;
+  niveau_collegiale: string;
+}
+
+export interface Unit {
+  id: string;
+  semestre: string;
+  name: string;
+  sequences: number;
+  cours: number;
+  progression: string;
+  testDiagno: boolean;
+}
+
+export interface Sequence {
+  id: string;
+  unite: string;
+  name: string;
+  cours: number;
+  exercices: number;
+  progression: string;
+}
+
+export interface PlanningCourse {
+  id: string;
+  name: string;
+  sequence: string;
+  exercices: number;
+  progression: string;
+}
+
+export interface Exercice {
+  id: string;
+  name: string;
+  cours: string;
+  questions?: number;
+  exercices?: number;
+  progression: string;
+}
+
+
 // Simulate API calls with delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -145,4 +194,29 @@ export const fetchActivities = async (): Promise<Activity[]> => {
 export const fetchBadges = async (): Promise<BadgeType[]> => {
   await delay(300);
   return badgesData;
+};
+
+export const fetchSemestres = async (): Promise<Semestre[]> => {
+  await delay(300);
+  return semestresData;
+};
+
+export const fetchUnits = async (): Promise<Unit[]> => {
+  await delay(300);
+  return unitsData;
+};
+
+export const fetchSequences = async (): Promise<Sequence[]> => {
+  await delay(300);
+  return sequencesData;
+};
+
+export const fetchPlanningCourses = async (): Promise<PlanningCourse[]> => {
+  await delay(300);
+  return planningCoursesData;
+};
+
+export const fetchExercices = async (): Promise<Exercice[]> => {
+  await delay(300);
+  return exercicesData;
 };

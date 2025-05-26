@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SidebarProvider, Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { BookOpenCheck, BookText, Calendar, GraduationCap, Home, LayoutDashboard, School, Users, ListTodo, BookOpen, Library, Video, FileText, Image, MoveHorizontal, Upload, X, Link2Icon, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useRef } from 'react'; // Import useRef
+import { fetchSemestres, fetchUnits, fetchSequences, fetchPlanningCourses, fetchExercices, Semestre, Unit, Sequence, PlanningCourse, Exercice } from '@/services/api';
+import { useToast } from '@/hooks/use-toast';
+
 const Planning = () => {
   const navigate = useNavigate();
   const [currentPlanningTab, setCurrentPlanningTab] = useState<'semesters' | 'units' | 'sequences' | 'courses' | 'exercices'>('semesters');
@@ -26,34 +29,73 @@ const Planning = () => {
   const [selectedSequence, setSelectedSequence] = useState<string>('seq1');
   const [activeCourseLevel, setActiveCourseLevel] = useState<'basic' | 'recommande' | 'avancee'>('basic');
   
-  const [units, setUnits] = useState([
-    { id: "unit1", semestre: 'sem1', name: "Unité 1", sequences : 2, cours: 6, progression: '100%', testDiagno: true },
-    { id: "unit2", semestre: 'sem1', name: "Unité 2", sequences : 2, cours: 5, progression: '60%', testDiagno: false },
-    { id: "unit3", semestre: 'sem1', name: "Unité 3", sequences : 1, cours: 7, progression: '0%', testDiagno: false},
-    { id: "unit4", semestre: 'sem2', name: "Unité 1", sequences : 3, cours: 8, progression: '75%', testDiagno: true },
-    { id: "unit5", semestre: 'sem2', name: "Unité 2", sequences : 2, cours: 4, progression: '0%', testDiagno: false },
-  ]);
+  // const [units, setUnits] = useState([
+  //   { id: "unit1", semestre: 'sem1', name: "Unité 1", sequences : 2, cours: 6, progression: '100%', testDiagno: true },
+  //   { id: "unit2", semestre: 'sem1', name: "Unité 2", sequences : 2, cours: 5, progression: '60%', testDiagno: false },
+  //   { id: "unit3", semestre: 'sem1', name: "Unité 3", sequences : 1, cours: 7, progression: '0%', testDiagno: false},
+  //   { id: "unit4", semestre: 'sem2', name: "Unité 1", sequences : 3, cours: 8, progression: '75%', testDiagno: true },
+  //   { id: "unit5", semestre: 'sem2', name: "Unité 2", sequences : 2, cours: 4, progression: '0%', testDiagno: false },
+  // ]);
 
 
   
-  const [sequences, setSequences] = useState([
-    { id: "seq1", unite : "unit1", name: "Séquence 1: Système informatique", cours: 3, exercices : 5, progression: '100%' },
-    { id: "seq2", unite : "unit1", name: "Séquence 2: Système d’exploitation", cours: 3, exercices : 7, progression: '100%' },
-    // { id: "seq3", name: "Séquence 3: Projet pratique" },
-  ]);
+  // const [sequences, setSequences] = useState([
+  //   { id: "seq1", unite : "unit1", name: "Séquence 1: Système informatique", cours: 3, exercices : 5, progression: '100%' },
+  //   { id: "seq2", unite : "unit1", name: "Séquence 2: Système d’exploitation", cours: 3, exercices : 7, progression: '100%' },
+  //   // { id: "seq3", name: "Séquence 3: Projet pratique" },
+  // ]);
   
-  // Fix the courses state by explicitly adding trace and video properties
-  const [courses, setCourses] = useState([
-    { id: "cours1", name: "Cours 1: Introduction aux notions Information - Informatique - Système informatique", sequence: 'seq1', exercices : 4, progression : '85%'},
-    { id: "cours2", name: "Cours 2: Connectivité", sequence: 'seq1', exercices : 3, progression : '90%' },
-    { id: "cours3", name: "Cours 3: Logiciels", sequence: 'seq1', exercices : 2, progression : '75%' },
-  ]);
+  // // Fix the courses state by explicitly adding trace and video properties
+  // const [courses, setCourses] = useState([
+  //   { id: "cours1", name: "Cours 1: Introduction aux notions Information - Informatique - Système informatique", sequence: 'seq1', exercices : 4, progression : '85%'},
+  //   { id: "cours2", name: "Cours 2: Connectivité", sequence: 'seq1', exercices : 3, progression : '90%' },
+  //   { id: "cours3", name: "Cours 3: Logiciels", sequence: 'seq1', exercices : 2, progression : '75%' },
+  // ]);
 
-  const [exercices, setExercices] = useState([
-    { id: "ex1", name: "Ex 1: Type d'information", cours: 'cours1', questions : 2, progression : '93%'},
-    { id: "ex2", name: "Ex 2: Signification de mot informatique", cours: 'cours1', questions : 2, progression : '86%' },
-    { id: "ex3", name: "Ex 3: Composantes d'un système informatique", cours: 'cours1', exercices : 3, progression : '80%' },
-  ]);
+  // const [exercices, setExercices] = useState([
+  //   { id: "ex1", name: "Ex 1: Type d'information", cours: 'cours1', questions : 2, progression : '93%'},
+  //   { id: "ex2", name: "Ex 2: Signification de mot informatique", cours: 'cours1', questions : 2, progression : '86%' },
+  //   { id: "ex3", name: "Ex 3: Composantes d'un système informatique", cours: 'cours1', exercices : 3, progression : '80%' },
+  // ]);
+
+  const [semesters, setSemestres] = useState<Semestre[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [sequences, setSequences] = useState<Sequence[]>([]);
+  const [courses, setCourses] = useState<PlanningCourse[]>([]);
+  const [exercices, setExercices] = useState<Exercice[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load data from API
+  useEffect(() => {
+    const loadPlanningData = async () => {
+      try {
+        setLoading(true);
+        const [semestresData, unitsData, sequencesData, coursesData, exercicesData] = await Promise.all([
+          fetchSemestres(),
+          fetchUnits(),
+          fetchSequences(),
+          fetchPlanningCourses(),
+          fetchExercices()
+        ]);
+        
+        setSemestres(semestresData);
+        setUnits(unitsData);
+        setSequences(sequencesData);
+        setCourses(coursesData);
+        setExercices(exercicesData);
+      } catch (error) {
+        console.error('Error loading planning data:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les données de planification",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+     loadPlanningData();
+  }, [toast]);
 
   // Set default values for dropdowns
   useEffect(() => {
@@ -317,10 +359,10 @@ const fileInputRefs = {
   ];
 
   // Semestres constants
-  const semesters = [
-    { id: "sem1", name: "1er semestre" },
-    { id: "sem2", name: "2ème semestre" },
-  ];
+  // const semesters = [
+  //   { id: "sem1", name: "1er semestre" },
+  //   { id: "sem2", name: "2ème semestre" },
+  // ];
 
   // Define types for file uploads for each level
 type CourseFiles = {
@@ -553,12 +595,21 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
           </SidebarContent>
         </Sidebar>
 
-        {/* Main Content */}
+        { /* Main Content */}
+          
         <div className="flex-1 overflow-hidden">
           <header className="border-b px-6 py-3">
             <h1 className="text-2xl text-center font-bold">Planification</h1>
           </header>
-
+{loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                <p className="mt-4">Chargement du planning...</p>
+              </div>
+            </div>
+          ) : 
+          (
           <main className="p-6">
             <Tabs value={currentPlanningTab} onValueChange={(value) => setCurrentPlanningTab(value as any)}>
               <TabsList className="mb-4">
@@ -589,19 +640,45 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="w-1/3">
-                      <Select value={selectedLevel} onValueChange={setSelectedLevel}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un niveau collégial" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Niveau Collégial</SelectLabel>
-                            {collegialLevels.map((level) => (
-                              <SelectItem key={level.id} value={level.id}>{level.name}</SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-4">
+                        {/* Select Niveau Collégial */}
+                        <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionner un niveau collégial" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Niveau Collégial</SelectLabel>
+                              {collegialLevels.map((level) => (
+                                <SelectItem key={level.id} value={level.id}>{level.name}</SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+
+                        {/* Select Année Collégiale (dynamique selon semestres) */}
+                        <Select
+                          value={selectedSemester}
+                          onValueChange={setSelectedSemester}
+                          disabled={!selectedLevel}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionner une année collégiale" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Année Collégiale</SelectLabel>
+                              {semesters
+                                .filter((semester) => semester.niveau_collegiale === selectedLevel)
+                                .map((semester) => (
+                                  <SelectItem key={semester.id} value={semester.id}>
+                                    {semester.annee_collegiale}
+                                  </SelectItem>
+                                ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
 
@@ -2107,7 +2184,7 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
 
 
             </Tabs>
-          </main>
+          </main>)}
         </div>
       </div>
     </SidebarProvider>
