@@ -1,5 +1,0 @@
-
-[
-  { "id": "seq1", "unite": "unit1", "name": "Séquence 1: Système informatique", "cours": 3, "exercices": 5, "progression": "100%" },
-  { "id": "seq2", "unite": "unit1", "name": "Séquence 2: Système d'exploitation", "cours": 3, "exercices": 7, "progression": "100%" }
-]

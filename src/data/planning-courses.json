@@ -1,6 +1,0 @@
-
-[
-  { "id": "cours1", "name": "Cours 1: Introduction aux notions Information - Informatique - Système informatique", "sequence": "seq1", "exercices": 4, "progression": "85%" },
-  { "id": "cours2", "name": "Cours 2: Connectivité", "sequence": "seq1", "exercices": 3, "progression": "90%" },
-  { "id": "cours3", "name": "Cours 3: Logiciels", "sequence": "seq1", "exercices": 2, "progression": "75%" }
-]

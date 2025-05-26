@@ -1,6 +1,0 @@
-
-[
-  { "id": "ex1", "name": "Ex 1: Type d'information", "cours": "cours1", "questions": 2, "progression": "93%" },
-  { "id": "ex2", "name": "Ex 2: Signification de mot informatique", "cours": "cours1", "questions": 2, "progression": "86%" },
-  { "id": "ex3", "name": "Ex 3: Composantes d'un système informatique", "cours": "cours1", "exercices": 3, "progression": "80%" }
-]
