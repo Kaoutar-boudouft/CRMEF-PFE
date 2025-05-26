@@ -553,6 +553,7 @@ const filteredExercices = exercices.filter(exercice => exercice.cours === select
 const selectedUnitDetails = units.find(unit => unit.id === selectedUnit);
 const selectedSequenceDetails = sequences.find(sequence => sequence.id === selectedSequence);
 const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
+const [selectedAnneeCollegiale, setSelectedAnneeCollegiale] = useState<string>("");
 
   return (
     <SidebarProvider>
@@ -658,8 +659,8 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
 
                         {/* Select Année Collégiale (dynamique selon semestres) */}
                         <Select
-                          value={selectedSemester}
-                          onValueChange={setSelectedSemester}
+                          value={selectedAnneeCollegiale}
+                          onValueChange={setSelectedAnneeCollegiale}
                           disabled={!selectedLevel}
                         >
                           <SelectTrigger>
@@ -668,21 +669,21 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
                           <SelectContent>
                             <SelectGroup>
                               <SelectLabel>Année Collégiale</SelectLabel>
-                              {semesters
-                                .filter((semester) => semester.niveau_collegiale === selectedLevel)
-                                .map((semester) => (
-                                  <SelectItem key={semester.id} value={semester.id}>
-                                    {semester.annee_collegiale}
-                                  </SelectItem>
-                                ))}
-                            </SelectGroup>
+        {[...new Set(
+          semesters
+            .filter((semester) => semester.niveau_collegiale === selectedLevel)
+            .map((semester) => semester.annee_collegiale)
+        )].map((annee) => (
+          <SelectItem key={annee} value={annee}>{annee}</SelectItem>
+        ))}
+      </SelectGroup>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Card key='sem1'>
                         <CardHeader>
                           <CardTitle className="flex justify-between">
@@ -761,7 +762,80 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
                         </CardFooter>
                       </Card>
                     {}
-                  </div>
+                  </div> */}
+                  {/* // ...plus bas, pour l'affichage des cards de semestres... */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {semesters
+    .filter(
+      (semester) =>
+        semester.niveau_collegiale === selectedLevel &&
+        (selectedAnneeCollegiale ? semester.annee_collegiale === selectedAnneeCollegiale : true)
+    )
+    .map((semester) => (
+      <Card key={semester.id}>
+        <CardHeader>
+          <CardTitle className="flex justify-between">
+            <span>{semester.name}</span>
+            {/* <span className={`text-xs px-2 py-1 rounded ${semester.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+              {semester.isActive ? 'Actif' : 'Inactif'}
+            </span> */}
+          </CardTitle>
+          <CardDescription>{semester.annee_collegiale}</CardDescription>
+        </CardHeader>
+         <CardContent>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Unités:</span>
+                              <span>
+                                {units.filter((unit) => unit.semestre === semester.id).length}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Séquences:</span>
+                              <span>
+                                {
+                                  sequences.filter(sequence => {
+                                    // Find the unit for this sequence
+                                    const unit = units.find(u => u.id === sequence.unite);
+                                    // Check if the unit belongs to this semester
+                                    return unit && unit.semestre === semester.id;
+                                  }).length
+                                }
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Cours:</span>
+                              <span>
+                                {
+                                  courses.filter(course => {
+                                    // Find the sequence for this course
+                                    const sequence = sequences.find(seq => seq.id === course.sequence);
+                                    // Find the unit for this sequence
+                                    const unit = sequence && units.find(u => u.id === sequence.unite);
+                                    // Check if the unit belongs to this semester
+                                    return unit && unit.semestre === semester.id;
+                                  }).length
+                                }
+                              </span>
+                            </div>
+                            {/* <div className="pt-2">
+                              <div className="flex justify-between text-sm mb-2">
+                                <span>Progression:</span>
+                                <span>65%</span>
+                              </div>
+                              <div className="w-full bg-secondary rounded-full h-2">
+                                <div className="bg-primary rounded-full h-2" style={{ width: '65%' }} />
+                              </div>
+                            </div> */}
+                          </div>
+                        </CardContent>
+        <CardFooter className="flex justify-end space-x-2">
+          <Button variant="outline">Dupliquer</Button>
+          <Button onClick={() => navigateToUnits(semester.id)}>Gérer</Button>
+        </CardFooter>
+      </Card>
+    ))}
+</div>
                 </div>
               </TabsContent>
 

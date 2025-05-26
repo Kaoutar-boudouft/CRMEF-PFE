@@ -1,4 +1,4 @@
 [
   { "id": "sem1", "name": "1er semestre", "annee_collegiale": "2024-2025", "niveau_collegiale": "1" },
-  { "id": "sem2", "name": "2ème semestre", "annee_collegiale": "2024-2025", "niveau_collegiale": "2" }
+  { "id": "sem2", "name": "2ème semestre", "annee_collegiale": "2024-2025", "niveau_collegiale": "1" }
 ]
