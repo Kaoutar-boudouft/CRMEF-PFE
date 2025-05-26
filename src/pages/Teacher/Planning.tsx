@@ -2192,5 +2192,3 @@ const selectedCoursDetails = courses.find(cours => cours.id === selectedCours);
 };
 
 export default Planning;
-
-
