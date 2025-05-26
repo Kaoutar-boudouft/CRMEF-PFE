@@ -52,59 +52,60 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 // Import data (assuming these are in a separate file)
-import { semestersData, unitsData, sequencesData, coursesData, exercisesData } from '@/data/planning-data';
+import semestersData from '@/data/semestres.json';
+import unitsData from '@/data/units.json';
+import sequencesData from '@/data/sequences.json';
+import coursesData from '@/data/planning-courses.json';
+import exercisesData from '@/data/exercices.json';
 import { SemesterCard } from "@/components/Planning/SemesterCard";
 import { UnitCard } from "@/components/Planning/UnitCard";
 import { SequenceCard } from "@/components/Planning/SequenceCard";
 import { CourseCard } from "@/components/Planning/CourseCard";
 import { ExerciseCard } from "@/components/Planning/ExerciseCard";
 
-interface Semester {
+export interface Semestre {
   id: string;
   name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
+  annee_collegiale: string;
+  niveau_collegiale: string;
 }
 
-interface Unit {
+export interface Unit {
+  id: string;
+  semestre: string;
+  name: string;
+  sequences: number;
+  cours: number;
+  progression: string;
+  testDiagno: boolean;
+}
+
+export interface Sequence {
+  id: string;
+  unite: string;
+  name: string;
+  cours: number;
+  exercices: number;
+  progression: string;
+}
+
+export interface Course {
   id: string;
   name: string;
-  description: string;
-  semesterId: string;
-  credits: number;
-  coefficient: number;
+  sequence: string;
+  exercices: number;
+  progression: string;
 }
 
-interface Sequence {
+export interface Exercice {
   id: string;
   name: string;
-  description: string;
-  unitId: string;
-  duration: number;
-  objectives: string[];
+  cours: string;
+  questions?: number;
+  exercices?: number;
+  progression: string;
 }
 
-interface Course {
-  id: string;
-  title: string;
-  description: string;
-  sequenceId: string;
-  duration: number;
-  type: 'theorique' | 'pratique' | 'mixte';
-  resources: string[];
-}
-
-interface Exercise {
-  id: string;
-  title: string;
-  description: string;
-  courseId: string;
-  type: 'td' | 'tp' | 'evaluation' | 'projet';
-  duration: number;
-  difficulty: 'facile' | 'moyen' | 'difficile';
-  instructions: string;
-}
 
 const Planning = () => {
   const [activeTab, setActiveTab] = useState<string>("semestres");
