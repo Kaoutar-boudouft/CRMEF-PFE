@@ -1,0 +1,8 @@
+
+[
+  { "id": "unit1", "semestre": "sem1", "name": "Unité 1", "sequences": 2, "cours": 6, "progression": "100%", "testDiagno": true },
+  { "id": "unit2", "semestre": "sem1", "name": "Unité 2", "sequences": 2, "cours": 5, "progression": "60%", "testDiagno": false },
+  { "id": "unit3", "semestre": "sem1", "name": "Unité 3", "sequences": 1, "cours": 7, "progression": "0%", "testDiagno": false },
+  { "id": "unit4", "semestre": "sem2", "name": "Unité 1", "sequences": 3, "cours": 8, "progression": "75%", "testDiagno": true },
+  { "id": "unit5", "semestre": "sem2", "name": "Unité 2", "sequences": 2, "cours": 4, "progression": "0%", "testDiagno": false }
+]
